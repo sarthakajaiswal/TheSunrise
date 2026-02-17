@@ -51,7 +51,7 @@ void Camera::printInfo()
         
 void Camera::cameraCallback(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
-    const float cameraSpeed = 1.0; 
+    const float cameraSpeed = 5.0; 
     static BOOL bMouseDown = FALSE; 
     
     // mouse event related variables
@@ -140,11 +140,11 @@ void Camera::cameraCallback(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
             case 'q': 
             case 'Q': 
-                position[1] -= sensitivity * 2.0; 
+                position[1] -= cameraSpeed * 2.0; 
                 break; 
             case 'e': 
             case 'E': 
-                position[1] += sensitivity * 2.0;
+                position[1] += cameraSpeed * 2.0;
                 break; 
 
             case 'g': 

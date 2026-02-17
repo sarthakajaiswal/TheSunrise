@@ -7,16 +7,22 @@ extern HWND ghwnd;
 
 bool ImGuiManager::initialized = false;
 
-// intro scene 
+// scene  
+extern Scene1 scene1; 
+extern Scene2 scene2; 
+
+// intro scene related 
 GLfloat cameraPosition[3] = { 4.0f, 0.0f, 6.0f };  
 extern GLfloat cameraPosY; 
 extern GLfloat cameraRotateAngle; 
 extern GLfloat cameraRadius; 
 extern IntroScene introScene;
 
-// scene  
-extern Scene1 scene1; 
-extern Scene2 scene2; 
+// scene2 related 
+extern float tHeight1; 
+extern float tHeight2; 
+extern float tHeight3; 
+extern float tHeight4; 
 
 bool ImGuiManager::Initialize(HWND hwnd) {
     if (initialized || !ENABLE_IMGUI)
@@ -146,6 +152,9 @@ void scene1Controls(void)
 
 void scene2Controls(void) 
 {
-    // ImGui::SliderFloat("terrain scale", scene1, -10.0f, 10.0f);
+    ImGui::SliderFloat("texture height 1", &tHeight1, -0.0f, 2000.0f);
+    ImGui::SliderFloat("texture height 2", &tHeight2, -0.0f, 2000.0f);
+    ImGui::SliderFloat("texture height 3", &tHeight3, -0.0f, 2000.0f);
+    ImGui::SliderFloat("texture height 4", &tHeight4, -0.0f, 2000.0f);
 } 
 

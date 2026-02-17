@@ -198,7 +198,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     // code 
     // code
 	if (ImGuiManager::IsEnabled() && ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
-		return true;
+		return DefWindowProc(hwnd, uMsg, wParam, lParam);
         
     // testSceneCallbacks(hwnd, uMsg, wParam, lParam); 
     // scene1Callbacks(hwnd, uMsg, wParam, lParam); 
@@ -473,7 +473,7 @@ void resize(int width, int height)
         45.0f, 
         (GLfloat)width/(GLfloat)height, 
         0.1f, 
-        10000.0f 
+        50000.0f 
     ); 
 } 
 

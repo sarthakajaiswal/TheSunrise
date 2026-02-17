@@ -11,9 +11,9 @@ class Scene2
 {
     private:
         Terrain terrain; 
-        const float terrainScale = 6.0f; 
-        const int textureScale = 8; 
-        const float heightScale = 2.0f; 
+        const float terrainScale = 50.0f; 
+        const int textureScale = 12; 
+        const float heightScale = 12.0f; 
 
     public: 
         Scene2(); 

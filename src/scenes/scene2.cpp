@@ -35,11 +35,17 @@ int Scene2::initialize()
     return (0); 
 } 
 
+float tHeight1 = 20.0;  // texture height 1 
+float tHeight2 = 50.0;  
+float tHeight3 = 100.0;  
+float tHeight4 = 150.0;  
 void Scene2::display() 
 {
    mat4 modelMatrix = mat4::identity(); 
    viewMatrix = mat4::identity(); 
    viewMatrix = scene2Camera.getViewMatrix(); 
+
+   terrain.SetTextureHeights(tHeight1, tHeight2, tHeight3, tHeight4); 
    terrain.Render(modelMatrix, viewMatrix, projectionMatrix); 
 } 
 

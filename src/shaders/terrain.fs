@@ -11,10 +11,10 @@ uniform sampler2D uTextureSampler3;
 
 uniform vec3 uLightDirection; 
 
-float height0 = 20.0; 
-float height1 = 50.0; 
-float height2 = 100.0; 
-float height3 = 150.0; 
+uniform float uHeight0; 
+uniform float uHeight1; 
+uniform float uHeight2; 
+uniform float uHeight3; 
 
 out vec4 FragColor;
 
@@ -24,30 +24,30 @@ vec4 calcTexColor()
 
     float height = out_height; 
 
-    if(height < height0) 
+    if(height < uHeight0) 
         texColor = texture(uTextureSampler0, out_texCoord); 
-    else if(height < height1) 
+    else if(height < uHeight1) 
     {
         vec4 color0 = texture(uTextureSampler0, out_texCoord); 
         vec4 color1 = texture(uTextureSampler1, out_texCoord); 
-        float delta = height1 - height0; 
-        float factor = (height-height0) / delta; 
+        float delta = uHeight1 - uHeight0; 
+        float factor = (height-uHeight0) / delta; 
         texColor = mix(color0, color1, factor); 
     } 
-    else if(height < height2) 
+    else if(height < uHeight2) 
     {
         vec4 color0 = texture(uTextureSampler1, out_texCoord); 
         vec4 color1 = texture(uTextureSampler2, out_texCoord); 
-        float delta = height2 - height1; 
-        float factor = (height-height1) / delta; 
+        float delta = uHeight2 - uHeight1; 
+        float factor = (height-uHeight1) / delta; 
         texColor = mix(color0, color1, factor); 
     } 
-    else if(height < height3) 
+    else if(height < uHeight3) 
     {
         vec4 color0 = texture(uTextureSampler2, out_texCoord); 
         vec4 color1 = texture(uTextureSampler3, out_texCoord); 
-        float delta = height3 - height2; 
-        float factor = (height-height2) / delta; 
+        float delta = uHeight3 - uHeight2; 
+        float factor = (height-uHeight2) / delta; 
         texColor = mix(color0, color1, factor);    
     } 
     else 

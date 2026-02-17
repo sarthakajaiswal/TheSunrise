@@ -65,9 +65,11 @@ class Terrain
         ShaderProgram shaderProgramObject; 
         GLuint mvpMatrixUniform; 
         GLuint textureSamplerUniform[4]; 
+        GLuint textureHeightUniforms[4]; 
         GLuint lightDirectionUniform; 
 
         GLuint textures[4]; 
+        GLuint textureHeights[4]; 
 
     public: 
         Terrain() : m_worldScale(1.0) 
@@ -144,6 +146,11 @@ class Terrain
             m_heightScale = heightScale; 
             m_textureScale = textureScale; 
 
+            textureHeights[0] = 20.0;  
+            textureHeights[1] = 50.0;  
+            textureHeights[2] = 100.0;  
+            textureHeights[3] = 150.0;  
+
             // load height map 
             loadFromFile("res/heightmap.save"); 
             m_triangleList.createTriangleList(m_terrainSize, m_terrainSize, this); 
@@ -200,10 +207,23 @@ class Terrain
             return m_heightScale; 
         } 
 
+        void SetTextureHeights(float height1, float height2, float height3, float height4)  
+        {
+            textureHeights[0] = height1; 
+            textureHeights[1] = height2; 
+            textureHeights[2] = height3; 
+            textureHeights[3] = height4; 
+        } 
+
         void Render(mat4 _modelMatrix, mat4 _viewMatrix, mat4 _projectionMatrix) 
         {
             shaderProgramObject.use();
             
+            glUniform1f(textureHeightUniforms[0], 50.0); 
+            glUniform1f(textureHeightUniforms[1], 100.0); 
+            glUniform1f(textureHeightUniforms[2], textureHeights[2]); 
+            glUniform1f(textureHeightUniforms[3], textureHeights[3]); 
+
             mat4 mvpMatrix = _projectionMatrix * _viewMatrix * _modelMatrix; 
             glUniformMatrix4fv(mvpMatrixUniform, 1, GL_FALSE, mvpMatrix); 
 
@@ -264,7 +284,13 @@ class Terrain
             textureSamplerUniform[0] = shaderProgramObject.getUniformLocation("uTextureSampler0"); 
             textureSamplerUniform[1] = shaderProgramObject.getUniformLocation("uTextureSampler1"); 
             textureSamplerUniform[2] = shaderProgramObject.getUniformLocation("uTextureSampler2"); 
-            textureSamplerUniform[3] = shaderProgramObject.getUniformLocation("uTextureSampler3"); 
+            textureSamplerUniform[3] = shaderProgramObject.getUniformLocation("uTextureSampler3");
+             
+            textureHeightUniforms[0] = shaderProgramObject.getUniformLocation("uHeight0"); 
+            textureHeightUniforms[1] = shaderProgramObject.getUniformLocation("uHeight1"); 
+            textureHeightUniforms[2] = shaderProgramObject.getUniformLocation("uHeight2"); 
+            textureHeightUniforms[3] = shaderProgramObject.getUniformLocation("uHeight3");
+             
             lightDirectionUniform = shaderProgramObject.getUniformLocation("uLightDirection"); 
 
             free(vertexShaderSourceCode); vertexShaderSourceCode = NULL; 
