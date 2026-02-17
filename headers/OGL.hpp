@@ -12,6 +12,7 @@
 // scene related headers 
 #include "scenes/testScene.hpp" 
 #include "scenes/introScene.hpp" 
+#include "scenes/scene1.hpp" 
 
 // imgui 
 #include "imgui_manager.hpp" 
