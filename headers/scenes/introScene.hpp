@@ -52,12 +52,14 @@ class IntroScene
         GLuint texture_marbleColor = 0; 
         GLuint texture_marbleNormalMap = 0; 
 
+        float localTimer = 0.0f; 
+
     public: 
         float alphabetSpacing = 3.799; 
         int blurIterations = 2; 
         float blendStrength = 0.0; // for blending red color on marble cracks 
-        float headingStartingX = -30.540f; 
-        float headingZ = 0.0; 
+        float astrmomedicompStartingX = -30.540f; 
+        float astromedicompZ = 0.0; 
         float alphabetSx = 1.471f, alphabetSy = 2.706f, alphabetSz = 2.647f; 
 
         // lighting related variable 

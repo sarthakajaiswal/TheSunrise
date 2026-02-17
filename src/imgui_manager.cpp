@@ -91,11 +91,11 @@ void ImGuiManager::RenderDebugWindow() {
 void introSceneControls(void) 
 {
     ImGui::SliderFloat("alphabet spacing", &introScene.alphabetSpacing, 0.0f, 5.0f);
-    ImGui::SliderFloat("heading startX", &introScene.headingStartingX, -40.0f, 0.0f);
+    ImGui::SliderFloat("amc startX", &introScene.astrmomedicompStartingX, -40.0f, 0.0f);
     ImGui::SliderFloat("alphabet Sx", &introScene.alphabetSx, -3.0f, 3.0f);
     ImGui::SliderFloat("alphabet Sy", &introScene.alphabetSy, -3.0f, 3.0f);
     ImGui::SliderFloat("alphabet Sz", &introScene.alphabetSz, -3.0f, 3.0f);
-    ImGui::SliderFloat("alphabetZ", &introScene.headingZ, 0.0f, -50.0f);
+    ImGui::SliderFloat("amcZ", &introScene.astromedicompZ, 0.0f, -50.0f);
 
     // ImGui::SliderFloat3("light position", lightPos, -50.0f, 50.0f);
     // introScene.lightPosition[0] = lightPos[0]; 

@@ -9,3 +9,7 @@ enum Scene
     SCENE_2, 
     SCENE_3 
 }; 
+
+extern const float introSceneStartTime; 
+
+void updateEvent(void); 
