@@ -42,8 +42,9 @@ float mainTimer = 0.0f;
 // ====================== Scene VARIABLES ================== 
 TestScene testScene; 
 IntroScene introScene; 
+Scene1 scene1; 
 
-enum Scene CurrentScene = INTRO_SCENE; 
+enum Scene CurrentScene = SCENE_1; 
 
 // ==================== ENTRY-POINT FUNCTION ================ 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) 
@@ -386,7 +387,8 @@ int initialize(void)
 
     // scene initialization 
     // testScene.initialize(); 
-    introScene.initialize(); 
+    // introScene.initialize(); 
+    scene1.initialize(); 
 
     // depth related code 
     glClearDepth(1.0); 
@@ -473,6 +475,9 @@ void display(void)
         case INTRO_SCENE: 
             introScene.display(); 
 
+        case SCENE_1: 
+            scene1.display(); 
+
         default: 
             break; 
     } 
@@ -497,6 +502,10 @@ void update(void)
     {
         case INTRO_SCENE: 
             introScene.update(); 
+
+        case SCENE_1:  
+            scene1.update(); 
+            break; 
 
         default: 
             break; 

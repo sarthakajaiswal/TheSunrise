@@ -1,16 +1,20 @@
 #include "..\headers\imgui_manager.hpp" 
 #include "..\headers\scenes\introScene.hpp" 
+#include "..\headers\scenes\scene1.hpp" 
 
 extern HWND ghwnd; 
 
 bool ImGuiManager::initialized = false;
 
+// intro scene 
 GLfloat cameraPosition[3] = { 4.0f, 0.0f, 6.0f };  
 extern GLfloat cameraPosY; 
 extern GLfloat cameraRotateAngle; 
 extern GLfloat cameraRadius; 
- 
-extern IntroScene introScene; 
+extern IntroScene introScene;
+
+// scene 1 
+extern Scene1 scene1; 
 
 bool ImGuiManager::Initialize(HWND hwnd) {
     if (initialized || !ENABLE_IMGUI)
@@ -63,6 +67,7 @@ void ImGuiManager::Render() {
 void ImGuiManager::RenderDebugWindow() {
     // function declarations 
     void introSceneControls(void);     
+    void scene1Controls(void);     
 
     // code 
     if (!initialized || !ENABLE_IMGUI)
@@ -79,6 +84,10 @@ void ImGuiManager::RenderDebugWindow() {
     {
         case INTRO_SCENE: 
             introSceneControls(); 
+
+        case SCENE_1: 
+            scene1Controls(); 
+            break; 
 
         default: 
             break; 
@@ -108,5 +117,23 @@ void introSceneControls(void)
     
     ImGui::SliderInt("Blur iterations:", &introScene.blurIterations, 0, 25); 
     ImGui::SliderFloat("Blend Strength:", &introScene.blendStrength, 0, 10); 
+} 
+
+float lightPos1[3]; 
+void scene1Controls(void) 
+{
+    bool isFirstTime = true; 
+    if(isFirstTime == true) 
+    {
+        lightPos1[0] = scene1.lightPosition[0]; 
+        lightPos1[1] = scene1.lightPosition[1]; 
+        lightPos1[2] = scene1.lightPosition[2]; 
+        isFirstTime = false; 
+    }
+
+    ImGui::SliderFloat3("light position", lightPos1, -10.0f, 10.0f);
+    scene1.lightPosition[0] = lightPos1[0]; 
+    scene1.lightPosition[1] = lightPos1[1]; 
+    scene1.lightPosition[2] = lightPos1[2]; 
 } 
 

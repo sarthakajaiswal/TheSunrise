@@ -5,6 +5,6 @@ const float introSceneEndTime = 20.0f;
 
 void updateEvent(void) 
 {
-    if(mainTimer >= introSceneStartTime && mainTimer < introSceneEndTime) 
-        CurrentScene = INTRO_SCENE; 
+    // if(mainTimer >= introSceneStartTime && mainTimer < introSceneEndTime) 
+    //     CurrentScene = INTRO_SCENE; 
 } 

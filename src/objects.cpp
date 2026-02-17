@@ -483,6 +483,8 @@ int Quad::initialize()
 
     glBindVertexArray(0); 
 	
+	logFile.log("Quad initialized\n"); 
+
 	return (0); 
 } 
 
