@@ -40,11 +40,12 @@ LARGE_INTEGER startTime, currentTime, freq;
 float mainTimer = 0.0f; 
 
 // ====================== Scene VARIABLES ================== 
-TestScene testScene; 
+// TestScene testScene; 
 IntroScene introScene; 
 Scene1 scene1; 
+Scene2 scene2; 
 
-enum Scene CurrentScene = SCENE_1; 
+enum Scene CurrentScene = SCENE_2; 
 
 // ==================== ENTRY-POINT FUNCTION ================ 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) 
@@ -191,13 +192,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     void resize(int, int); 
     void uninitialize(void); 
     void testSceneCallbacks(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam); 
+    void scene1Callbacks(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam); 
+    void scene2Callbacks(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam); 
 
     // code 
     // code
 	if (ImGuiManager::IsEnabled() && ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
-		return true;
+		return DefWindowProc(hwnd, uMsg, wParam, lParam);
         
-    testSceneCallbacks(hwnd, uMsg, wParam, lParam); 
+    // testSceneCallbacks(hwnd, uMsg, wParam, lParam); 
+    // scene1Callbacks(hwnd, uMsg, wParam, lParam); 
+    scene2Callbacks(hwnd, uMsg, wParam, lParam); 
     switch(uMsg) 
     {
         case WM_CREATE: 
@@ -386,9 +391,22 @@ int initialize(void)
     // printGLInfo();  
 
     // scene initialization 
-    // testScene.initialize(); 
-    // introScene.initialize(); 
-    scene1.initialize(); 
+    switch(CurrentScene) 
+    {
+        case INTRO_SCENE: 
+            introScene.initialize(); 
+
+        case SCENE_1:  
+            scene1.initialize(); 
+            break; 
+
+        case SCENE_2: 
+            scene2.initialize(); 
+            break; 
+
+        default: 
+            break; 
+    } 
 
     // depth related code 
     glClearDepth(1.0); 
@@ -455,7 +473,7 @@ void resize(int width, int height)
         45.0f, 
         (GLfloat)width/(GLfloat)height, 
         0.1f, 
-        500.0f 
+        50000.0f 
     ); 
 } 
 
@@ -477,6 +495,11 @@ void display(void)
 
         case SCENE_1: 
             scene1.display(); 
+            break; 
+
+        case SCENE_2: 
+            scene2.display(); 
+            break; 
 
         default: 
             break; 
@@ -505,6 +528,10 @@ void update(void)
 
         case SCENE_1:  
             scene1.update(); 
+            break; 
+
+        case SCENE_2: 
+            scene2.update(); 
             break; 
 
         default: 

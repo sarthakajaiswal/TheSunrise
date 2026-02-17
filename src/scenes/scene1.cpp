@@ -91,7 +91,7 @@ Scene1::~Scene1()
 {
 } 
 
-void Scene1Callbacks(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
+void scene1Callbacks(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 {
     float cameraStep = 0.5f; 
     switch(uMsg) 

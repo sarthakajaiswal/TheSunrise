@@ -148,7 +148,8 @@ void Vertex::InitVertex(const Terrain* pTerrain, int x, int z)
 {
     float y = pTerrain->GetHeight(x, z); 
     float worldScale = pTerrain->GetScale(); 
-    position = vec3(x*worldScale, y, z*worldScale); 
+    float heightScale = pTerrain->GetHeightScaleFactor(); 
+    position = vec3(x*worldScale, y*heightScale, z*worldScale); 
 
     int textureScale = pTerrain->GetTextureScale(); 
     float size = (float)pTerrain->GetSize(); 

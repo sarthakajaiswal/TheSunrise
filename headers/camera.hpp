@@ -1,34 +1,34 @@
-#ifndef _CAMERA_HPP 
-#define _CAMERA_HPP 
+#ifndef CAMERA_HPP 
+#define CAMERA_HPP 
 
-#include "global_header.hpp" 
-#include "common.hpp" 
+#include <Windowsx.h> 
+
+#include "OGL.hpp" 
+extern HWND ghwnd; 
 
 class Camera 
 {
     private: 
         vec3 position; 
-        vec3 front; 
         vec3 up; 
-
+        vec3 target; 
         vec3 direction; 
-        float yaw; 
-        float pitch; 
 
-        float speed; 
+        vec3 right; 
+        vec3 front; 
 
+        float yaw, pitch; 
+
+        void updateVectorsAfterChangesInAngle(void); 
+        
     public: 
         Camera(); 
-        ~Camera(); 
-
-        vec3 getPosition() const; 
-
-        void initialize(vec3 position, float yaw, float pitch); 
+        void setPosition(vec3 newPosition); 
+        // void setCenter(vec3 center); 
         mat4 getViewMatrix(); 
-        void setSpeed(float newSpeed); 
-        void updateCamera(); 
-
-        void callbackFunction(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);  
+        void cameraCallback(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam); 
+        void printInfo(); 
 }; 
 
-#endif /* _CAMERA_HPP */ 
+#endif // CAMERA_HPP 
+

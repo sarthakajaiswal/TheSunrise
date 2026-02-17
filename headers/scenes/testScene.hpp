@@ -1,25 +1,25 @@
-#ifndef _TEST_SCENE 
-#define _TEST_SCENE 
+// #ifndef _TEST_SCENE 
+// #define _TEST_SCENE 
 
-#include "../global_header.hpp" 
-#include "../shaderProgram.hpp" 
-#include "../objects.hpp" 
-#include "../camera.hpp" 
+// #include "../global_header.hpp" 
+// #include "../shaderProgram.hpp" 
+// #include "../objects.hpp" 
+// #include "../camera.hpp" 
 
-class TestScene 
-{
-    private: 
-        GLuint shaderProgramObject; 
+// class TestScene 
+// {
+//     private: 
+//         GLuint shaderProgramObject; 
 
-    public: 
-        TestScene(); 
+//     public: 
+//         TestScene(); 
 
-        int initialize(); 
-        void display(); 
-        void update(); 
+//         int initialize(); 
+//         void display(); 
+//         void update(); 
         
-        ~TestScene(); 
-}; 
+//         ~TestScene(); 
+// }; 
 
 
-#endif /* _TEST_SCENE */ 
+// #endif /* _TEST_SCENE */ 
