@@ -35,6 +35,8 @@ HGLRC ghrc = NULL;
 // ====================== GLOBAL VARIABLES ================= 
 mat4 projectionMatrix; 
 mat4 viewMatrix; 
+
+LARGE_INTEGER startTime, currentTime, freq; 
 float mainTimer = 0.0f; 
 
 // ====================== Scene VARIABLES ================== 
@@ -132,7 +134,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     SetForegroundWindow(hwnd); 
     SetFocus(hwnd); 
 
-    LARGE_INTEGER startTime, currentTime, freq; 
     QueryPerformanceFrequency(&freq); 
     float one_divided_by_freq = 1.0f/(float)freq.QuadPart; 
 
@@ -467,8 +468,14 @@ void display(void)
 		ImGuiManager::NewFrame();
 	}
 
-    // testScene.display(); 
-    introScene.display(); 
+    switch(CurrentScene) 
+    {
+        case INTRO_SCENE: 
+            introScene.display(); 
+
+        default: 
+            break; 
+    } 
 
 	// Render ImGui debug window and other UI elements
 	if (ImGuiManager::IsEnabled())
@@ -484,7 +491,16 @@ void display(void)
 void update(void) 
 {
     // code 
-    testScene.update(); 
+    updateEvent(); 
+
+    switch(CurrentScene) 
+    {
+        case INTRO_SCENE: 
+            introScene.update(); 
+
+        default: 
+            break; 
+    } 
 } 
 
 void uninitialize(void) 
