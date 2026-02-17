@@ -2,11 +2,14 @@
 *.txt 
 
 # build / output folder 
-build\ 
-output\
+build/
+output/
 
 # Prerequisites
 *.d
+
+# IDE 
+.vscode/
 
 # Compiled Object files
 *.slo
@@ -46,3 +49,5 @@ output\
 
 # debug information files
 *.dwo
+
+*.ini 
