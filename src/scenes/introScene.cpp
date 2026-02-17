@@ -3,12 +3,12 @@
 // Camera scene1Camera; 
 GLfloat cameraPosX = 0.0f; 
 GLfloat cameraPosY = 0.0f; 
-GLfloat cameraPosZ = 5.0f; 
+GLfloat cameraPosZ = 20.0f; 
 GLfloat cameraCenterX = 0.0f; 
 GLfloat cameraCenterY = 0.0f; 
-GLfloat cameraCenterZ = 0.0f; 
+GLfloat cameraCenterZ = -30.0f; 
 GLfloat cameraRotateAngle = 0.0f; 
-GLfloat cameraRadius = 10.0f; 
+GLfloat cameraRadius = 0.0f; 
 
 extern mat4 projectionMatrix; 
 extern void resize(int, int); 
@@ -56,7 +56,19 @@ int IntroScene::initialize()
     logFile.log("IntroScene::initialize > required FBOs created\n"); 
 
     quad.initialize(); 
+    logFile.log("IntroScene::initialize > initializing alphabets...\n"); 
     initAlphabet_A(); 
+    initAlphabet_S(); 
+    initAlphabet_T(); 
+    initAlphabet_R(); 
+    initAlphabet_O(); 
+    initAlphabet_M(); 
+    initAlphabet_E(); 
+    initAlphabet_D(); 
+    initAlphabet_I(); 
+    initAlphabet_C(); 
+    initAlphabet_P(); 
+    logFile.log("IntroScene::initialize > Alphabets initialized\n"); 
 
     texture_marbleColor = loadTexture("res\\BlackMarble.png", FALSE); 
     texture_marbleNormalMap = loadTexture("res\\BlackMarbleNormalMap.png", FALSE); 
@@ -74,8 +86,8 @@ void IntroScene::display()
 
     // =========================== ORIGINAL SCENE START =========================== 
 
-	cameraPosX = cameraRadius * cos(cameraRotateAngle * 3.14/180.0); 
-	cameraPosZ = 5.0 * sin(cameraRotateAngle * 3.14/180.0); 
+	cameraPosX = cameraRadius * sin(cameraRotateAngle * 3.14/180.0); 
+	cameraPosZ = cameraRadius * cos(cameraRotateAngle * 3.14/180.0); 
 	viewMatrix = vmath::lookat(
 		vec3(cameraPosX, cameraPosY, cameraPosZ), 
 		vec3(cameraCenterX, cameraCenterY, cameraCenterZ), 
@@ -83,9 +95,10 @@ void IntroScene::display()
 	);  
 
     mat4 modelMatrix = mat4::identity(); 
+    vec3 headingStartingLocation = {headingStartingX, 0.0f, headingZ}; 
+    modelMatrix = vmath::translate(headingStartingLocation[0], headingStartingLocation[1], headingStartingLocation[2]); 
+    modelMatrix = modelMatrix * vmath::scale(alphabetSx, alphabetSy, alphabetSz); 
 
-	mat4 modelViewMatrix = viewMatrix * modelMatrix; 
-	glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
 	glUniformMatrix4fv(projectionMatrixUniform_heading, 1, GL_FALSE, projectionMatrix);   
 	glUniform1f(blendStrengthUniform_heading, blendStrength); 
 	glUniform4fv(lightPositionUniform_heading, 1, lightPosition);  
@@ -96,23 +109,52 @@ void IntroScene::display()
 	glUniform3fv(kaUniform_heading, 1, materialAmbient);  
 	glUniform3fv(kdUniform_heading, 1, materialDiffuse);  
 	glUniform3fv(ksUniform_heading, 1, materialSpecular);  
-	// normal map related 
-	if(bNormalMapping == true) 
-	{
-		glUniform1i(normalMapEnableUniform_heading, 1);  
-		glActiveTexture(GL_TEXTURE0); 
-		glBindTexture(GL_TEXTURE_2D, texture_marbleNormalMap); 
-		glUniform1i(normalMapTextureSamplerUniform_heading, 0); 
-	} 
-	else
-	{ 
-		glUniform1i(normalMapEnableUniform_heading, 0);  
-	} 
-	glActiveTexture(GL_TEXTURE1); 
+ 
+    glActiveTexture(GL_TEXTURE0); 
+    glBindTexture(GL_TEXTURE_2D, texture_marbleNormalMap); 
+    glUniform1i(normalMapTextureSamplerUniform_heading, 0); 
+
+    glActiveTexture(GL_TEXTURE1); 
 	glBindTexture(GL_TEXTURE_2D, texture_marbleColor); 
 	glUniform1i(colorTextureSamplerUniform_heading, 1); 
 
+    mat4 modelViewMatrix = viewMatrix * modelMatrix; 
+	glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
 	renderAlphabet_A();    
+
+    modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+    glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+	renderAlphabet_S();    
+    modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+    glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+	renderAlphabet_T();    
+    modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+    glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+	renderAlphabet_R();    
+    modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+    glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+	renderAlphabet_O();    
+    modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+    glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+	renderAlphabet_M();    
+    modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+    glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+	renderAlphabet_E();    
+    modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+    glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+	renderAlphabet_I();    
+    modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+    glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+	renderAlphabet_C();    
+    modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+    glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+	renderAlphabet_O();    
+    modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+    glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+	renderAlphabet_M();    
+    modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+    glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+	renderAlphabet_P();    
 
     // =========================== ORIGINAL SCENE END =========================== 
 
@@ -192,30 +234,32 @@ void IntroScene::display()
 	glUseProgram(0); 
 
     // ************** CHECK FBO TEXTURES *************** 
-	// scene 
-	glViewport(10, 600, 300, 180); 
-	fsTextureProgram.use();
-	glActiveTexture(GL_TEXTURE0); 
-	glBindTexture(GL_TEXTURE_2D, fbo_scene.getTextureID()); 
-	glUniform1i(textureUniform_fsTexture, 0);  
-	quad.render();  
-	glBindTexture(GL_TEXTURE_2D, 0); 
-	fsTextureProgram.unuse(); 
+	// // scene 
+	// glViewport(10, 600, 300, 180); 
+	// fsTextureProgram.use();
+	// glActiveTexture(GL_TEXTURE0); 
+	// glBindTexture(GL_TEXTURE_2D, fbo_scene.getTextureID()); 
+	// glUniform1i(textureUniform_fsTexture, 0);  
+	// quad.render();  
+	// glBindTexture(GL_TEXTURE_2D, 0); 
+	// fsTextureProgram.unuse(); 
 
-	// bright colors  
-	glViewport(1000, 400, 480, 270);
-    fsTextureProgram.use(); 
-	glActiveTexture(GL_TEXTURE0); 
-	glBindTexture(GL_TEXTURE_2D, fbo_brightColors.getTextureID()); 
-	glUniform1i(textureUniform_fsTexture, 0);  
-	quad.render(); 
-	glBindTexture(GL_TEXTURE_2D, 0); 
-	glUseProgram(0);
+	// // bright colors  
+	// glViewport(1000, 400, 480, 270);
+    // fsTextureProgram.use(); 
+	// glActiveTexture(GL_TEXTURE0); 
+	// glBindTexture(GL_TEXTURE_2D, fbo_brightColors.getTextureID()); 
+	// glUniform1i(textureUniform_fsTexture, 0);  
+	// quad.render(); 
+	// glBindTexture(GL_TEXTURE_2D, 0); 
+	// glUseProgram(0);
 } 
 
 void IntroScene::update() 
 {
     // code  
+    if(mainTimer > 3.0 && headingZ < -50.0) 
+    {} 
 } 
 
 void IntroScene::uninitialize() 
@@ -269,7 +313,7 @@ bool IntroScene::initHeadingAlphabetsShaderProgram()
 	// normal mapping
 	normalMapTextureSamplerUniform_heading =    headingAlphabetsShaderProgram.getUniformLocation("uNormalMapSampler"); 
 	colorTextureSamplerUniform_heading =        headingAlphabetsShaderProgram.getUniformLocation("uColorTextureSampler"); 
-	normalMapEnableUniform_heading =            headingAlphabetsShaderProgram.getUniformLocation("uIsNormalMapEnabled"); 
+	// normalMapEnableUniform_heading =            headingAlphabetsShaderProgram.getUniformLocation("uIsNormalMapEnabled"); 
     // blending 
 	blendStrengthUniform_heading =  headingAlphabetsShaderProgram.getUniformLocation("uBlendStrength"); 
 

@@ -23,7 +23,7 @@ uniform vec3 uMaterialSpecular;
 // normal mapping related 
 uniform sampler2D uNormalMapSampler; 
 uniform sampler2D uColorTextureSampler; 
-uniform int uIsNormalMapEnabled; 
+uniform int uIsNormalMapEnabled = 1; 
 
 uniform float uBlendStrength; 
 

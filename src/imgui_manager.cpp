@@ -61,6 +61,10 @@ void ImGuiManager::Render() {
 }
 
 void ImGuiManager::RenderDebugWindow() {
+    // function declarations 
+    void introSceneControls(void);     
+
+    // code 
     if (!initialized || !ENABLE_IMGUI)
         return;
 
@@ -71,14 +75,38 @@ void ImGuiManager::RenderDebugWindow() {
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 
         1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-    ImGui::SliderFloat("camera height", &cameraPosY, -5.0f, 5.0f);
-    ImGui::SliderFloat("camera radius", &cameraRadius, 0.0f, 20.0f);
-    ImGui::SliderFloat("camera angle", &cameraRotateAngle, 0.0f, 360.0f);
-    
-    ImGui::Checkbox("Normal mapping:", &introScene.bNormalMapping); 
-    ImGui::SliderInt("Blur iterations:", &introScene.blurIterations, 0, 25); 
-    ImGui::SliderFloat("Blend Strength:", &introScene.blendStrength, 0, 10); 
+    switch(CurrentScene) 
+    {
+        case INTRO_SCENE: 
+            introSceneControls(); 
+
+        default: 
+            break; 
+    } 
 
     ImGui::End();
 }
+
+// float lightPos[] = {introScene.lightPosition[0], introScene.lightPosition[1], introScene.lightPosition[2]}; 
+void introSceneControls(void) 
+{
+    ImGui::SliderFloat("alphabet spacing", &introScene.alphabetSpacing, 0.0f, 5.0f);
+    ImGui::SliderFloat("heading startX", &introScene.headingStartingX, -40.0f, 0.0f);
+    ImGui::SliderFloat("alphabet Sx", &introScene.alphabetSx, -3.0f, 3.0f);
+    ImGui::SliderFloat("alphabet Sy", &introScene.alphabetSy, -3.0f, 3.0f);
+    ImGui::SliderFloat("alphabet Sz", &introScene.alphabetSz, -3.0f, 3.0f);
+    ImGui::SliderFloat("alphabetZ", &introScene.headingZ, 0.0f, -50.0f);
+
+    // ImGui::SliderFloat3("light position", lightPos, -50.0f, 50.0f);
+    // introScene.lightPosition[0] = lightPos[0]; 
+    // introScene.lightPosition[1] = lightPos[1]; 
+    // introScene.lightPosition[2] = lightPos[2]; 
+
+    ImGui::SliderFloat("camera height", &cameraPosY, -5.0f, 5.0f);
+    ImGui::SliderFloat("camera radius", &cameraRadius, 0.0f, 50.0f);
+    ImGui::SliderFloat("camera angle", &cameraRotateAngle, 0.0f, 360.0f);
+    
+    ImGui::SliderInt("Blur iterations:", &introScene.blurIterations, 0, 25); 
+    ImGui::SliderFloat("Blend Strength:", &introScene.blendStrength, 0, 10); 
+} 
 

@@ -27,7 +27,6 @@ class IntroScene
         GLuint ksUniform_heading = 0; 
         GLuint normalMapTextureSamplerUniform_heading = 0; 
         GLuint colorTextureSamplerUniform_heading = 0; 
-        GLuint normalMapEnableUniform_heading = 0; 
         GLuint blendStrengthUniform_heading = 0; 
         
         ShaderProgram brightColorSeparatorProgram; 
@@ -54,22 +53,24 @@ class IntroScene
         GLuint texture_marbleNormalMap = 0; 
 
     public: 
-        int blurIterations = 10; 
-        float blendStrength = 1.0; // for blending red color on marble cracks 
+        float alphabetSpacing = 3.799; 
+        int blurIterations = 2; 
+        float blendStrength = 0.0; // for blending red color on marble cracks 
+        float headingStartingX = -30.540f; 
+        float headingZ = 0.0; 
+        float alphabetSx = 1.471f, alphabetSy = 2.706f, alphabetSz = 2.647f; 
 
         // lighting related variable 
         GLfloat lightAmbient[4] = {0.1f, 0.1f, 0.1f, 1.0}; 
         GLfloat lightDiffuse[4] = {2.0f, 0.0f, 0.0f, 1.0f}; 
         GLfloat lightSpecular[4] = {2.0f, 0.0f, 0.0f, 1.0f};
-        GLfloat lightPosition[4] = {100.0f, 100.0f, 100.0f, 1.0f}; 
+        // GLfloat lightPosition[4] = {13.57f, 18.041f, -3.767f, 1.0f}; 
+        GLfloat lightPosition[4] = {0.0f, 50.0f, 50.0f, 1.0f}; 
 
         GLfloat materialAmbient[4] = {0.0f, 0.0f, 0.0f, 1.0f}; 
         GLfloat materialDiffuse[4] = {1.0f, 2.0f, 0.0f, 1.0f}; 
         GLfloat materialSpecular[4] = {0.7f, 0.7f, 0.7f, 1.0f}; 
         GLfloat materialShininess = 128.0f; 
-
-        // feature toggle 
-        bool bNormalMapping = false; 
 
         IntroScene(); 
 

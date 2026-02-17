@@ -35,11 +35,13 @@ HGLRC ghrc = NULL;
 // ====================== GLOBAL VARIABLES ================= 
 mat4 projectionMatrix; 
 mat4 viewMatrix; 
-float mainTimer = 0; 
+float mainTimer = 0.0f; 
 
 // ====================== Scene VARIABLES ================== 
 TestScene testScene; 
 IntroScene introScene; 
+
+enum Scene CurrentScene = INTRO_SCENE; 
 
 // ==================== ENTRY-POINT FUNCTION ================ 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) 

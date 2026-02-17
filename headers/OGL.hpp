@@ -7,6 +7,7 @@
 #include "global_header.hpp" 
 #include "resources.hpp"
 #include "fileHandler.hpp" 
+#include "eventManager.hpp" 
 
 // scene related headers 
 #include "scenes/testScene.hpp" 

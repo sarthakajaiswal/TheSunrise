@@ -14,6 +14,7 @@
 using namespace vmath; 
 
 #include "fileHandler.hpp" 
+#include "eventManager.hpp" 
 
 enum
 {
@@ -33,5 +34,10 @@ extern mat4 viewMatrix;
 
 // window dimentions 
 extern int winWidth, winHeight; 
+
+// timer 
+extern float mainTimer; 
+
+extern enum Scene CurrentScene; 
 
 #endif /* _GLOBAL_HEADER_HPP */ 
