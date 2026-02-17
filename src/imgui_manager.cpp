@@ -1,6 +1,7 @@
 #include "..\headers\imgui_manager.hpp" 
 #include "..\headers\scenes\introScene.hpp" 
 #include "..\headers\scenes\scene1.hpp" 
+#include "..\headers\scenes\scene2.hpp" 
 
 extern HWND ghwnd; 
 
@@ -13,8 +14,9 @@ extern GLfloat cameraRotateAngle;
 extern GLfloat cameraRadius; 
 extern IntroScene introScene;
 
-// scene 1 
+// scene  
 extern Scene1 scene1; 
+extern Scene2 scene2; 
 
 bool ImGuiManager::Initialize(HWND hwnd) {
     if (initialized || !ENABLE_IMGUI)
@@ -68,6 +70,7 @@ void ImGuiManager::RenderDebugWindow() {
     // function declarations 
     void introSceneControls(void);     
     void scene1Controls(void);     
+    void scene2Controls(void);     
 
     // code 
     if (!initialized || !ENABLE_IMGUI)
@@ -87,6 +90,10 @@ void ImGuiManager::RenderDebugWindow() {
 
         case SCENE_1: 
             scene1Controls(); 
+            break; 
+
+        case SCENE_2: 
+            scene2Controls(); 
             break; 
 
         default: 
@@ -135,5 +142,10 @@ void scene1Controls(void)
     scene1.lightPosition[0] = lightPos1[0]; 
     scene1.lightPosition[1] = lightPos1[1]; 
     scene1.lightPosition[2] = lightPos1[2]; 
+} 
+
+void scene2Controls(void) 
+{
+    // ImGui::SliderFloat("terrain scale", scene1, -10.0f, 10.0f);
 } 
 

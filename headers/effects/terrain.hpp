@@ -59,6 +59,7 @@ class Terrain
         TriangleList m_triangleList; 
 
         float m_worldScale; 
+        float m_heightScale; 
         float m_textureScale; 
 
         ShaderProgram shaderProgramObject; 
@@ -137,24 +138,41 @@ class Terrain
             return (id); 
         } 
 
-        void initialize(float worldScale, int textureScale, std::vector<std::string> terrainTextureFilesPath) 
+        bool initialize(float worldScale, float heightScale, int textureScale, std::vector<std::string> terrainTextureFilesPath) 
         {
             m_worldScale = worldScale; 
+            m_heightScale = heightScale; 
             m_textureScale = textureScale; 
 
+            // load height map 
             loadFromFile("res/heightmap.save"); 
             m_triangleList.createTriangleList(m_terrainSize, m_terrainSize, this); 
+            logFile.log("Terrain heightmap loaded successfully\n");
 
             initializeShaders(); 
 
+            // check input array of texture images 
+            if(terrainTextureFilesPath.size() == 0) 
+            {
+                logFile.log("Terrain::initialize() > ERROR > provide texture images\n");
+                return (false); 
+            } 
+            else if(terrainTextureFilesPath.size() < 4) 
+            {
+                // if textures less than 4, then repeat them upto 4 
+                for(int i = 0; i < 4 - terrainTextureFilesPath.size(); ++i) 
+                    terrainTextureFilesPath.push_back(terrainTextureFilesPath[0]); 
+            } 
+            
+            // load textures 
             for(size_t i = 0; i < 4; ++i) 
             {
-                std::string texturePath = "res/terrain" + std::to_string(i+1) + ".png"; 
-                GLuint texture = loadTerrainTexture(texturePath.c_str(), FALSE); 
+                GLuint texture = loadTerrainTexture(terrainTextureFilesPath[i].c_str(), FALSE); 
                 textures[i] = texture; 
-            } 
-
+            }
             logFile.log("Terrain textures loaded successfully\n"); 
+    
+            return (true); 
         } 
 
         float GetSize() const 
@@ -175,6 +193,11 @@ class Terrain
         float GetScale() const 
         {
             return m_worldScale; 
+        } 
+
+        float GetHeightScaleFactor() const 
+        {
+            return m_heightScale; 
         } 
 
         void Render(mat4 _modelMatrix, mat4 _viewMatrix, mat4 _projectionMatrix) 

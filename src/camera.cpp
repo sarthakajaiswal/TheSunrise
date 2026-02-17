@@ -1,115 +1,171 @@
 #include "../headers/camera.hpp" 
 
-// TODO: 10.4] Movement Speed : same speed across machines 
+extern HWND ghwnd; 
+
+void Camera::updateVectorsAfterChangesInAngle(void) 
+{
+    direction[0] = cos(radians(yaw)) * cos(radians(pitch)); 
+    direction[1] = sin(radians(pitch)); 
+    direction[2] = sin(radians(yaw)) * cos(radians(pitch)); 
+    
+    up = vec3(0.0f, 1.0f, 0.0f); 
+    front = normalize(direction); 
+    right = normalize(cross(up, direction)); 
+} 
+ 
 Camera::Camera() 
 {
-    this->position = vec3(0.0, 0.0, 5.0); 
-    this->front = vec3(0.0, 0.0, -1.0); 
-    this->up = vec3(0.0, 1.0, 0.0); 
-
-    this->speed = 1.0; 
-
-    this->yaw = -90.0f; 
-    this->pitch = 0.0f; 
-
-    updateCamera(); 
+    position = vec3(0.0, 2.0, 3.0); 
+    up = vec3(0.0, 1.0, 0.0); 
+    target = vec3(0.0, 0.0, 0.0); 
+    front = vec3(0.0, 0.0, -1.0); 
+    
+    direction = normalize(position - target); 
+    yaw = -90.0f; 
+    pitch = 0.0f; 
+    direction[0] = cos(radians(yaw)) * cos(radians(pitch)); 
+    direction[1] = sin(radians(pitch)); 
+    direction[2] = sin(radians(yaw)) * cos(radians(pitch)); 
+    right = normalize(cross(up, direction)); 
+    up = cross(direction, right);
 } 
 
-Camera::~Camera() 
-{} 
- 
-vec3 Camera::getPosition() const 
-{
-    return (this->position); 
-} 
-
-void Camera::setSpeed(float newSpeed) 
-{
-    speed = newSpeed; 
+void Camera::setPosition(vec3 newPosition) 
+{ 
+    position = newPosition; 
 } 
 
 mat4 Camera::getViewMatrix() 
 {
-    mat4 viewMatrix = vmath::lookat(
-                        position, 
-                        position + front, 
-                        up
-                    ); 
+    mat4 viewMatrix = vmath::lookat(position, position+front, up); 
     return (viewMatrix); 
 } 
 
-void Camera::initialize(vec3 position, float yaw, float pitch)  
+void Camera::printInfo() 
 {
-    this->position = position; 
-    this->yaw += yaw; 
-    this->pitch = pitch; 
+    logFile.log("Camera Info: \n");
+    logFile.log("Camera Position: %.2f, %.2f, %.2f\n", position[0], position[1], position[2]);
+    logFile.log("yaw: %.2f\n", yaw);
+    logFile.log("pitch: %.2f\n", pitch);
 } 
-
-void Camera::updateCamera() 
+        
+void Camera::cameraCallback(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
-    float yawInRad = degToRad(yaw); 
-    float pitchInRad = degToRad(pitch); 
+    const float cameraSpeed = 1.0; 
+    static BOOL bMouseDown = FALSE; 
+    
+    // mouse event related variables
+    static BOOL bGameMode = FALSE; 
+    float sensitivity = 0.1f; 
 
-    direction[0] = cos(yawInRad) * cos(pitchInRad); 
-    direction[1] = sin(pitchInRad); 
-    direction[2] = sin(yawInRad) * cos(pitchInRad);
+    static BOOL bJustModeChanged = TRUE; 
+    static float lastX = 0.0; 
+    static float lastY = 0.0; 
+    float currentX, currentY; 
+    float xOffset, yOffset; 
 
-    front = normalize(direction); 
-} 
-
-void Camera::callbackFunction(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
-{
-    // code 
-    MOUSEMOVEPOINT mouseInfo; 
-    switch(uMsg) 
+    switch(iMsg) 
     {
+        case WM_LBUTTONDOWN: 
+            lastX = GET_X_LPARAM(lParam); 
+            lastY = GET_Y_LPARAM(lParam);
+            bMouseDown = TRUE; 
+            break; 
+
+        case WM_LBUTTONUP: 
+            bMouseDown = FALSE; 
+            break; 
+
+        case WM_MOUSEMOVE: 
+            if(bGameMode == FALSE && bMouseDown == FALSE) 
+                break; 
+
+            if(bJustModeChanged) // get the mouse positions on changing the mode 
+            {
+                lastX = GET_X_LPARAM(lParam); 
+                lastY = GET_Y_LPARAM(lParam);
+                ShowCursor(!bGameMode); 
+                
+                bJustModeChanged = FALSE; 
+            } 
+            currentX = GET_X_LPARAM(lParam);
+            currentY = GET_Y_LPARAM(lParam);
+            xOffset = currentX - lastX; 
+            yOffset = lastY - currentY; 
+            lastX = currentX; 
+            lastY = currentY; 
+
+            xOffset *= sensitivity; 
+            yOffset *= sensitivity; 
+
+            yaw -= xOffset; 
+            pitch -= yOffset; 
+
+            if(pitch > 89.0f)
+                pitch = 89.0f;
+            if(pitch < -89.0f)
+                pitch = -89.0f;
+            updateVectorsAfterChangesInAngle(); 
+
+            if(bGameMode == TRUE) 
+            {
+                RECT windowRect; 
+                GetClientRect(ghwnd, &windowRect);
+                lastX = windowRect.right/2;  
+                lastY = windowRect.bottom/2;  
+                // lastY = GetSystemMetrics(SM_CYSCREEN)/2; 
+                SetCursorPos(lastX, lastY); 
+            } 
+            break; 
+
         case WM_CHAR: 
             switch(wParam) 
             {
-                case 'w': 
-                case 'W':  
-                    position += speed * front; 
-                    break; 
+            case 'w': 
+            case 'W':   
+                position += cameraSpeed * front; 
+                break; 
+            case 's': 
+            case 'S': 
+                position -= cameraSpeed * front; 
+                break; 
+            case 'a': 
+            case 'A': 
+                position -= normalize(cross(front, up)) * cameraSpeed; 
+                break; 
+            case 'd': 
+            case 'D': 
+                position += normalize(cross(front, up)) * cameraSpeed; 
+                break; 
 
-                case 'S': 
-                case 's':  
-                    position -= speed * front; 
-                    break; 
+            case 'q': 
+            case 'Q': 
+                position[1] -= sensitivity * 2.0; 
+                break; 
+            case 'e': 
+            case 'E': 
+                position[1] += sensitivity * 2.0;
+                break; 
 
-                case 'A': 
-                case 'a':  
-                    position -= normalize(vmath::cross(front, up)); 
-                    break; 
+            case 'g': 
+            case 'G': 
+                bGameMode = !bGameMode; 
+                bJustModeChanged = true; // to save the values of lastX and lastY for firsttime after mode is changed 
+                break; 
+                
+            case 'p': 
+            case 'P': 
+                printInfo(); 
+                break; 
 
-                case 'd': 
-                case 'D':  
-                    position += normalize(vmath::cross(front, up)); 
-                    break; 
-
-                case '4': 
-                    yaw -= 1.0; 
-                    break; 
-
-                case '6': 
-                    yaw += 1.0f; 
-                    break; 
-
-                case '2': 
-                    pitch -= 1.0; 
-                    break; 
-
-                case '8': 
-                    pitch += 1.0f; 
-                    break; 
-
-                default: 
-                    break; 
+            default: 
+                break; 
             } 
             break; 
 
         default: 
-            break; 
+            break;  
     } 
-
-    updateCamera(); 
 } 
+
+

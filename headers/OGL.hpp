@@ -13,6 +13,7 @@
 #include "scenes/testScene.hpp" 
 #include "scenes/introScene.hpp" 
 #include "scenes/scene1.hpp" 
+#include "scenes/scene2.hpp" 
 
 // imgui 
 #include "imgui_manager.hpp" 
