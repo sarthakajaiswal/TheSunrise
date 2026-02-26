@@ -9,6 +9,11 @@ ShaderProgram::ShaderProgram()
     this->id = 0; 
 }  
 
+GLuint ShaderProgram::getID() 
+{
+    return this->id; 
+} 
+
 int ShaderProgram::create(std::vector<ShaderSourceCodeAndType> shaderSourceAndTypes, std::vector<AttributeWithIndexLocation> attributes) 
 {
     // code 
@@ -134,15 +139,13 @@ ShaderSourceCodeAndType::ShaderSourceCodeAndType(const char* _sourceCode, GLenum
     this->sourceCode = _sourceCode; 
 } 
 
-// (2) 
 AttributeWithIndexLocation::AttributeWithIndexLocation(int _index, const char* _attributeName) 
 {
     this->index = _index; 
     this->attributeName = _attributeName; 
 } 
 
-// (3) 
-ShaderObject::ShaderObject(const char* _sourceCode, GLenum _type) 
+ShaderProgram::ShaderObject::ShaderObject(const char* _sourceCode, GLenum _type) 
 {
     this->type = _type; 
     this->sourceCode = _sourceCode; 
@@ -179,7 +182,7 @@ ShaderObject::ShaderObject(const char* _sourceCode, GLenum _type)
     } 
 } 
 
-ShaderObject::~ShaderObject() 
+ShaderProgram::ShaderObject::~ShaderObject() 
 {
     // TODO: we are not deleting shader object here, because shaderObject get deleted in ShaderProgram::create() while pushing into shaderObjects array 
     // glDeleteShader(this->id); 

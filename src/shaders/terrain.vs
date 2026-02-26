@@ -1,20 +1,24 @@
-#version 460 core
+#version 460 core 
 
-in vec4 aPosition;
-in vec2 aTexCoord;
+in vec4 aPosition; 
+in vec2 aTexCoord; 
 in vec3 aNormal; 
 
-uniform mat4 uMVPMatrix;
-
-out vec2 out_texCoord;
+out vec2 out_texCoord; 
 out vec3 out_normal; 
-out float out_height; 
+out vec3 out_worldPosition; 
 
-void main(void) 
-{
-    gl_Position = uMVPMatrix * aPosition;
-    out_texCoord = aTexCoord;
-    out_normal = aNormal; 
-    out_height = aPosition.y; 
-}
+uniform mat4 uModelMatrix; 
+uniform mat4 uViewMatrix; 
+uniform mat4 uProjectionMatrix; 
+uniform mat4 uNormalMatrix; 
+
+void main(void)  
+{ 
+   gl_Position = uProjectionMatrix * uViewMatrix * uModelMatrix * aPosition; 
+   out_worldPosition = (uModelMatrix * aPosition).xyz; 
+   out_texCoord = aTexCoord; 
+   out_normal = (mat3(transpose(inverse(uModelMatrix))) * aNormal).xyz; 
+   out_normal = normalize(out_normal); 
+} 
 

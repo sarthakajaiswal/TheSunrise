@@ -14,19 +14,6 @@ class ShaderSourceCodeAndType
         ShaderSourceCodeAndType(const char* sourceCode, GLenum type); 
 }; 
 
-class ShaderObject 
-{
-    friend class ShaderSourceCodeAndType; 
-    public: 
-        const char* sourceCode; 
-        GLenum type; 
-        GLuint id; 
-
-    public: 
-        ShaderObject(const char* sourceCode, GLenum type); 
-        ~ShaderObject(); 
-};
-
 class AttributeWithIndexLocation 
 {
     public: 
@@ -40,11 +27,25 @@ class AttributeWithIndexLocation
 class ShaderProgram 
 {
     friend class ShaderSourceCodeAndType; 
+    private: 
+        class ShaderObject 
+        {
+            friend class ShaderSourceCodeAndType; 
+            public: 
+                const char* sourceCode; 
+                GLenum type; 
+                GLuint id; 
+
+            public: 
+                ShaderObject(const char* sourceCode, GLenum type); 
+                ~ShaderObject(); 
+        };
+
+        GLuint id; 
 
     public: 
-        GLint id; 
+        GLuint getID(); 
 
-    public: 
         ShaderProgram(); 
         int create(std::vector<ShaderSourceCodeAndType> shaders, std::vector<AttributeWithIndexLocation> linkingAttributes); 
 
