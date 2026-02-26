@@ -1,68 +1,85 @@
-#version 460 core
+#version 460 core 
 
-in vec2 out_texCoord;
+in vec2 out_texCoord; 
 in vec3 out_normal; 
-in float out_height; 
+in vec3 out_worldPosition; 
 
-uniform sampler2D uTextureSampler0;
-uniform sampler2D uTextureSampler1;
-uniform sampler2D uTextureSampler2;
-uniform sampler2D uTextureSampler3;
+out vec4 FragColor; 
 
-uniform vec3 uLightDirection; 
+uniform sampler2D uTextures[4]; 
+uniform float uHeightScale; 
 
-uniform float uHeight0; 
-uniform float uHeight1; 
-uniform float uHeight2; 
-uniform float uHeight3; 
+// const float hRange1 = 0.1; 
+// const float hRange2 = 0.3; 
+// const float hRange3 = 0.5; 
+// const float hRange4 = 0.75; 
+    
+uniform float hRange1; 
+uniform float hRange2; 
+uniform float hRange3; 
+uniform float hRange4; 
+    
+vec4 uLightPosition = vec4(0.0, 50.0, 50.0, 1.0); 
+vec3 lightColor = vec3(1.0, 1.0, 1.0); 
+uniform vec3 uViewPosition; 
 
-out vec4 FragColor;
+void main(void) 
+{ 
+    /* -------- light color --------- */
+    vec3 skyColor = vec3(0.7, 0.9, 0.9); 
+    vec3 groundColor = vec3(0.4, 0.3, 0.2); 
+    float mixFactor = dot(out_normal, vec3(0.0, 1.0, 0.0)) * 0.5 + 0.5; 
+    vec3 ambientColor = mix(groundColor, skyColor, mixFactor); 
 
-vec4 calcTexColor() 
-{
-    vec4 texColor; 
+    vec3 lightDirection = normalize(vec3(out_worldPosition - uLightPosition.xyz)); 
+    float diffuse = max(0.0, dot(-lightDirection, out_normal)); 
+    vec3 diffuseColor = diffuse * lightColor; 
 
-    float height = out_height; 
+    float shininess = 32.0f; 
+    vec3 reflectionVector = normalize(reflect(lightDirection, out_normal)); 
+    vec3 viewDirection = normalize(vec3(uViewPosition - out_worldPosition)); 
+    float specular = pow(max(0.0, dot(reflectionVector, viewDirection)), shininess); 
+    vec3 specularColor = specular * lightColor; 
 
-    if(height < uHeight0) 
-        texColor = texture(uTextureSampler0, out_texCoord); 
-    else if(height < uHeight1) 
-    {
-        vec4 color0 = texture(uTextureSampler0, out_texCoord); 
-        vec4 color1 = texture(uTextureSampler1, out_texCoord); 
-        float delta = uHeight1 - uHeight0; 
-        float factor = (height-uHeight0) / delta; 
-        texColor = mix(color0, color1, factor); 
+    lightColor = (ambientColor + diffuseColor + specularColor); 
+
+    /* -------- texture color --------- */ 
+    float height = out_worldPosition.y/uHeightScale; 
+    
+    vec3 textureColor = vec3(0.0); 
+    if(height < hRange1) 
+    { 
+        textureColor = texture(uTextures[0], out_texCoord).rgb; 
     } 
-    else if(height < uHeight2) 
-    {
-        vec4 color0 = texture(uTextureSampler1, out_texCoord); 
-        vec4 color1 = texture(uTextureSampler2, out_texCoord); 
-        float delta = uHeight2 - uHeight1; 
-        float factor = (height-uHeight1) / delta; 
-        texColor = mix(color0, color1, factor); 
+    else if(height < hRange2) 
+    { 
+        vec3 color0 = texture(uTextures[0], out_texCoord).rgb; 
+        vec3 color1 = texture(uTextures[1], out_texCoord).rgb; 
+        float delta = hRange2-hRange1; 
+        float factor = (height - hRange1)/delta; 
+        textureColor = mix(color0, color1, factor); 
     } 
-    else if(height < uHeight3) 
-    {
-        vec4 color0 = texture(uTextureSampler2, out_texCoord); 
-        vec4 color1 = texture(uTextureSampler3, out_texCoord); 
-        float delta = uHeight3 - uHeight2; 
-        float factor = (height-uHeight2) / delta; 
-        texColor = mix(color0, color1, factor);    
+    else if(height < hRange3) 
+    { 
+        vec3 color0 = texture(uTextures[1], out_texCoord).rgb; 
+        vec3 color1 = texture(uTextures[2], out_texCoord).rgb; 
+        float delta = hRange3-hRange2; 
+        float factor = (height - hRange2)/delta; 
+        textureColor = mix(color0, color1, factor); 
+    } 
+    else if(height < hRange4) 
+    { 
+        vec3 color0 = texture(uTextures[2], out_texCoord).rgb; 
+        vec3 color1 = texture(uTextures[3], out_texCoord).rgb; 
+        float delta = hRange4-hRange3; 
+        float factor = (height - hRange3)/delta; 
+        textureColor = mix(color0, color1, factor); 
     } 
     else 
-    {
-        texColor = texture(uTextureSampler3, out_texCoord); 
+    { 
+        textureColor = texture(uTextures[3], out_texCoord).rgb; 
     } 
 
-    return (texColor); 
+    /* ----- final color ----- */ 
+    FragColor = vec4(textureColor * lightColor, 1.0f); 
 } 
-
-void main(void)
-{
-    vec3 normal = normalize(out_normal); 
-    float diffuse = max(0.2, dot(normal, -normalize(uLightDirection))); 
-    FragColor = calcTexColor() * diffuse;
-}
-
-     
