@@ -1159,6 +1159,12 @@ static inline vecN<T,N> clamp(const vecN<T,N>& x, const vecN<T,N>& minVal, const
     return min<T>(max<T>(x, minVal), maxVal);
 }
 
+template <typename T> 
+static inline T clamp(const T& x, const T& minVal, const T& maxVal)
+{
+    return min<T>(max<T>(x, minVal), maxVal);
+}
+
 template <typename T, const int N>
 static inline vecN<T,N> smoothstep(const vecN<T,N>& edge0, const vecN<T,N>& edge1, const vecN<T,N>& x)
 {

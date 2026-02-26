@@ -12,26 +12,26 @@ float cameraZ = 10.0;
 
 int Scene2::initialize() 
 {	
-    // code 
-    logFile.log("------------------ Scene2::initialize() started ----------------\n"); 
+    // // code 
+    // logFile.log("------------------ Scene2::initialize() started ----------------\n"); 
 
-    std::vector<std::string> terrainTextureImages = 
-    {
-        "res/terrain1.png", 
-        "res/terrain2.png", 
-        "res/terrain3.png", 
-        "res/terrain4.png" 
-    }; 
-	terrain.initialize(terrainScale, heightScale, textureScale, terrainTextureImages); 
+    // std::vector<std::string> terrainTextureImages = 
+    // {
+    //     "res/terrain1.png", 
+    //     "res/terrain2.png", 
+    //     "res/terrain3.png", 
+    //     "res/terrain4.png" 
+    // }; 
+	// terrain.initialize(terrainScale, heightScale, textureScale, terrainTextureImages); 
 
-    glFrontFace(GL_CW); 
+    // glFrontFace(GL_CW); 
 
-    logFile.log("Scene2::initialize() > terrain initialized\n"); 
+    // logFile.log("Scene2::initialize() > terrain initialized\n"); 
 
-    scene2Camera.setPosition(vec3(cameraX, cameraY, cameraZ)); 
+    // scene2Camera.setPosition(vec3(cameraX, cameraY, cameraZ)); 
 
 
-    logFile.log("------------------ Scene2::initialize() completed ----------------\n\n"); 
+    // logFile.log("------------------ Scene2::initialize() completed ----------------\n\n"); 
     return (0); 
 } 
 
@@ -43,10 +43,10 @@ void Scene2::display()
 {
    mat4 modelMatrix = mat4::identity(); 
    viewMatrix = mat4::identity(); 
-   viewMatrix = scene2Camera.getViewMatrix(); 
+//    viewMatrix = scene2Camera.getViewMatrix(); 
 
-   terrain.SetTextureHeights(tHeight1, tHeight2, tHeight3, tHeight4); 
-   terrain.Render(modelMatrix, viewMatrix, projectionMatrix); 
+//    terrain.SetTextureHeights(tHeight1, tHeight2, tHeight3, tHeight4); 
+//    terrain.Render(modelMatrix, viewMatrix, projectionMatrix); 
 } 
 
 void Scene2::update() 

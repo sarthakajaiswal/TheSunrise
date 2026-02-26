@@ -45,7 +45,7 @@ IntroScene introScene;
 Scene1 scene1; 
 Scene2 scene2; 
 
-enum Scene CurrentScene = SCENE_2; 
+enum Scene CurrentScene = INTRO_SCENE; 
 
 // ==================== ENTRY-POINT FUNCTION ================ 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) 
@@ -191,18 +191,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     void toggleFullscreen(void); 
     void resize(int, int); 
     void uninitialize(void); 
-    void testSceneCallbacks(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam); 
-    void scene1Callbacks(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam); 
-    void scene2Callbacks(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam); 
 
     // code 
     // code
 	if (ImGuiManager::IsEnabled() && ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
         
-    // testSceneCallbacks(hwnd, uMsg, wParam, lParam); 
-    // scene1Callbacks(hwnd, uMsg, wParam, lParam); 
-    scene2Callbacks(hwnd, uMsg, wParam, lParam); 
+    switch(CurrentScene) 
+    {
+        case INTRO_SCENE: 
+            introScene.eventCallback(hwnd, uMsg, wParam, lParam);
+            break; 
+            
+        default: 
+            break; 
+    } 
+
     switch(uMsg) 
     {
         case WM_CREATE: 
@@ -494,7 +498,7 @@ void display(void)
             introScene.display(); 
 
         case SCENE_1: 
-            scene1.display(); 
+            // scene1.display(); 
             break; 
 
         case SCENE_2: 

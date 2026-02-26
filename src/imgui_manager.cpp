@@ -8,15 +8,9 @@ extern HWND ghwnd;
 bool ImGuiManager::initialized = false;
 
 // scene  
+extern IntroScene introScene; 
 extern Scene1 scene1; 
 extern Scene2 scene2; 
-
-// intro scene related 
-GLfloat cameraPosition[3] = { 4.0f, 0.0f, 6.0f };  
-extern GLfloat cameraPosY; 
-extern GLfloat cameraRotateAngle; 
-extern GLfloat cameraRadius; 
-extern IntroScene introScene;
 
 // scene2 related 
 extern float tHeight1; 
@@ -124,10 +118,6 @@ void introSceneControls(void)
     // introScene.lightPosition[1] = lightPos[1]; 
     // introScene.lightPosition[2] = lightPos[2]; 
 
-    ImGui::SliderFloat("camera height", &cameraPosY, -5.0f, 5.0f);
-    ImGui::SliderFloat("camera radius", &cameraRadius, 0.0f, 50.0f);
-    ImGui::SliderFloat("camera angle", &cameraRotateAngle, 0.0f, 360.0f);
-    
     ImGui::SliderInt("Blur iterations:", &introScene.blurIterations, 0, 25); 
     ImGui::SliderFloat("Blend Strength:", &introScene.blendStrength, 0, 10); 
 } 

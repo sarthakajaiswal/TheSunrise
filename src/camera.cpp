@@ -1,57 +1,88 @@
 #include "../headers/camera.hpp" 
-
-extern HWND ghwnd; 
+#include "../headers/fileHandler.hpp"
+extern FileHandler logFile; 
 
 void Camera::updateVectorsAfterChangesInAngle(void) 
 {
-    direction[0] = cos(radians(yaw)) * cos(radians(pitch)); 
-    direction[1] = sin(radians(pitch)); 
-    direction[2] = sin(radians(yaw)) * cos(radians(pitch)); 
+    direction[0] = cos(vmath::radians(yaw)) * cos(vmath::radians(pitch)); 
+    direction[1] = sin(vmath::radians(pitch)); 
+    direction[2] = sin(vmath::radians(yaw)) * cos(vmath::radians(pitch)); 
     
-    up = vec3(0.0f, 1.0f, 0.0f); 
+    up = vmath::vec3(0.0f, 1.0f, 0.0f); 
     front = normalize(direction); 
     right = normalize(cross(up, direction)); 
 } 
- 
+
 Camera::Camera() 
+            : positionSpline({vmath::vec3(0.0, 1.0, 1.0), vmath::vec3(0.0, 2.0, 2.0)}), 
+                yawSpline({CAMERA_DEFAULT_YAW, CAMERA_DEFAULT_YAW}), 
+                pitchSpline({CAMERA_DEFAULT_PITCH, CAMERA_DEFAULT_PITCH}) 
 {
-    position = vec3(0.0, 2.0, 3.0); 
-    up = vec3(0.0, 1.0, 0.0); 
-    target = vec3(0.0, 0.0, 0.0); 
-    front = vec3(0.0, 0.0, -1.0); 
+    position = vmath::vec3(0.0, 5.0, 3.0); 
+    up = vmath::vec3(0.0, 1.0, 0.0); 
+    target = vmath::vec3(0.0, 0.0, 0.0); 
+    front = vmath::vec3(0.0, 0.0, -1.0); 
     
     direction = normalize(position - target); 
-    yaw = -90.0f; 
-    pitch = 0.0f; 
-    direction[0] = cos(radians(yaw)) * cos(radians(pitch)); 
-    direction[1] = sin(radians(pitch)); 
-    direction[2] = sin(radians(yaw)) * cos(radians(pitch)); 
+    yaw = CAMERA_DEFAULT_YAW; 
+    pitch = CAMERA_DEFAULT_PITCH; 
+    direction[0] = cos(vmath::radians(yaw)) * cos(vmath::radians(pitch)); 
+    direction[1] = sin(vmath::radians(pitch)); 
+    direction[2] = sin(vmath::radians(yaw)) * cos(vmath::radians(pitch)); 
     right = normalize(cross(up, direction)); 
     up = cross(direction, right);
 } 
 
-void Camera::setPosition(vec3 newPosition) 
-{ 
-    position = newPosition; 
+Camera::Camera(std::vector<vmath::vec3> _positionArray, std::vector<float> _yawArray, std::vector<float> _pitchArray) 
+            : positionSpline(_positionArray), yawSpline(_yawArray), pitchSpline(_pitchArray) 
+{
+    this->positionArray = _positionArray; 
+    this->yawArray = _yawArray; 
+    this->pitchArray = _pitchArray; 
+}  
+
+vmath::vec3 Camera::getPosition() 
+{
+    return (position); 
 } 
 
-mat4 Camera::getViewMatrix() 
+vmath::mat4 Camera::getViewMatrix(enum CameraMode mode, float t) 
 {
-    mat4 viewMatrix = vmath::lookat(position, position+front, up); 
-    return (viewMatrix); 
-} 
-
-void Camera::printInfo() 
-{
-    logFile.log("Camera Info: \n");
-    logFile.log("Camera Position: %.2f, %.2f, %.2f\n", position[0], position[1], position[2]);
-    logFile.log("yaw: %.2f\n", yaw);
-    logFile.log("pitch: %.2f\n", pitch);
-} 
+    if(mode == CAMERA_GAME_MODE) 
+    {
+        vmath::mat4 viewMatrix = vmath::lookat(position, position+front, up); 
+        return (viewMatrix); 
+    } 
+    else 
+    {
+        vmath::vec3 eye = positionSpline.evaluatePosition(t); 
         
+        float yawAtT = yawSpline.evaluateValue(t); 
+        float pitchAtT = pitchSpline.evaluateValue(t); 
+        vmath::vec3 direction; 
+        direction[0] = cos(vmath::radians(yawAtT)) * cos(vmath::radians(pitchAtT)); 
+        direction[1] = sin(vmath::radians(pitchAtT)); 
+        direction[2] = sin(vmath::radians(yawAtT)) * cos(vmath::radians(pitchAtT)); 
+        vmath::vec3 center = eye + direction; 
+
+        vmath::vec3 up = vmath::vec3(0.0, 1.0, 0.0); 
+
+        logFile.log("t = %.2f => pos = %.2f, %.2f, %.2f yaw=%.2f pitch=%.2f center = %.2f, %.2f, %.2f up = %.2f, %.2f, %.2f\n", 
+                t, eye[0], eye[1], eye[2], yawAtT, pitchAtT, center[0], center[1], center[2], up[0], up[1], up[2]); 
+
+        vmath::mat4 viewMatrix = vmath::lookat(eye, center, up); 
+        return (viewMatrix);  
+    } 
+} 
+
+void setControlPoints(std::vector<vmath::vec3> positions, std::vector<float> yaws, std::vector<float> pitches) 
+{
+
+} 
+
 void Camera::cameraCallback(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
-    const float cameraSpeed = 5.0; 
+    const float cameraSpeed = 0.8; 
     static BOOL bMouseDown = FALSE; 
     
     // mouse event related variables
@@ -140,10 +171,12 @@ void Camera::cameraCallback(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
             case 'q': 
             case 'Q': 
+                // position[1] -= sensitivity * 2.0; 
                 position[1] -= cameraSpeed * 2.0; 
                 break; 
             case 'e': 
             case 'E': 
+                // position[1] += sensitivity * 2.0;
                 position[1] += cameraSpeed * 2.0;
                 break; 
 
@@ -152,12 +185,11 @@ void Camera::cameraCallback(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
                 bGameMode = !bGameMode; 
                 bJustModeChanged = true; // to save the values of lastX and lastY for firsttime after mode is changed 
                 break; 
-                
+
             case 'p': 
-            case 'P': 
                 printInfo(); 
                 break; 
-
+                
             default: 
                 break; 
             } 
@@ -168,4 +200,7 @@ void Camera::cameraCallback(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
     } 
 } 
 
-
+void Camera::printInfo() 
+{
+    logFile.log("%.2f, %.2f, %.2f | %.2f | %.2f\n", position[0], position[1], position[2], yaw, pitch); 
+} 
