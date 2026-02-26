@@ -11,6 +11,8 @@
 #include <iostream> 
 #include <vector> 
 
+extern FileHandler logFile; 
+
 class Dissolve 
 {
     private: 

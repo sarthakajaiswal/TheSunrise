@@ -1,31 +1,56 @@
-#ifndef CAMERA_HPP 
-#define CAMERA_HPP 
+#ifndef _CAMERA_HPP 
+#define _CAMERA_HPP 
 
-#include <Windowsx.h> 
+#include "global_header.hpp" 
+#include "common.hpp" 
+#include "spline.hpp" 
 
-#include "OGL.hpp" 
-extern HWND ghwnd; 
+#include <iostream> 
+#include <vector> 
+#include <windowsx.h> 
+
+// symbolic constants 
+#define CAMERA_DEFAULT_YAW     -90.0f 
+#define CAMERA_DEFAULT_PITCH   0.0f 
+
+extern HWND ghwnd;  
+
+enum CameraMode 
+{
+    CAMERA_GAME_MODE = 1, 
+    CAMERA_AUTO_MODE  
+}; 
 
 class Camera 
 {
     private: 
-        vec3 position; 
-        vec3 up; 
-        vec3 target; 
-        vec3 direction; 
+        vmath::vec3 position; 
+        vmath::vec3 up; 
+        vmath::vec3 target; 
+        vmath::vec3 direction; 
 
-        vec3 right; 
-        vec3 front; 
+        vmath::vec3 right; 
+        vmath::vec3 front; 
 
         float yaw, pitch; 
 
-        void updateVectorsAfterChangesInAngle(void); 
-        
+        // automatic camera related 
+        std::vector<vmath::vec3> positionArray; 
+        std::vector<float> yawArray, pitchArray; 
+        Spline3D positionSpline; 
+        Spline1D yawSpline, pitchSpline; 
+
+        void updateVectorsAfterChangesInAngle(void);  
+
     public: 
         Camera(); 
-        void setPosition(vec3 newPosition); 
-        // void setCenter(vec3 center); 
-        mat4 getViewMatrix(); 
+        Camera::Camera(std::vector<vmath::vec3> positions, std::vector<float> yaws, std::vector<float> pitches); 
+        
+        vmath::vec3 getPosition(); 
+        vmath::mat4 getViewMatrix(enum CameraMode mode, float speed = 0.5); 
+
+        void setControlPoints(std::vector<vmath::vec3> positions, std::vector<float> yaws, std::vector<float> pitches); 
+
         void cameraCallback(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam); 
         void printInfo(); 
 }; 

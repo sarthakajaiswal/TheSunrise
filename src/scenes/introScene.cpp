@@ -1,14 +1,6 @@
 #include "../../headers/scenes/introScene.hpp" 
 
-// Camera scene1Camera; 
-GLfloat cameraPosX = 0.0f; 
-GLfloat cameraPosY = 0.0f; 
-GLfloat cameraPosZ = 20.0f; 
-GLfloat cameraCenterX = 0.0f; 
-GLfloat cameraCenterY = 0.0f; 
-GLfloat cameraCenterZ = -30.0f; 
-GLfloat cameraRotateAngle = 0.0f; 
-GLfloat cameraRadius = 0.0f; 
+Camera introSceneCamera; 
 
 extern mat4 projectionMatrix; 
 extern void resize(int, int); 
@@ -92,16 +84,8 @@ void IntroScene::display()
     headingAlphabetsShaderProgram.use(); 
 
     // =========================== ORIGINAL SCENE START =========================== 
-
-	cameraPosX = cameraRadius * sin(cameraRotateAngle * 3.14/180.0); 
-	cameraPosZ = cameraRadius * cos(cameraRotateAngle * 3.14/180.0); 
-	viewMatrix = vmath::lookat(
-		vec3(cameraPosX, cameraPosY, cameraPosZ), 
-		vec3(cameraCenterX, cameraCenterY, cameraCenterZ), 
-		vec3(0.0, 1.0, 0.0)
-	);  
-
     mat4 modelMatrix = mat4::identity(); 
+    viewMatrix = introSceneCamera.getViewMatrix(CAMERA_GAME_MODE); 
 
 	glUniformMatrix4fv(projectionMatrixUniform_heading, 1, GL_FALSE, projectionMatrix);   
 	glUniform1f(blendStrengthUniform_heading, blendStrength); 
@@ -124,8 +108,8 @@ void IntroScene::display()
 
     mat4 modelViewMatrix = mat4::identity(); 
     
-    if(mainTimer < 15.0f) 
-    {
+    // if(mainTimer < 15.0f) 
+    // {
         vec3 astromedicompStartingLocation = {astrmomedicompStartingX, 0.0f, astromedicompZ}; 
         modelMatrix = vmath::translate(astromedicompStartingLocation[0], astromedicompStartingLocation[1], astromedicompStartingLocation[2]); 
         modelMatrix = modelMatrix * vmath::scale(alphabetSx, alphabetSy, alphabetSz); 
@@ -166,7 +150,7 @@ void IntroScene::display()
         modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
         glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
         renderAlphabet_P();    
-    } 
+    // } 
     // else 
     // {
     //     static bool isFirstTime = true; 
@@ -314,6 +298,24 @@ void IntroScene::update()
 void IntroScene::uninitialize() 
 {
 
+} 
+
+void IntroScene::eventCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
+{
+    introSceneCamera.cameraCallback(hwnd, uMsg, wParam, lParam); 
+    switch(uMsg) 
+    {
+        case WM_CHAR: 
+            switch(wParam) 
+            {
+            default: 
+                break; 
+            } 
+            break; 
+
+        default: 
+            break; 
+    } 
 } 
 
 IntroScene::~IntroScene() 

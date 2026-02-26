@@ -81,6 +81,8 @@ class IntroScene
         void update(); 
         void uninitialize(); 
 
+        void eventCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam); 
+
         bool initHeadingAlphabetsShaderProgram(); 
         bool initBrightColorSeparatorProgram(); 
         bool initGuassianBlurProgram(); 
