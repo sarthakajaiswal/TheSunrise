@@ -1,3 +1,9 @@
+/* 
+    TODO: 
+    Add count of each type and increment/decrement in their constructors
+    to verify all objects created are destroyed at last 
+*/ 
+
 #include "../headers/OGL.hpp" 
 
 #define STB_IMAGE_IMPLEMENTATION

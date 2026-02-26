@@ -205,6 +205,8 @@ int Cube::initialize()
 
     glBindVertexArray(0);  
 
+	logFile.log("Cube::Cube() > initialization succesfull\n"); 
+
 	return (0); 
 } 
 
@@ -223,6 +225,7 @@ void Cube::render()
 Cube::~Cube() 
 {
     // code 
+	logFile.log("Quad::~Quad() > destroying cube...\n");
     // free vbo 
 	if(vbo_texCoord) 
 	{
@@ -319,6 +322,8 @@ int Triangle::initialize()
 
     glBindVertexArray(0); 
 
+	logFile.log("Triangle::Triangle() > initialization succesfull\n"); 
+
 	return (0); 
 } 
 
@@ -333,6 +338,7 @@ void Triangle::render()
 Triangle::~Triangle() 
 {
 	// code 
+	logFile.log("Quad::~Quad() > destroying Triangle...\n");
 	// free vbo 
 	if(vbo_texCoord) 
 	{
@@ -483,7 +489,7 @@ int Quad::initialize()
 
     glBindVertexArray(0); 
 	
-	logFile.log("Quad initialized\n"); 
+	logFile.log("Quad::Quad() > initialization succesfull\n"); 
 
 	return (0); 
 } 
@@ -500,6 +506,7 @@ Quad::~Quad()
 {
 	// code 
 	// free vbo 
+	logFile.log("Quad::~Quad() > destroying quad...\n");  
 	if(vbo_texCoord) 
 	{
 		glDeleteBuffers(1, &vbo_texCoord); 

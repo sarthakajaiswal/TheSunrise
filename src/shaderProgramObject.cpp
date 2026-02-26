@@ -64,7 +64,8 @@ int ShaderProgram::create(std::vector<ShaderSourceCodeAndType> shaderSourceAndTy
 
         uninitialize(); 
     }
-
+    
+    logFile.log("ShaderProgram::ShaderProgram() > program created successfully\n"); 
     return (0); 
 } 
 
@@ -88,7 +89,8 @@ GLuint ShaderProgram::getUniformLocation(const char* uniformName)
 
 ShaderProgram::~ShaderProgram() 
 {
-     // detach, delete shader objects and delete shaderprogram 
+    // detach, delete shader objects and delete shaderprogram 
+    logFile.log("ShaderProgram::~ShaderProgram() > uninitializing...\n"); 
     // (1) check of shader program object is still here 
     if(this->id) 
     {
