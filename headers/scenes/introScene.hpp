@@ -7,6 +7,8 @@
 #include "../fbo.hpp" 
 #include "../texture.hpp"
 #include "../alphabets.hpp" 
+#include "../effects/guassianBlur.hpp" 
+#include "../effects/textureBlending.hpp" 
 
 class IntroScene 
 {
@@ -32,25 +34,22 @@ class IntroScene
         ShaderProgram brightColorSeparatorProgram; 
         GLuint textureUniform_brightColors = 0; 
 
-        ShaderProgram guassianBlurProgram; 
-        GLuint textureSamplerUniform_guassianBlur = 0; 
-        GLuint horizontalOrVerticalUniform_guassianBlur = 0; 
-
-        ShaderProgram blendTextureProgram; 
-        GLuint texture1Uniform_blendProgram = 0; 
-        GLuint texture2Uniform_blendProgram = 0; 
-
         ShaderProgram fsTextureProgram; 
         GLuint textureUniform_fsTexture = 0; 
+
+        // ===== EFFECTS ===== 
+        GuassianBlur blueEffect; 
+        TextureBlending blendTextureEffect; 
 
         // ====== FBOs ======= 
         FBO fbo_scene; 
         FBO fbo_brightColors; 
-        FBO fbos_guassianBlur[2]; 
 
         // ==== TEXTURES ====== 
         GLuint texture_marbleColor = 0; 
         GLuint texture_marbleNormalMap = 0; 
+        GLuint blurTexture; 
+        GLuint blendedTexture; 
 
         float localTimer = 0.0f; 
 
@@ -85,7 +84,6 @@ class IntroScene
 
         bool initHeadingAlphabetsShaderProgram(); 
         bool initBrightColorSeparatorProgram(); 
-        bool initGuassianBlurProgram(); 
         bool initTextureBlendProgram(); 
         bool initializeFullScreenTextureProgram(); 
 

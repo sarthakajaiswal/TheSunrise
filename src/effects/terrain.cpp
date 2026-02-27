@@ -296,6 +296,8 @@ int Terrain::initialize(const char* heightmapImagePath, float _worldScale, float
                 std::vector<std::string> textureImages, std::vector<float> _textureHeightRanges, float _textureScale) 
 {
     // code 
+    logFile.log("---- Terrain::initialize() started ----\n"); 
+    
     heightmapData = LoadHeightMap(heightmapImagePath, &this->width, &this->depth); 
     if(heightmapData == 0) 
         throw heightmap_loading_failure("Terrain::initialize() > heightmap loading failed\n"); 
@@ -335,6 +337,8 @@ int Terrain::initialize(const char* heightmapImagePath, float _worldScale, float
     } 
 
     isInitialized = true; 
+
+    logFile.log("---- Terrain::initialize() completed successfully ----\n"); 
     return (0); 
 } 
 
@@ -383,6 +387,9 @@ void Terrain::render(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::m
 
 void Terrain::uninitialize() 
 {
+    // code 
+    logFile.log("Terrain::uninitialize() >  uninitializing terrain...\n"); 
+    
     if(ebo) 
     {
         glDeleteBuffers(1, &ebo); 

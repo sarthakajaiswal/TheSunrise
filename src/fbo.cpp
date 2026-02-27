@@ -116,3 +116,24 @@ void FBO::unbind() const
 	glBindFramebuffer(GL_FRAMEBUFFER, 0); 
 	glViewport(0, 0, winWidth, winHeight); 
 } 
+
+void FBO::destroyFBO() 
+{
+	if(fbo) 
+	{
+		glDeleteFramebuffers(1, &fbo); 
+		fbo = 0; 
+	}  
+	if(rbo)
+	{
+		glDeleteRenderbuffers(1, &rbo); 
+		rbo = 0; 
+	} 
+	 
+	int i = 0; 
+	while(textures[i] != 0) 
+	{
+		glDeleteTextures(1, textures+i); 
+		*(textures+i) = 0; 
+	} 
+} 
