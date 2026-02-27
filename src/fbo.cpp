@@ -119,6 +119,9 @@ void FBO::unbind() const
 
 void FBO::destroyFBO() 
 {
+	// code 
+	logFile.log("FBO::destroyFBO() > uninitializing...\n"); 
+	
 	if(fbo) 
 	{
 		glDeleteFramebuffers(1, &fbo); 
