@@ -5,6 +5,7 @@
 #include "../shaderProgram.hpp" 
 #include "../effects/exposure.hpp" 
 #include "../effects/terrain.hpp" 
+#include "../effects/cubemap.hpp" 
 #include "../objects.hpp"
 #include "../fbo.hpp" 
 
@@ -14,6 +15,7 @@ class Scene1
         Exposure exposureProgram; 
         FullScreenTexturer fsTexturer;  
         Terrain terrain; 
+        Cubemap cubemap; 
 
         FBO floatingPointFBO; 
 

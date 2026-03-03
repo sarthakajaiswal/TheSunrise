@@ -198,7 +198,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     void resize(int, int); 
     void uninitialize(void); 
 
-    // code 
     // code
 	if (ImGuiManager::IsEnabled() && ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);

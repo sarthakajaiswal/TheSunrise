@@ -12,6 +12,9 @@ extern IntroScene introScene;
 extern Scene1 scene1; 
 extern Scene2 scene2; 
 
+// scene1 related 
+// extern float cubemapYAngle; 
+
 // scene2 related 
 extern float tHeight1; 
 extern float tHeight2; 
@@ -125,6 +128,7 @@ void introSceneControls(void)
 void scene1Controls(void) 
 {
     ImGui::SliderFloat("exposure:", &scene1.exposureValue, 0.0, 5.0);  
+    // ImGui::SliderFloat("cubemap Y angle:", &cubemapYAngle, 0.0, 360.0);  
 } 
 
 void scene2Controls(void) 
