@@ -208,6 +208,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case INTRO_SCENE: 
             introScene.eventCallback(hwnd, uMsg, wParam, lParam);
             break; 
+
+        case SCENE_1: 
+            scene1.scene1Callbacks(hwnd, uMsg, wParam, lParam);
+            break; 
             
         default: 
             break; 

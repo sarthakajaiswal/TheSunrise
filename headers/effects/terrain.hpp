@@ -65,7 +65,7 @@ class Terrain
         std::vector<GLuint> textures; 
         std::vector<float> textureHeightRanges; 
 
-        GLuint shaderProgramObject; 
+        ShaderProgram shaderProgramObject; 
         GLuint modelMatrixUniform; 
         GLuint viewMatrixUniform; 
         GLuint projectionMatrixUniform; 

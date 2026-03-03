@@ -13,6 +13,16 @@
 // global function declarations 
 float degToRad(float degree); 
 
+// ========= EXCEPTIONS ===================
+class called_render_before_initialization : public std::runtime_error 
+{
+    public: 
+        called_render_before_initialization(const char* msg) : std::runtime_error(msg) 
+        {
+        } 
+}; 
+// ========= EXCEPTIONS ===================
+
 // ======== TEXTURE ===========
 
 class unable_to_load_file : public std::runtime_error 

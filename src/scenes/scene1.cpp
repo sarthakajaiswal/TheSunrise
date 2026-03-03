@@ -13,19 +13,23 @@ int Scene1::initialize()
     // code 
     logFile.log("------------------ Scene1::initialize() started ----------------\n"); 
 
+    // -------- Effects --------- 
     // assert(exposureProgram.initialize() == 0); 
     assert(fsTexturer.initialize() == 0); 
 
-    std::vector<std::string> textureImages = {"res/terrain1.png", "res/terrain2.png", "res/terrain3.png", "res/terrain4.png"}; 
-    std::vector<float> textureHeightRanges = {0.1, 0.2, 0.3, 0.4}; 
-    // terrain.initialize("res/scene1terrain.png", 1.0f, 1.0f, textureImages, textureHeightRanges, 1.0); 
+    std::vector<std::string> textureImages = {"res/terrain1.png", "res/terrain3.png", "res/terrain2.png", "res/terrain4.png"}; 
+    std::vector<float> textureHeightRanges = {0.06, 0.4, 0.6, 1.0}; 
+    terrain.initialize("res/scene1terrain.png", 1.0f, 70.0f, textureImages, textureHeightRanges, 8.0); 
 
+    // -------- Objects --------- 
     assert(quad.initialize() == 0); 
+
+    // -------- FBO and textures --------- 
     assert(floatingPointFBO.createFloatingPointFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
 
-    // quoteTexture = loadTexture("res\\phrase1.png", FALSE);
-    // if(quoteTexture == 0) 
-    //     throw texture_loading_failure("Scene1::initialize() > phrase1 texture loading failed\n");  
+    quoteTexture = loadTexture("res\\phrase1.png", FALSE);
+    if(quoteTexture == 0) 
+        throw texture_loading_failure("Scene1::initialize() > phrase1 texture loading failed\n");  
 
     // gateTexture = loadTexture("res\\gate.png"); 
     // if(gateTexture == 0) 
@@ -34,6 +38,8 @@ int Scene1::initialize()
     // quoteTexture = loadTexture("res\\phrase1.png"); 
     // if(quoteTexture == 0) 
     //     throw texture_loading_failure("Scene1::initialize() > phrase1 texture loading failed\n");
+
+    scene1Camera.setState(vec3(534.06, 46.83, 501.85), 88.60, 1.20); 
 
     logFile.log("------------------ Scene1::initialize() completed ----------------\n\n"); 
     return (0); 
@@ -86,10 +92,9 @@ Scene1::~Scene1()
 {
 } 
 
-void scene1Callbacks(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
+void Scene1::scene1Callbacks(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 {
-    scene1Camera.cameraCallback(hwnd, uMsg, wParam, lParam); 
-    float cameraStep = 0.5f; 
+    scene1Camera.cameraCallback(hwnd, uMsg, wParam, lParam);  
     switch(uMsg) 
     {
         case WM_CHAR: 

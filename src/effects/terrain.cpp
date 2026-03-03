@@ -183,7 +183,6 @@ int Terrain::InitOpenGLState()
     attributes.push_back(AttributeWithIndexLocation(AMC_ATTRIBUTE_TEXCOORD, "aTexCoord")); 
     attributes.push_back(AttributeWithIndexLocation(AMC_ATTRIBUTE_NORMAL, "aNormal")); 
 
-    ShaderProgram shaderProgramObject; 
     shaderProgramObject.create(shaders, attributes); 
 
     if(vertexShaderSourceCode)
@@ -218,7 +217,6 @@ int Terrain::InitOpenGLState()
 
 Terrain::Terrain() 
 {
-    shaderProgramObject = 0; 
     vao = 0; 
     vbo = 0; 
     ebo = 0; 
@@ -244,10 +242,8 @@ int Terrain::initialize(const char* heightmapImagePath, float _worldScale, float
     this->heightScale = _heightScale; 
     this->textureScale = _textureScale; 
     InitVertices(width, depth, heightmapData, mesh); 
-
     // showHeightMapData(); 
     // showVertices(); 
-
     InitIndices(width, depth, indices); 
     assert(InitOpenGLState() == 0); 
 
@@ -282,7 +278,7 @@ void Terrain::render(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::m
     if(isInitialized == false) 
         throw render_called_before_initialize("Terrain::render() > terrain is not initialized yet\n"); 
 
-    glUseProgram(shaderProgramObject); 
+    shaderProgramObject.use(); 
 
     glUniformMatrix4fv(modelMatrixUniform, 1, GL_FALSE, _modelMatrix); 
     glUniformMatrix4fv(viewMatrixUniform, 1, GL_FALSE, _viewMatrix); 
@@ -317,7 +313,7 @@ void Terrain::render(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::m
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0); 
     glBindVertexArray(0); 
 
-    glUseProgram(0); 
+    shaderProgramObject.unuse(); 
 } 
 
 void Terrain::uninitialize() 
@@ -340,33 +336,6 @@ void Terrain::uninitialize()
         glDeleteVertexArrays(1, &vao); 
         vao = 0; 
     } 
-
-    if(shaderProgramObject) 
-    {
-        glUseProgram(shaderProgramObject); 
-        
-        GLint numShaders; 
-        glGetProgramiv(shaderProgramObject, GL_ATTACHED_SHADERS, &numShaders); 
-        if(numShaders > 0) 
-        {
-            GLuint* pShaders = (GLuint*)malloc(numShaders * sizeof(GLuint)); 
-            if(pShaders != NULL) 
-            {
-                glGetAttachedShaders(shaderProgramObject, numShaders, NULL, pShaders);
-                
-                for(GLint i = 0; i < numShaders; ++i) 
-                {
-                    glDetachShader(shaderProgramObject, pShaders[i]); 
-                    glDeleteShader(pShaders[i]); 
-                    pShaders[i] = 0; 
-                }
-
-                free(pShaders); 
-                pShaders = 0; 
-            }
-        }
-    } 
-    glUseProgram(0); 
 } 
 
 Terrain::~Terrain() 

@@ -28,7 +28,7 @@ int Scene2::initialize()
 
     // logFile.log("Scene2::initialize() > terrain initialized\n"); 
 
-    // scene2Camera.setPosition(vec3(cameraX, cameraY, cameraZ)); 
+    // scene2Camera.setState(vec3(cameraX, cameraY, cameraZ)); 
 
 
     // logFile.log("------------------ Scene2::initialize() completed ----------------\n\n"); 

@@ -75,6 +75,14 @@ vmath::mat4 Camera::getViewMatrix(enum CameraMode mode, float t)
     } 
 } 
 
+void Camera::setState(vmath::vec3 _position, float _yaw, float _pitch)
+{
+    position = _position; 
+    yaw = _yaw; 
+    pitch = _pitch; 
+    updateVectorsAfterChangesInAngle(); 
+} 
+
 void setControlPoints(std::vector<vmath::vec3> positions, std::vector<float> yaws, std::vector<float> pitches) 
 {
 
@@ -82,7 +90,7 @@ void setControlPoints(std::vector<vmath::vec3> positions, std::vector<float> yaw
 
 void Camera::cameraCallback(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
-    const float cameraSpeed = 0.8; 
+    const float cameraSpeed = 2.8; 
     static BOOL bMouseDown = FALSE; 
     
     // mouse event related variables

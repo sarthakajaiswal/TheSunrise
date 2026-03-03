@@ -31,6 +31,8 @@ class Scene1
         void update(); 
         void uninitialize(); 
         ~Scene1(); 
+
+        void scene1Callbacks(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);  
 }; 
 
 
