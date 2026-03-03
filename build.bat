@@ -1,11 +1,16 @@
-cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\*.cpp  src\scenes\*.cpp src\effects\*.cpp 
+@REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\*.cpp  src\scenes\*.cpp src\effects\*.cpp ImGui\*.cpp
+@REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include ImGui\*.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\OGL.cpp  src\scenes\introScene.cpp  src\imgui_manager.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\OGL.cpp  
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\imgui_manager.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\objects.cpp
+@REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\common.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\scenes\introScene.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\effects\guassianBlur.cpp
+@REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\effects\exposure.cpp
+cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\effects\terrain.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\effects\textureBlending.cpp
+cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\scenes\scene1.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\scenes\scene2.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\scenes\testScene.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\imgui_manager.cpp

@@ -122,22 +122,9 @@ void introSceneControls(void)
     ImGui::SliderFloat("Blend Strength:", &introScene.blendStrength, 0, 10); 
 } 
 
-float lightPos1[3]; 
 void scene1Controls(void) 
 {
-    bool isFirstTime = true; 
-    if(isFirstTime == true) 
-    {
-        lightPos1[0] = scene1.lightPosition[0]; 
-        lightPos1[1] = scene1.lightPosition[1]; 
-        lightPos1[2] = scene1.lightPosition[2]; 
-        isFirstTime = false; 
-    }
-
-    ImGui::SliderFloat3("light position", lightPos1, -10.0f, 10.0f);
-    scene1.lightPosition[0] = lightPos1[0]; 
-    scene1.lightPosition[1] = lightPos1[1]; 
-    scene1.lightPosition[2] = lightPos1[2]; 
+    ImGui::SliderFloat("exposure:", &scene1.exposureValue, 0.0, 5.0);  
 } 
 
 void scene2Controls(void) 

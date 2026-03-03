@@ -16,6 +16,7 @@
 #include "..\global_header.hpp" 
 #include "..\camera.hpp" 
 #include "..\shaderProgram.hpp" 
+#include "..\common.hpp" 
 
 extern FileHandler logFile; 
 extern Camera testSceneCamera; 
@@ -49,12 +50,6 @@ class no_texture_images_provided : public std::runtime_error
 {
     public: 
         no_texture_images_provided(const char* msg); 
-}; 
-
-class texture_loading_failure : public std::runtime_error 
-{
-    public: 
-        texture_loading_failure(const char* msg); 
 }; 
 
 class Terrain 
@@ -98,7 +93,6 @@ class Terrain
         void InitIndices(int width, int depth, std::vector<unsigned int>& indices); 
         float* LoadHeightMap(const char* filePath, int* pWidth, int* pDepth); 
         int InitOpenGLState(); 
-        int loadTexture(const char* path, BOOL bFlipImage = TRUE); 
 
     public: 
         Terrain(); 

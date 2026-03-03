@@ -1,6 +1,5 @@
 #include "..\..\headers\effects\terrain.hpp" 
 
-
 heightmap_loading_failure::heightmap_loading_failure(const char* msg) : std::runtime_error(msg) 
 {
 } 
@@ -14,10 +13,6 @@ render_called_before_initialize::render_called_before_initialize(const char* msg
 } 
 
 no_texture_images_provided::no_texture_images_provided(const char* msg) : std::runtime_error(msg) 
-{
-} 
-
-texture_loading_failure::texture_loading_failure(const char* msg) : std::runtime_error(msg) 
 {
 } 
 
@@ -221,68 +216,6 @@ int Terrain::InitOpenGLState()
     return (0); 
 } 
 
-int Terrain::loadTexture(const char* path, BOOL bFlipImage) 
-{
-    // local variable declarations 
-    GLuint texture; 
-    unsigned char* pData = NULL; 
-    int width, height, nrComponents; 
-
-    // code 
-    stbi_set_flip_vertically_on_load((bFlipImage == TRUE) ? 1 : 0); 
-
-    pData = stbi_load(path, &width, &height, &nrComponents, 0); 
-    if(NULL == pData) 
-    {
-        logFile.log("Load texture failed to load %s\n", path); 
-        // uninitialize(); 
-        exit(EXIT_FAILURE); 
-    } 
-
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1); 
-    glGenTextures(1, &texture); 
-    glBindTexture(GL_TEXTURE_2D, texture); 
-    {
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); 
-
-        GLenum format; 
-        switch(nrComponents) 
-        {
-            case 1: 
-                format = GL_R; 
-                break; 
-
-            case 2: 
-                format = GL_RG; 
-                break; 
-
-            case 3: 
-                format = GL_RGB; 
-                break; 
-
-            case 4: 
-                format = GL_RGBA; 
-                break; 
-
-            default: 
-                format = GL_RGBA; 
-                break; 
-        } 
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, pData); 
-        glGenerateMipmap(GL_TEXTURE_2D); 
-    }
-    glBindTexture(GL_TEXTURE_2D, 0); 
-    
-    stbi_image_free(pData); 
-    pData = NULL; 
-
-    stbi_set_flip_vertically_on_load(0); 
-    return (texture); 
-} 
-
 Terrain::Terrain() 
 {
     shaderProgramObject = 0; 
@@ -301,6 +234,9 @@ int Terrain::initialize(const char* heightmapImagePath, float _worldScale, float
     heightmapData = LoadHeightMap(heightmapImagePath, &this->width, &this->depth); 
     if(heightmapData == 0) 
         throw heightmap_loading_failure("Terrain::initialize() > heightmap loading failed\n"); 
+    else 
+        logFile.log("heightmap image for terrain loaded successfully\n"); 
+
     assert(this->width != 0); 
     assert(this->depth != 0);   
 
@@ -313,8 +249,7 @@ int Terrain::initialize(const char* heightmapImagePath, float _worldScale, float
     // showVertices(); 
 
     InitIndices(width, depth, indices); 
-    if(InitOpenGLState() != 0) 
-        throw opengl_initialization_failure("Terrain::initialize() > InitOpenGLState() failed\n"); 
+    assert(InitOpenGLState() == 0); 
 
     // textures 
     if(textureImages.size() < 4) 

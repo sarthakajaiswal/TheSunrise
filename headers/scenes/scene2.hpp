@@ -3,7 +3,6 @@
 #include "../global_header.hpp" 
 #include "../shaderProgram.hpp" 
 #include "../objects.hpp"
-#include "../texture.hpp"
 #include "../camera.hpp"
 #include "../effects/terrain.hpp"
 

@@ -1,34 +1,35 @@
 #pragma once 
 
 #include "../global_header.hpp" 
+#include "../common.hpp" 
 #include "../shaderProgram.hpp" 
+#include "../effects/exposure.hpp" 
+#include "../effects/terrain.hpp" 
 #include "../objects.hpp"
-#include "../texture.hpp"
+#include "../fbo.hpp" 
 
 class Scene1 
 {
     private:
+        Exposure exposureProgram; 
+        FullScreenTexturer fsTexturer;  
+        Terrain terrain; 
+
+        FBO floatingPointFBO; 
+
         Quad quad; 
 
-        ShaderProgram glowingPlanetProgram; 
-        GLuint lightPositionUniform_glowingPlanet = 0; 
-        GLuint resoulutionUniform_glowingPlanet = 0; 
-        GLuint timeUniform_glowingPlanet = 0; 
-        GLuint textureUniform_glowingPlanet = 0;
-
-        GLuint texture_moon; 
-
-        bool initGlowingPlanetProgram(); 
+        GLuint quoteTexture; 
+        GLuint gateTexture; 
 
     public: 
-        GLfloat lightPosition[4];
+        float exposureValue; 
 
         Scene1(); 
-
         int initialize(); 
         void display(); 
         void update(); 
-        
+        void uninitialize(); 
         ~Scene1(); 
 }; 
 

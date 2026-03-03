@@ -187,6 +187,7 @@ ShaderProgram::ShaderObject::ShaderObject(const char* _sourceCode, GLenum _type)
 ShaderProgram::ShaderObject::~ShaderObject() 
 {
     // TODO: we are not deleting shader object here, because shaderObject get deleted in ShaderProgram::create() while pushing into shaderObjects array 
+    // it will be deleted by ShaderProgram::uninitialize() automatically by shader 
     // glDeleteShader(this->id); 
     // this->id = 0; 
 } 

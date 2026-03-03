@@ -5,7 +5,6 @@
 #include "../shaderProgram.hpp" 
 #include "../camera.hpp" 
 #include "../fbo.hpp" 
-#include "../texture.hpp"
 #include "../alphabets.hpp" 
 #include "../effects/guassianBlur.hpp" 
 #include "../effects/textureBlending.hpp" 
@@ -34,8 +33,7 @@ class IntroScene
         ShaderProgram brightColorSeparatorProgram; 
         GLuint textureUniform_brightColors = 0; 
 
-        ShaderProgram fsTextureProgram; 
-        GLuint textureUniform_fsTexture = 0; 
+        FullScreenTexturer fsTexture; 
 
         // ===== EFFECTS ===== 
         GuassianBlur blueEffect; 
@@ -85,7 +83,6 @@ class IntroScene
         bool initHeadingAlphabetsShaderProgram(); 
         bool initBrightColorSeparatorProgram(); 
         bool initTextureBlendProgram(); 
-        bool initializeFullScreenTextureProgram(); 
 
         ~IntroScene(); 
 }; 

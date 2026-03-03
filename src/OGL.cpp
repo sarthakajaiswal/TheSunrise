@@ -51,7 +51,7 @@ IntroScene introScene;
 Scene1 scene1; 
 Scene2 scene2; 
 
-enum Scene CurrentScene = INTRO_SCENE; 
+enum Scene CurrentScene = SCENE_1; 
 
 // ==================== ENTRY-POINT FUNCTION ================ 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) 
@@ -504,7 +504,7 @@ void display(void)
             introScene.display(); 
 
         case SCENE_1: 
-            // scene1.display(); 
+            scene1.display(); 
             break; 
 
         case SCENE_2: 

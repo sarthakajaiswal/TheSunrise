@@ -25,11 +25,6 @@ int IntroScene::initialize()
     else 
         logFile.log("IntroScene::initialize > Bright-Color-separator program created\n"); 
 
-    if(initializeFullScreenTextureProgram() == false) 
-        logFile.log("IntroScene::initialize > fullscreen-texture program craetion failed\n"); 
-    else 
-        logFile.log("IntroScene::initialize > fullscreen-texture program created\n"); 
-
     // FBOs 
 	assert(fbo_scene.createFloatingPointFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true); 
 	assert(fbo_brightColors.createFloatingPointFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true); 
@@ -189,14 +184,7 @@ void IntroScene::display()
     blendedTexture = blendTextureEffect.render(fbo_scene.getTextureID(), blurTexture); 
     
     // Finally, render blended texture on screen  
-	glViewport(0, 0, winWidth, winHeight); 
-	fsTextureProgram.use();
-	glActiveTexture(GL_TEXTURE0); 
-	glBindTexture(GL_TEXTURE_2D, blendedTexture); 
-	glUniform1i(textureUniform_fsTexture, 0);  
-	quad.render();  
-	glBindTexture(GL_TEXTURE_2D, 0); 
-	fsTextureProgram.unuse(); 
+    fsTexture.render(blendedTexture); 
 
 	// ************** CHECK FBO TEXTURES *************** 
 	// glViewport(1000, 400, 480, 270);
@@ -331,34 +319,6 @@ bool IntroScene::initBrightColorSeparatorProgram()
 
     // get uniform locations 
     textureUniform_brightColors = brightColorSeparatorProgram.getUniformLocation("uTexture"); 
-
-    free(vertexShaderSourceCode); vertexShaderSourceCode = NULL; 
-    free(fragmentShaderSourceCode); fragmentShaderSourceCode = NULL; 
-
-    return (true); 
-} 
-
-bool IntroScene::initializeFullScreenTextureProgram()
-{
-    char* vertexShaderSourceCode = NULL; 
-    char* fragmentShaderSourceCode = NULL; 
-    vertexShaderSourceCode = FileHandler::fileToString("src/shaders/fullScreenTexture.vs"); 
-    fragmentShaderSourceCode = FileHandler::fileToString("src/shaders/fullScreenTexture.fs"); 
-    if(vertexShaderSourceCode == NULL || fragmentShaderSourceCode == NULL) 
-        return false; 
-
-    std::vector<ShaderSourceCodeAndType> shaders; 
-    shaders.push_back(ShaderSourceCodeAndType(vertexShaderSourceCode, GL_VERTEX_SHADER)); 
-    shaders.push_back(ShaderSourceCodeAndType(fragmentShaderSourceCode, GL_FRAGMENT_SHADER)); 
-
-    std::vector<AttributeWithIndexLocation> attributes; 
-    attributes.push_back(AttributeWithIndexLocation(AMC_ATTRIBUTE_POSITION, "aPosition")); 
-    attributes.push_back(AttributeWithIndexLocation(AMC_ATTRIBUTE_TEXCOORD, "aTexCoord")); 
-	
-    fsTextureProgram.create(shaders, attributes); 
-
-    // get uniform locations 
-    textureUniform_fsTexture = fsTextureProgram.getUniformLocation("uTexture"); 
 
     free(vertexShaderSourceCode); vertexShaderSourceCode = NULL; 
     free(fragmentShaderSourceCode); fragmentShaderSourceCode = NULL; 
