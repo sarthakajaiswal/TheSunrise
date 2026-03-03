@@ -7,7 +7,9 @@
 #include "../effects/terrain.hpp" 
 #include "../effects/cubemap.hpp" 
 #include "../objects.hpp"
+#include "../assimpModelLoader.hpp"
 #include "../fbo.hpp" 
+#include "../../ImGui/imgui.h" 
 
 class Scene1 
 {
@@ -16,10 +18,11 @@ class Scene1
         FullScreenTexturer fsTexturer;  
         Terrain terrain; 
         Cubemap cubemap; 
+        
+        Model treeModel; 
+        Quad quad; 
 
         FBO floatingPointFBO; 
-
-        Quad quad; 
 
         GLuint quoteTexture; 
         GLuint gateTexture; 

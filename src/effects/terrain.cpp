@@ -309,6 +309,10 @@ void Terrain::render(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::m
     glBindTexture(GL_TEXTURE_2D, textures[3]); 
     glUniform1i(texture4Uniform, 3); 
 
+    float maxAniso = 0.0f; 
+    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &maxAniso); 
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, maxAniso); 
+
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0); 
     glBindVertexArray(0); 
@@ -343,4 +347,3 @@ Terrain::~Terrain()
     delete[] heightmapData; 
     heightmapData = 0;
 } 
-

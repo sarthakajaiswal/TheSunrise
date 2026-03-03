@@ -13,6 +13,15 @@
 // global function declarations 
 float degToRad(float degree); 
 
+struct Vertex 
+{
+	vmath::vec3 position; 
+	vmath::vec3 normal; 
+	vmath::vec2 texCoord; 
+	vmath::vec3 tangent; 
+	vmath::vec3 bitangent; 
+}; 
+
 // ========= EXCEPTIONS ===================
 class called_render_before_initialization : public std::runtime_error 
 {

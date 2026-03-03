@@ -21,13 +21,6 @@
 extern FileHandler logFile; 
 extern Camera testSceneCamera; 
 
-struct Vertex 
-{
-    vmath::vec3 position; 
-    vmath::vec2 texCoord; 
-    vmath::vec3 normal; 
-}; 
-
 class heightmap_loading_failure : public std::runtime_error 
 {
     public: 
