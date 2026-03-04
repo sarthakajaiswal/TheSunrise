@@ -198,10 +198,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     void resize(int, int); 
     void uninitialize(void); 
 
+    extern bool doImGuiCapturedEvent; 
+
     // code
 	if (ImGuiManager::IsEnabled() && ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
 		return DefWindowProc(hwnd, uMsg, wParam, lParam);
-        
+    
     switch(CurrentScene) 
     {
         case INTRO_SCENE: 
@@ -341,6 +343,7 @@ int initialize(void)
     GLenum glewResult; 
 
     // code 
+    logFile.log("INITIALIZING.....\n"); 
     // pixel format descriptor initialization 
     ZeroMemory((void*)&pfd, sizeof(PIXELFORMATDESCRIPTOR)); 
     pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR); 
@@ -440,6 +443,8 @@ int initialize(void)
 
     // warm-up resize 
     resize(WIN_WIDTH, WIN_HEIGHT); 
+
+    logFile.log("INITIALIZATION SUCCESSFULL.....\n");
     return (0); 
 } 
 

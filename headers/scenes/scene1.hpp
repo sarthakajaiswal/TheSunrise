@@ -10,6 +10,7 @@
 #include "../assimpModelLoader.hpp"
 #include "../fbo.hpp" 
 #include "../../ImGui/imgui.h" 
+#include "../imgui_manager.hpp" 
 
 class Scene1 
 {

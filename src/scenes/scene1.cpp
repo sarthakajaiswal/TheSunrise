@@ -2,7 +2,8 @@
 
 /* 
 388.0f, 46.00f, 501.85f 
-
+439.514f, 18.81f, 1337.290f
+650.896f, 18.81f, 1337.290f | 0.79, 0.59, 0.044 
 */ 
 
 Camera scene1Camera; 
@@ -109,8 +110,10 @@ void Scene1::display()
     // cubemap.render(rotationMatrix, viewMatrix, projectionMatrix); 
 
     mat4 modelMatrix = mat4::identity(); 
-    modelMatrix *= vmath::translate(modelX, modelY, modelZ); 
-    modelMatrix *= vmath::scale(modelSx, modelSy, modelSz);
+    // modelMatrix *= vmath::translate(modelX, modelY, modelZ); 
+    // modelMatrix *= vmath::scale(modelSx, modelSy, modelSz);
+    modelMatrix *= vmath::translate(650.896f, 18.81f, 1337.290f); 
+    modelMatrix *= vmath::scale(0.79f, 0.59f, 0.044f);
     treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
 } 
 
@@ -125,7 +128,16 @@ Scene1::~Scene1()
 
 void Scene1::scene1Callbacks(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 {
-    scene1Camera.cameraCallback(hwnd, uMsg, wParam, lParam);  
+    bool doImGuiCapturedEvent = false; 
+    if(ImGuiManager::initialized == true)
+    {
+        ImGuiIO& io = ImGui::GetIO(); 
+        doImGuiCapturedEvent = io.WantCaptureMouse; 
+    } 
+
+    if(!doImGuiCapturedEvent) 
+        scene1Camera.cameraCallback(hwnd, uMsg, wParam, lParam);  
+
     switch(uMsg) 
     {
         case WM_CHAR: 

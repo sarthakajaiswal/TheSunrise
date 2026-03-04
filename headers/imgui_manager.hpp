@@ -21,7 +21,7 @@ public:
     // Add your custom ImGui windows here
     static void RenderDebugWindow();
     
-private:
+public:
     static bool initialized;
 };
 
