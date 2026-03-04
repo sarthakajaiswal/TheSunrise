@@ -6,6 +6,7 @@
 #include "../effects/exposure.hpp" 
 #include "../effects/terrain.hpp" 
 #include "../effects/cubemap.hpp" 
+#include "../effects/godrays.hpp" 
 #include "../objects.hpp"
 #include "../assimpModelLoader.hpp"
 #include "../fbo.hpp" 
@@ -18,12 +19,14 @@ class Scene1
         Exposure exposureProgram; 
         FullScreenTexturer fsTexturer;  
         Terrain terrain; 
+        Godrays godrays; 
         Cubemap cubemap; 
         
         Model treeModel; 
         Quad quad; 
 
         FBO floatingPointFBO; 
+        FBO testFBO; 
 
         GLuint quoteTexture; 
         GLuint gateTexture; 

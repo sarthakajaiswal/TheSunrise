@@ -227,7 +227,7 @@ int FullScreenTexturer::initialize()
 
 void FullScreenTexturer::render(GLuint texture) 
 {
-    glViewport(0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)); 
+    // glViewport(0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)); 
     shaderProgram.use();
     glActiveTexture(GL_TEXTURE0); 
     glBindTexture(GL_TEXTURE_2D, texture); 

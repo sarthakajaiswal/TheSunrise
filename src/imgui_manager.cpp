@@ -129,13 +129,13 @@ void introSceneControls(void)
 
 void scene1Controls(void) 
 {
-    ImGui::SliderFloat("exposure:", &scene1.exposureValue, 0.0, 5.0);  
-    ImGui::SliderFloat("dx", &modelX, -1000.0f, 1000.0f);
-    ImGui::SliderFloat("dy", &modelY, -1000.0f, 1000.0f);
-    ImGui::SliderFloat("dz", &modelZ, 0.0f, 2000.0f);
-    ImGui::SliderFloat("dsx", &modelSx, 0.0f, 1.0f);
-    ImGui::SliderFloat("dsy", &modelSy, 0.0f, 1.0f);
-    ImGui::SliderFloat("dsz", &modelSz, 0.0f, 1.0f);
+    // ImGui::SliderFloat("exposure:", &scene1.exposureValue, 0.0, 5.0);  
+    // ImGui::SliderFloat("dx", &modelX, -1000.0f, 1000.0f);
+    // ImGui::SliderFloat("dy", &modelY, -1000.0f, 1000.0f);
+    // ImGui::SliderFloat("dz", &modelZ, 0.0f, 2000.0f);
+    // ImGui::SliderFloat("dsx", &modelSx, 0.0f, 1.0f);
+    // ImGui::SliderFloat("dsy", &modelSy, 0.0f, 1.0f);
+    // ImGui::SliderFloat("dsz", &modelSz, 0.0f, 1.0f);
     // ImGui::SliderFloat("cubemap Y angle:", &cubemapYAngle, 0.0, 360.0);  
 } 
 

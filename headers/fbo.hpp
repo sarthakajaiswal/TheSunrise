@@ -13,6 +13,7 @@ class FBO
     public: 
         GLuint getTextureID() const; 
 
+        bool createNormalFBO(GLuint textureWidth, GLuint textureHeight); 
         bool createFloatingPointFBO(GLuint textureWidth, GLuint textureHeight); 
         bool createFBOWithoutDepthBuffer(GLuint textureWidth, GLuint textureHeight); 
 

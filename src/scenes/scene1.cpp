@@ -24,7 +24,7 @@ int Scene1::initialize()
 
     // -------- Effects --------- 
     // assert(exposureProgram.initialize() == 0); 
-    // assert(fsTexturer.initialize() == 0); 
+    assert(fsTexturer.initialize() == 0); 
 
     std::vector<std::string> textureImages = {"res/terrain1.png", "res/terrain3.png", "res/terrain2.png", "res/terrain4.png"}; 
     std::vector<float> textureHeightRanges = {0.06, 0.4, 0.6, 1.0}; 
@@ -41,6 +41,8 @@ int Scene1::initialize()
     // }; 
     // cubemap.initialize(cubemapImages); 
 
+    godrays.initialize(); 
+
     // -------- Objects --------- 
     // assert(quad.initialize() == 0); 
     logFile.log("Loading Model...\n"); 
@@ -49,23 +51,95 @@ int Scene1::initialize()
 
     // -------- FBO and textures --------- 
     // assert(floatingPointFBO.createFloatingPointFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
+    assert(testFBO.createNormalFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
 
-    // quoteTexture = loadTexture("res\\phrase1.png", FALSE);
-    // if(quoteTexture == 0) 
-    //     throw texture_loading_failure("Scene1::initialize() > phrase1 texture loading failed\n");  
-
-    // gateTexture = loadTexture("res\\gate.png"); 
-    // if(gateTexture == 0) 
-    //     throw texture_loading_failure("Scene1::initialize() > gate texture loading failed\n");
+    gateTexture = loadTexture("res\\gate.png"); 
+    if(gateTexture == 0) 
+        throw texture_loading_failure("Scene1::initialize() > gate texture loading failed\n");
         
-    // quoteTexture = loadTexture("res\\phrase1.png"); 
-    // if(quoteTexture == 0) 
-    //     throw texture_loading_failure("Scene1::initialize() > phrase1 texture loading failed\n");
+    quoteTexture = loadTexture("res\\phrase1.png"); 
+    if(quoteTexture == 0) 
+        throw texture_loading_failure("Scene1::initialize() > phrase1 texture loading failed\n");
 
     scene1Camera.setState(vec3(534.06, 46.83, 501.85), 88.60, 1.20); 
 
     logFile.log("------------------ Scene1::initialize() completed ----------------\n\n"); 
     return (0); 
+} 
+
+void Scene1::display() 
+{
+    glClearColor(0.0, 0.0, 0.0, 1.0); 
+    glClear(GL_COLOR_BUFFER_BIT); 
+
+    glViewport(0, 0, winWidth, winHeight); 
+    mat4 modelMatrix = mat4::identity(); 
+    viewMatrix = scene1Camera.getViewMatrix(CAMERA_GAME_MODE); 
+
+    // floatingPointFBO.bind(); 
+    fsTexturer.render(gateTexture); 
+    // floatingPointFBO.unbind(); 
+
+    // exposureProgram.render(floatingPointFBO.getTextureID(), exposureValue); 
+
+    // glEnable(GL_BLEND); 
+    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+    // fsTexturer.render(quoteTexture); 
+    // glDisable(GL_BLEND); 
+
+    // ---------- 
+
+    // terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition()); 
+
+    // mat4 rotationMatrix = vmath::rotate(178.0f, 0.0f, 1.0f, 0.0f); 
+    // rotationMatrix = rotationMatrix * vmath::rotate(20.0f, 1.0f, 0.0f, 0.0f); 
+    // cubemap.render(rotationMatrix, viewMatrix, projectionMatrix); 
+
+    // // modelMatrix *= vmath::translate(modelX, modelY, modelZ); 
+    // // modelMatrix *= vmath::scale(modelSx, modelSy, modelSz);
+    // modelMatrix *= vmath::translate(650.896f, 18.81f, 1337.290f); 
+    // modelMatrix *= vmath::scale(0.79f, 0.59f, 0.044f);
+    // treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
+
+    /*********** GODRAYS ************/ 
+    godrays.occlusionFBO.bind(); 
+    glClearColor(0.2, 0.2, 0.2, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);  
+    
+    // // // godrays.occlusionProgram.use(); 
+    
+    terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition()); 
+
+    modelMatrix *= vmath::translate(650.896f, 18.81f, 1337.290f); 
+    modelMatrix *= vmath::scale(0.79f, 0.59f, 0.044f);
+    // glUniformMatrix4fv(godrays.mvpMatrixUniform_occlusion, 1, GL_FALSE, projectionMatrix*viewMatrix*modelMatrix); 
+    // glUniform1i(godrays.isLightUniform_occlusion, 0); 
+    treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
+    
+    // // // godrays.occlusionProgram.unuse(); 
+
+    godrays.occlusionFBO.unbind(); 
+
+
+    /*****************************************************************************************************************************/
+
+    // void resize(int, int); 
+    // resize(winWidth, winHeight); 
+
+    testFBO.bind(); 
+
+    fsTexturer.render(godrays.occlusionFBO.getTextureID()); 
+    // fsTexturer.render(quoteTexture); 
+    testFBO.unbind(); 
+    
+    glViewport(10, 600, 400, 250); 
+    fsTexturer.render(testFBO.getTextureID()); 
+    // fsTexturer.render(gateTexture); 
+} 
+
+void Scene1::update() 
+{
+    // code 
 } 
 
 void Scene1::uninitialize()  
@@ -85,41 +159,6 @@ void Scene1::uninitialize()
     } 
     
     logFile.log("Scene1::uninitialize() > Uninitialized\n"); 
-} 
-
-void Scene1::display() 
-{
-    // floatingPointFBO.bind(); 
-    // fsTexturer.render(gateTexture); 
-    // floatingPointFBO.unbind(); 
-
-    // exposureProgram.render(floatingPointFBO.getTextureID(), exposureValue); 
-
-    // glEnable(GL_BLEND); 
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-    // fsTexturer.render(quoteTexture); 
-    // glDisable(GL_BLEND); 
-
-    // ---------- 
-
-    viewMatrix = scene1Camera.getViewMatrix(CAMERA_GAME_MODE); 
-    terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition()); 
-
-    // mat4 rotationMatrix = vmath::rotate(178.0f, 0.0f, 1.0f, 0.0f); 
-    // rotationMatrix = rotationMatrix * vmath::rotate(20.0f, 1.0f, 0.0f, 0.0f); 
-    // cubemap.render(rotationMatrix, viewMatrix, projectionMatrix); 
-
-    mat4 modelMatrix = mat4::identity(); 
-    // modelMatrix *= vmath::translate(modelX, modelY, modelZ); 
-    // modelMatrix *= vmath::scale(modelSx, modelSy, modelSz);
-    modelMatrix *= vmath::translate(650.896f, 18.81f, 1337.290f); 
-    modelMatrix *= vmath::scale(0.79f, 0.59f, 0.044f);
-    treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
-} 
-
-void Scene1::update() 
-{
-    // code 
 } 
 
 Scene1::~Scene1() 
