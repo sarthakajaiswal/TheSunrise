@@ -2,7 +2,7 @@
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include ImGui\*.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\OGL.cpp  src\scenes\introScene.cpp  src\imgui_manager.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\OGL.cpp  
-@REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\imgui_manager.cpp
+cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\imgui_manager.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\assimpModelLoader.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\objects.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\fbo.cpp

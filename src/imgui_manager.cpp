@@ -15,7 +15,11 @@ extern Scene2 scene2;
 // scene1 related 
 // extern float cubemapYAngle; 
 extern float modelX, modelY, modelZ; 
-extern float modelSx, modelSy, modelSz; 
+extern float modelSx, modelSy, modelSz;
+
+extern float tx, ty, tz; 
+extern float sx, sy, sz; 
+extern float rx, ry, rz; 
 
 // scene2 related 
 extern float tHeight1; 
@@ -137,6 +141,19 @@ void scene1Controls(void)
     // ImGui::SliderFloat("dsy", &modelSy, 0.0f, 1.0f);
     // ImGui::SliderFloat("dsz", &modelSz, 0.0f, 1.0f);
     // ImGui::SliderFloat("cubemap Y angle:", &cubemapYAngle, 0.0, 360.0);  
+
+    ImGui::SliderFloat("tx", &tx, -100.0f, 1000.0f);
+    ImGui::SliderFloat("ty", &ty, -100.0f, 1000.0f);
+    ImGui::SliderFloat("tz", &tz, -100.0f, 2000.0f);
+    
+    ImGui::SliderFloat("sx", &sx, 0.0f, 1.0f);
+    ImGui::SliderFloat("sy", &sy, 0.0f, 1.0f);
+    ImGui::SliderFloat("sz", &sz, 0.0f, 1.0f);
+
+    ImGui::SliderFloat("rx", &rx, 0.0f, 360.0f);
+    ImGui::SliderFloat("ry", &ry, 0.0f, 360.0f);
+    ImGui::SliderFloat("rz", &rz, 0.0f, 360.0f);
+    
 } 
 
 void scene2Controls(void) 

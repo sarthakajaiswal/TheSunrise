@@ -2,10 +2,14 @@
 
 /* 
 tree model positions: 
-388.0f, 46.00f, 501.85f 
+660.032f, 27.08f, 948.01f  | 0.189f, 0.199f, 0.224f
 439.514f, 18.81f, 1337.290f
 650.896f, 18.81f, 1337.290f | 0.79, 0.59, 0.044 
 */ 
+
+float tx, ty, tz; 
+float sx=1.0, sy=1.0, sz=1.0; 
+float rx, ry, rz; 
 
 Camera scene1Camera; 
 // float cubemapYAngle=178.0f; 
@@ -28,9 +32,9 @@ int Scene1::initialize()
     assert(fsTexturer.initialize() == 0); 
     assert(initBWShader() == 0); 
 
-    // std::vector<std::string> textureImages = {"res/terrain1.png", "res/terrain3.png", "res/terrain2.png", "res/terrain4.png"}; 
-    // std::vector<float> textureHeightRanges = {0.06, 0.4, 0.6, 1.0}; 
-    // terrain.initialize("res/scene1terrain.png", 1.0f, 60.0f, textureImages, textureHeightRanges, 4.0); 
+    std::vector<std::string> textureImages = {"res/terrain1.png", "res/terrain3.png", "res/terrain2.png", "res/terrain4.png"}; 
+    std::vector<float> textureHeightRanges = {0.06, 0.4, 0.6, 1.0}; 
+    terrain.initialize("res/scene1terrain.png", 1.0f, 60.0f, textureImages, textureHeightRanges, 4.0); 
 
     const char* cubemapImages[6] = 
     {
@@ -67,6 +71,10 @@ int Scene1::initialize()
 
     scene1Camera.setState(vec3(534.06, 46.83, 501.85), 88.60, 1.20); 
 
+    tx = scene1Camera.getPosition()[0]; 
+    ty = scene1Camera.getPosition()[1]; 
+    tz = scene1Camera.getPosition()[2]; 
+
     logFile.log("------------------ Scene1::initialize() completed ----------------\n\n"); 
     return (0); 
 } 
@@ -80,8 +88,8 @@ void Scene1::display()
     glViewport(0, 0, winWidth, winHeight); 
     resize(winWidth, winHeight); 
     mat4 modelMatrix = mat4::identity(); 
-    // viewMatrix = scene1Camera.getViewMatrix(CAMERA_GAME_MODE); 
-    viewMatrix = mat4::identity(); 
+    viewMatrix = scene1Camera.getViewMatrix(CAMERA_GAME_MODE); 
+    // viewMatrix = mat4::identity(); 
 
     // floatingPointFBO.bind(); 
     // fsTexturer.render(gateTexture); 
@@ -96,46 +104,52 @@ void Scene1::display()
 
     // ---------- 
 
-    // terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition()); 
+    // moon 
+    matrixStack.pushMatrix(modelMatrix); 
+    {
+        modelMatrix = mat4::identity(); 
+
+        vmath::mat4 translationMatrix = vmath::translate(490.6f, 455.627f, 2000.0f); 
+        vmath::mat4 scaleMatrix = vmath::scale(125.0f, 125.0f, 125.0f); 
+        modelMatrix = translationMatrix * scaleMatrix; 
+
+        bwShader.use(); 
+        glUniformMatrix4fv(mvpMatrixUniform_bwShader, 1, GL_FALSE, projectionMatrix*viewMatrix*modelMatrix); 
+        moonSphere.render(); 
+        bwShader.unuse(); 
+    } 
+    modelMatrix = matrixStack.popMatrix(); 
+
+    terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition()); 
 
     matrixStack.pushMatrix(modelMatrix); 
     {
-        mat4 rotationMatrix = vmath::rotate(178.0f, 0.0f, 1.0f, 0.0f); 
-        rotationMatrix *= vmath::rotate(20.0f, 1.0f, 0.0f, 0.0f); 
+        mat4 rotationMatrix = vmath::rotate(162.0f, 1.0f, 0.0f, 0.0f); 
+        rotationMatrix *= vmath::rotate(0.6f, 0.0f, 1.0f, 0.0f); 
+        rotationMatrix *= vmath::rotate(7.11f, 0.0f, 0.0f, 1.0f); 
         modelMatrix = rotationMatrix; 
 
         cubemap.render(modelMatrix, viewMatrix, projectionMatrix); 
     } 
     modelMatrix = matrixStack.popMatrix(); 
 
-    // // modelMatrix *= vmath::translate(modelX, modelY, modelZ); 
-    // // modelMatrix *= vmath::scale(modelSx, modelSy, modelSz);
-    // modelMatrix *= vmath::translate(650.896f, 18.81f, 1337.290f); 
-    // modelMatrix *= vmath::scale(0.79f, 0.59f, 0.044f);
-    // treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
-
-    // moon 
     matrixStack.pushMatrix(modelMatrix); 
     {
-        vmath::mat4 translationMatrix = vmath::translate(0.0f, 0.0f, -20.0f); 
-        modelMatrix = translationMatrix; 
-
-        bwShader.use(); 
-        glUniformMatrix4fv(mvpMatrixUniform_bwShader, 1, GL_FALSE, projectionMatrix*viewMatrix*translationMatrix); 
-        moonSphere.render(); 
-        bwShader.unuse(); 
+        modelMatrix *= vmath::translate(660.032f, 27.08f, 948.01f); 
+        modelMatrix *= vmath::scale(0.189f, 0.199f, 0.224f);
+        treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
     } 
     modelMatrix = matrixStack.popMatrix(); 
 
     /*********** GODRAYS ************/ 
-    // godrays.occlusionFBO.bind(); 
+    godrays.occlusionFBO.bind(); 
 
-    // terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition()); 
-    // modelMatrix *= vmath::translate(650.896f, 18.81f, 1337.290f); 
-    // modelMatrix *= vmath::scale(0.79f, 0.59f, 0.044f);
-    // treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
+    terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition()); 
+    modelMatrix *= vmath::translate(650.896f, 18.81f, 1337.290f); 
+    modelMatrix *= vmath::scale(0.79f, 0.59f, 0.044f);
+    treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
     
-    // godrays.occlusionFBO.unbind(); 
+    godrays.occlusionFBO.unbind(); 
 
 
     /*****************************************************************************************************************************/
@@ -235,3 +249,11 @@ void Scene1::scene1Callbacks(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     } 
 } 
 
+
+
+// vmath::mat4 translationMatrix = mat4::identity(); // vmath::translate(tx, ty, tz); 
+//         translationMatrix *= vmath::translate(tx, ty, tz); 
+
+//         vmath::mat4 rotationMatrix = vmath::rotate(rx, 1.0f, 0.0f, 0.0f) * vmath::rotate(ry, 0.0f, 1.0f, 0.0f) * vmath::rotate(rz, 0.0f, 0.0f, 1.0f); 
+//         vmath::mat4 scaleMatrix = vmath::scale(sx, sy, sz); 
+//         modelMatrix = translationMatrix*rotationMatrix*scaleMatrix; 
