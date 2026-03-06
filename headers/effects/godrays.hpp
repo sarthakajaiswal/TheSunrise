@@ -17,27 +17,42 @@ extern FileHandler logFile;
 class Godrays 
 {
     public: 
+        // pass1 
         ShaderProgram silhoutteFromObjectsAndLightProgram; 
-        GLuint objectsTextureUniform_silhotte; 
-        GLuint lightSourceTextureUniform_silhoutte;  
+        GLuint objectsTextureUniform_silhotte = 0; 
+        GLuint lightSourceTextureUniform_silhoutte = 0;  
         
-        ShaderProgram sceneFromObjectsAndLightProgram; 
-        GLuint objectsTextureUniform_scene; 
-        GLuint lightSourceTextureUniform_scene;  
+        // pass2 
+        ShaderProgram sceneFromObjectsAndLightProgram;  
+        GLuint objectsTextureUniform_scene = 0; 
+        GLuint lightSourceTextureUniform_scene = 0;  
         
+        // pass3 
+        ShaderProgram motionBlurProgram; 
+        GLuint exposureUniform_motionBlur = 0; 
+        GLuint decayUniform_motionBlur = 0; 
+        GLuint densityUniform_motionBlur = 0; 
+        GLuint weightUniform_motionBlur = 0; 
+        GLuint lightPositionOnScreenUniform_motionBlur = 0; 
+        GLuint occlusionTextureUniform_motionBlur = 0; 
+        GLuint numSamplesUniform_motionBlur = 0; 
+
         FBO sceneObjectsFBO; 
         FBO lightSourceFBO; 
         FBO occlusionFBO; 
         FBO sceneFBO; 
+        FBO motionBlurFBO; 
 
         Quad quad; 
 
         int initOpenGLState(); 
         int initOcclusionProgram(); 
         int initSceneProgram(); 
+        int initMotionBlurProgram(); 
 
         GLuint getOcclusionTexture(); 
         GLuint getSceneTexture(); 
+        GLuint getMotionBlurTexture(); 
 
     public: 
         Godrays(); 

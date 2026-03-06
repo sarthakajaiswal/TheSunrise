@@ -204,9 +204,11 @@ void Scene1::display()
 
     GLuint sceneTexture = godrays.getSceneTexture(); 
     GLuint occlusionTexture = godrays.getOcclusionTexture(); 
+    GLuint motionBlurTexture = godrays.getMotionBlurTexture(); 
 
     glViewport(10, 600, 400, 250);  
-    fsTexturer.render(sceneTexture); 
+    fsTexturer.render(motionBlurTexture); 
+    // fsTexturer.render(sceneTexture); 
     // fsTexturer.render(occlusionTexture); 
     // fsTexturer.render(gateTexture); 
 } 
