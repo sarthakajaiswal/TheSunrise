@@ -15,6 +15,7 @@ using namespace vmath;
 
 #include "fileHandler.hpp" 
 #include "eventManager.hpp" 
+#include "ds\stack.hpp" 
 
 enum
 {
@@ -23,7 +24,8 @@ enum
     AMC_ATTRIBUTE_TEXCOORD, 
     AMC_ATTRIBUTE_NORMAL, 
     AMC_ATTRIBUTE_TANGENT, 
-    AMC_ATTRIBUTE_BITANGENT  
+    AMC_ATTRIBUTE_BITANGENT, 
+    AMC_ATTRIBUTE_ELEMENT
 }; 
 
 // log file 
@@ -32,6 +34,9 @@ extern FileHandler logFile;
 // matrices 
 extern mat4 projectionMatrix; 
 extern mat4 viewMatrix; 
+
+// matrix stack 
+extern Stack<vmath::mat4> matrixStack;
 
 // window dimentions 
 extern int winWidth, winHeight; 

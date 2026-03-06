@@ -42,6 +42,8 @@ HGLRC ghrc = NULL;
 mat4 projectionMatrix; 
 mat4 viewMatrix; 
 
+Stack<vmath::mat4> matrixStack; 
+
 LARGE_INTEGER startTime, currentTime, freq; 
 float mainTimer = 0.0f; 
 

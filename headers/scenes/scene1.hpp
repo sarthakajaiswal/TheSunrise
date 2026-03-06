@@ -21,15 +21,21 @@ class Scene1
         Terrain terrain; 
         Godrays godrays; 
         Cubemap cubemap; 
+
+        ShaderProgram bwShader; 
+        GLuint mvpMatrixUniform_bwShader; 
         
         Model treeModel; 
         Quad quad; 
+        Sphere moonSphere; 
 
         FBO floatingPointFBO; 
         FBO testFBO; 
 
         GLuint quoteTexture; 
         GLuint gateTexture; 
+
+        int initBWShader(); 
 
     public: 
         float exposureValue; 
