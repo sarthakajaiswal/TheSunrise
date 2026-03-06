@@ -9,7 +9,8 @@ int Godrays::initialize()
     logFile.log("---- Godrays::initialize() ----\n"); 
     assert(initOpenGLState() == 0); 
 
-    assert(occlusionFBO.createNormalFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
+    assert(sceneObjectsFBO.createNormalFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
+    assert(lightSourceFBO.createNormalFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
 
     logFile.log("---- Godrays::initialize() completed successfully ----\n"); 
     return (0); 

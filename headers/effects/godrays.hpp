@@ -21,7 +21,8 @@ class Godrays
         GLuint mvpMatrixUniform_occlusion; 
         GLuint isLightUniform_occlusion; 
         
-        FBO occlusionFBO; 
+        FBO sceneObjectsFBO; 
+        FBO lightSourceFBO; 
 
         int initOpenGLState(); 
 

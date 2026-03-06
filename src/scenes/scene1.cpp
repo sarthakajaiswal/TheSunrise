@@ -120,8 +120,23 @@ void Scene1::display()
     } 
     modelMatrix = matrixStack.popMatrix(); 
 
-    terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition()); 
+    // terrain 
+    matrixStack.pushMatrix(modelMatrix); 
+    {
+        terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition()); 
+    } 
+    modelMatrix = matrixStack.popMatrix(); 
 
+    // tree 
+    matrixStack.pushMatrix(modelMatrix); 
+    {
+        modelMatrix *= vmath::translate(660.032f, 27.08f, 948.01f); 
+        modelMatrix *= vmath::scale(0.189f, 0.199f, 0.224f);
+        treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
+    } 
+    modelMatrix = matrixStack.popMatrix(); 
+
+    // cubemap  
     matrixStack.pushMatrix(modelMatrix); 
     {
         mat4 rotationMatrix = vmath::rotate(162.0f, 1.0f, 0.0f, 0.0f); 
@@ -133,23 +148,51 @@ void Scene1::display()
     } 
     modelMatrix = matrixStack.popMatrix(); 
 
-    matrixStack.pushMatrix(modelMatrix); 
-    {
-        modelMatrix *= vmath::translate(660.032f, 27.08f, 948.01f); 
-        modelMatrix *= vmath::scale(0.189f, 0.199f, 0.224f);
-        treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
-    } 
-    modelMatrix = matrixStack.popMatrix(); 
-
     /*********** GODRAYS ************/ 
-    godrays.occlusionFBO.bind(); 
+    godrays.sceneObjectsFBO.bind(); 
+    { 
+        glClearColor(0.2, 0.2, 0.2, 1.0); 
+        glClear(GL_COLOR_BUFFER_BIT); 
 
-    terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition()); 
-    modelMatrix *= vmath::translate(650.896f, 18.81f, 1337.290f); 
-    modelMatrix *= vmath::scale(0.79f, 0.59f, 0.044f);
-    treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
-    
-    godrays.occlusionFBO.unbind(); 
+        // terrain 
+        matrixStack.pushMatrix(modelMatrix); 
+        {
+            terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition()); 
+        } 
+        modelMatrix = matrixStack.popMatrix(); 
+
+        // tree 
+        matrixStack.pushMatrix(modelMatrix); 
+        {
+            modelMatrix *= vmath::translate(660.032f, 27.08f, 948.01f); 
+            modelMatrix *= vmath::scale(0.189f, 0.199f, 0.224f);
+            treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
+        } 
+        modelMatrix = matrixStack.popMatrix(); 
+    } 
+    godrays.sceneObjectsFBO.unbind(); 
+
+    godrays.lightSourceFBO.bind(); 
+    { 
+        glClearColor(0.2, 0.2, 0.2, 1.0); 
+        glClear(GL_COLOR_BUFFER_BIT); 
+
+        matrixStack.pushMatrix(modelMatrix); 
+        {
+            modelMatrix = mat4::identity(); 
+
+            vmath::mat4 translationMatrix = vmath::translate(490.6f, 455.627f, 2000.0f); 
+            vmath::mat4 scaleMatrix = vmath::scale(125.0f, 125.0f, 125.0f); 
+            modelMatrix = translationMatrix * scaleMatrix; 
+
+            bwShader.use(); 
+            glUniformMatrix4fv(mvpMatrixUniform_bwShader, 1, GL_FALSE, projectionMatrix*viewMatrix*modelMatrix); 
+            moonSphere.render(); 
+            bwShader.unuse(); 
+        } 
+        modelMatrix = matrixStack.popMatrix(); 
+    } 
+    godrays.lightSourceFBO.unbind(); 
 
 
     /*****************************************************************************************************************************/
@@ -157,14 +200,15 @@ void Scene1::display()
     // void resize(int, int); 
     // resize(winWidth, winHeight); 
 
-    // testFBO.bind(); 
+    testFBO.bind(); 
+    glEnable(GL_BLEND); 
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+    fsTexturer.render(godrays.sceneObjectsFBO.getTextureID()); 
+    glDisable(GL_BLEND); 
+    testFBO.unbind(); 
 
-    // fsTexturer.render(godrays.occlusionFBO.getTextureID()); 
-    // // fsTexturer.render(quoteTexture); 
-    // testFBO.unbind(); 
-    
-    // glViewport(10, 600, 400, 250); 
-    // fsTexturer.render(testFBO.getTextureID()); 
+    glViewport(10, 600, 400, 250); 
+    fsTexturer.render(godrays.lightSourceFBO.getTextureID()); 
     // fsTexturer.render(gateTexture); 
 } 
 
