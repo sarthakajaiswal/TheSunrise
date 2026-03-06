@@ -102,16 +102,13 @@ Model::Model()
 int 
 Model::initialize(const char* path) 
 {
-    logFile.log("Model::initialize() started\n"); 
     loadModel(path); 
-    logFile.log("Model::initialize() completed successfully\n"); 
     return (0); 
 } 
 
 void 
 Model::loadModel(const std::string& path) 
 {
-    logFile.log("Model::loadModel() started\n"); 
     Assimp::Importer importer; 
 
     directory = path.substr(0, path.find_last_of('/')); 
@@ -134,8 +131,6 @@ Model::loadModel(const std::string& path)
     printf("nrnodes = \n"); //, count(scene->mRootNode)); 
     
     processNode(scene->mRootNode, scene, vmath::mat4::identity()); 
-
-    logFile.log("Model::loadModel() completed successfully\n"); 
 } 
 
 int count(aiNode* node) 

@@ -17,14 +17,19 @@ extern FileHandler logFile;
 class Godrays 
 {
     public: 
-        ShaderProgram occlusionProgram; 
-        GLuint mvpMatrixUniform_occlusion; 
-        GLuint isLightUniform_occlusion; 
+        ShaderProgram silhoutteFromObjectsAndLightProgram; 
+        GLuint objectsTextureUniform_silhotte; 
+        GLuint lightSourceTextureUniform_silhoutte;  
         
         FBO sceneObjectsFBO; 
         FBO lightSourceFBO; 
+        FBO occlusionFBO; 
+
+        Quad quad; 
 
         int initOpenGLState(); 
+        GLuint getOcclusionTexture(); 
+        GLuint getSceneTexture(); 
 
     public: 
         Godrays(); 

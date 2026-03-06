@@ -61,9 +61,9 @@ int Scene1::initialize()
     // assert(floatingPointFBO.createFloatingPointFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
     assert(testFBO.createNormalFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
 
-    // gateTexture = loadTexture("res\\gate.png"); 
-    // if(gateTexture == 0) 
-    //     throw texture_loading_failure("Scene1::initialize() > gate texture loading failed\n");
+    gateTexture = loadTexture("res\\gate.png"); 
+    if(gateTexture == 0) 
+        throw texture_loading_failure("Scene1::initialize() > gate texture loading failed\n");
         
     // quoteTexture = loadTexture("res\\phrase1.png"); 
     // if(quoteTexture == 0) 
@@ -130,6 +130,7 @@ void Scene1::display()
     // tree 
     matrixStack.pushMatrix(modelMatrix); 
     {
+        modelMatrix = mat4::identity(); 
         modelMatrix *= vmath::translate(660.032f, 27.08f, 948.01f); 
         modelMatrix *= vmath::scale(0.189f, 0.199f, 0.224f);
         treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
@@ -151,9 +152,6 @@ void Scene1::display()
     /*********** GODRAYS ************/ 
     godrays.sceneObjectsFBO.bind(); 
     { 
-        glClearColor(0.2, 0.2, 0.2, 1.0); 
-        glClear(GL_COLOR_BUFFER_BIT); 
-
         // terrain 
         matrixStack.pushMatrix(modelMatrix); 
         {
@@ -174,9 +172,6 @@ void Scene1::display()
 
     godrays.lightSourceFBO.bind(); 
     { 
-        glClearColor(0.2, 0.2, 0.2, 1.0); 
-        glClear(GL_COLOR_BUFFER_BIT); 
-
         matrixStack.pushMatrix(modelMatrix); 
         {
             modelMatrix = mat4::identity(); 
@@ -200,15 +195,18 @@ void Scene1::display()
     // void resize(int, int); 
     // resize(winWidth, winHeight); 
 
-    testFBO.bind(); 
-    glEnable(GL_BLEND); 
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-    fsTexturer.render(godrays.sceneObjectsFBO.getTextureID()); 
-    glDisable(GL_BLEND); 
-    testFBO.unbind(); 
+    // testFBO.bind(); 
+    // glEnable(GL_BLEND); 
+    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+    // fsTexturer.render(godrays.sceneObjectsFBO.getTextureID()); 
+    // glDisable(GL_BLEND); 
+    // testFBO.unbind(); 
 
-    glViewport(10, 600, 400, 250); 
-    fsTexturer.render(godrays.lightSourceFBO.getTextureID()); 
+    // GLuint sceneTexture = godrays.getSceneTexture(); 
+    GLuint occlusionTexture = godrays.getOcclusionTexture(); 
+
+    glViewport(10, 600, 400, 250);  
+    fsTexturer.render(occlusionTexture); 
     // fsTexturer.render(gateTexture); 
 } 
 
