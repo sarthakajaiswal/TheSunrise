@@ -202,11 +202,12 @@ void Scene1::display()
     // glDisable(GL_BLEND); 
     // testFBO.unbind(); 
 
-    // GLuint sceneTexture = godrays.getSceneTexture(); 
+    GLuint sceneTexture = godrays.getSceneTexture(); 
     GLuint occlusionTexture = godrays.getOcclusionTexture(); 
 
     glViewport(10, 600, 400, 250);  
-    fsTexturer.render(occlusionTexture); 
+    fsTexturer.render(sceneTexture); 
+    // fsTexturer.render(occlusionTexture); 
     // fsTexturer.render(gateTexture); 
 } 
 

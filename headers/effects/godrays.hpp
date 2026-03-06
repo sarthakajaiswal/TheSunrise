@@ -21,13 +21,21 @@ class Godrays
         GLuint objectsTextureUniform_silhotte; 
         GLuint lightSourceTextureUniform_silhoutte;  
         
+        ShaderProgram sceneFromObjectsAndLightProgram; 
+        GLuint objectsTextureUniform_scene; 
+        GLuint lightSourceTextureUniform_scene;  
+        
         FBO sceneObjectsFBO; 
         FBO lightSourceFBO; 
         FBO occlusionFBO; 
+        FBO sceneFBO; 
 
         Quad quad; 
 
         int initOpenGLState(); 
+        int initOcclusionProgram(); 
+        int initSceneProgram(); 
+
         GLuint getOcclusionTexture(); 
         GLuint getSceneTexture(); 
 
