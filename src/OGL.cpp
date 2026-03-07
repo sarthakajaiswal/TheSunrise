@@ -53,7 +53,7 @@ IntroScene introScene;
 Scene1 scene1; 
 Scene2 scene2; 
 
-enum Scene CurrentScene = SCENE_1; 
+enum Scene CurrentScene = SCENE_2; 
 
 // ==================== ENTRY-POINT FUNCTION ================ 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) 
@@ -213,7 +213,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break; 
 
         case SCENE_1: 
-            scene1.scene1Callbacks(hwnd, uMsg, wParam, lParam);
+            scene1.eventCallback(hwnd, uMsg, wParam, lParam);
+            break; 
+
+        case SCENE_2: 
+            scene2.eveneCallback(hwnd, uMsg, wParam, lParam);
             break; 
             
         default: 

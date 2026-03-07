@@ -22,6 +22,8 @@ class Scene2
         void update(); 
         
         ~Scene2(); 
+
+        void eveneCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam); 
 }; 
 
 

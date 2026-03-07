@@ -57,7 +57,7 @@ void main(void)
         vec3 color1 = texture(uTextures[1], out_texCoord).rgb; 
         float delta = hRange2-hRange1; 
         float factor = (height - hRange1)/delta; 
-        textureColor = mix(color0, color1, factor); 
+        textureColor = mix(color0, color1, factor);  
     } 
     else if(height < hRange3) 
     { 

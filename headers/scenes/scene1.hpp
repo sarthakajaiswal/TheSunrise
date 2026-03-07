@@ -56,7 +56,7 @@ class Scene1
         void uninitialize(); 
         ~Scene1(); 
 
-        void scene1Callbacks(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);  
+        void eventCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);  
 }; 
 
 

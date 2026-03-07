@@ -46,6 +46,7 @@ void Terrain::showVertices()
 
 void Terrain::InitVertices(int width, int depth, float* heightData, std::vector<Vertex>& vertices) 
 {
+    logFile.log("textureScale = %.2f\n", textureScale); 
     for(int z = 0; z < depth; ++z) 
     {
         for(int x = 0; x < width; ++x) 
@@ -57,8 +58,8 @@ void Terrain::InitVertices(int width, int depth, float* heightData, std::vector<
             v.position[2] = z * worldScale; 
 
             // calculate texcoords 
-            v.texCoord[0] = 1.0/(float)(width-1) * x * textureScale; 
-            v.texCoord[1] = 1.0/(float)(depth-1) * z * textureScale; 
+            v.texCoord[0] = (float)x/(float)(width-1) * textureScale; 
+            v.texCoord[1] = (float)z/(float)(depth-1) * textureScale; 
 
             // calculate normals 
             vmath::vec3 normal; 
@@ -75,7 +76,7 @@ void Terrain::InitVertices(int width, int depth, float* heightData, std::vector<
             float hDown = heightData[downZ * width + x];   
 
             // use height of neighbours to calculate normal 
-            normal = vmath::vec3(hLeft-hRight, 2.0, hUp-hDown); // 2.0 gives better terrain | mathematically calculated using cross product 
+            normal = vmath::vec3((hLeft-hRight)*heightScale, 2.0, (hUp-hDown)*heightScale); // 2.0 gives better terrain | mathematically calculated using cross product 
 
             v.normal = normalize(normal); 
 

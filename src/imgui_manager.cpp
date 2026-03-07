@@ -22,10 +22,6 @@ extern float rx, ry, rz;
 extern float alpha; 
 
 // scene2 related 
-extern float tHeight1; 
-extern float tHeight2; 
-extern float tHeight3; 
-extern float tHeight4; 
 
 bool ImGuiManager::Initialize(HWND hwnd) {
     if (initialized || !ENABLE_IMGUI)
@@ -166,9 +162,5 @@ void scene1Controls(void)
 
 void scene2Controls(void) 
 {
-    ImGui::SliderFloat("texture height 1", &tHeight1, -0.0f, 2000.0f);
-    ImGui::SliderFloat("texture height 2", &tHeight2, -0.0f, 2000.0f);
-    ImGui::SliderFloat("texture height 3", &tHeight3, -0.0f, 2000.0f);
-    ImGui::SliderFloat("texture height 4", &tHeight4, -0.0f, 2000.0f);
 } 
 

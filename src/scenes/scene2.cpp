@@ -12,41 +12,27 @@ float cameraZ = 10.0;
 
 int Scene2::initialize() 
 {	
-    // // code 
-    // logFile.log("------------------ Scene2::initialize() started ----------------\n"); 
+    // code 
+    logFile.log("------------------ Scene2::initialize() started ----------------\n"); 
 
-    // std::vector<std::string> terrainTextureImages = 
-    // {
-    //     "res/terrain1.png", 
-    //     "res/terrain2.png", 
-    //     "res/terrain3.png", 
-    //     "res/terrain4.png" 
-    // }; 
-	// terrain.initialize(terrainScale, heightScale, textureScale, terrainTextureImages); 
+    std::vector<std::string> textureImages = {"res/terrain5.png", "res/terrain6.png", "res/terrain7.png", "res/terrain8.png"}; 
+    std::vector<float> textureHeightRanges = {0.06, 0.4, 0.6, 1.0}; 
+    terrain.initialize("res/scene2terrain.png", 1.5f, 60.0f, textureImages, textureHeightRanges, 8.0);
 
-    // glFrontFace(GL_CW); 
-
-    // logFile.log("Scene2::initialize() > terrain initialized\n"); 
-
-    // scene2Camera.setState(vec3(cameraX, cameraY, cameraZ)); 
+    scene2Camera.setState(vec3(270.33, 50.34, 325.60), 249.50, -9.70); 
 
 
-    // logFile.log("------------------ Scene2::initialize() completed ----------------\n\n"); 
+    logFile.log("------------------ Scene2::initialize() completed ----------------\n\n"); 
     return (0); 
 } 
 
-float tHeight1 = 20.0;  // texture height 1 
-float tHeight2 = 50.0;  
-float tHeight3 = 100.0;  
-float tHeight4 = 150.0;  
 void Scene2::display() 
 {
    mat4 modelMatrix = mat4::identity(); 
    viewMatrix = mat4::identity(); 
-//    viewMatrix = scene2Camera.getViewMatrix(); 
-
-//    terrain.SetTextureHeights(tHeight1, tHeight2, tHeight3, tHeight4); 
-//    terrain.Render(modelMatrix, viewMatrix, projectionMatrix); 
+   viewMatrix = scene2Camera.getViewMatrix(CAMERA_GAME_MODE); 
+ 
+   terrain.render(modelMatrix, viewMatrix, projectionMatrix, scene2Camera.getPosition()); 
 } 
 
 void Scene2::update() 
@@ -58,7 +44,7 @@ Scene2::~Scene2()
 {
 } 
 
-void scene2Callbacks(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
+void Scene2::eveneCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 {
     // variable declarations 
     float cameraStep = 0.5f; 

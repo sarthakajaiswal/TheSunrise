@@ -323,7 +323,7 @@ int Scene1::initBWShader()
     return (0); 
 } 
 
-void Scene1::scene1Callbacks(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
+void Scene1::eventCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 {
     bool doImGuiCapturedEvent = false; 
     if(ImGuiManager::initialized == true)
