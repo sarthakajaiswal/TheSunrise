@@ -1,4 +1,4 @@
-@REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\*.cpp  src\scenes\*.cpp src\effects\*.cpp ImGui\*.cpp
+cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\*.cpp  src\scenes\*.cpp src\effects\*.cpp ImGui\*.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include ImGui\*.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\OGL.cpp  src\scenes\introScene.cpp  src\imgui_manager.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\OGL.cpp  

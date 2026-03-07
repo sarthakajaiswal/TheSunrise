@@ -8,7 +8,7 @@ uniform float uAlpha;
 void main(void) 
 { 
     vec3 texColor = texture(uTexture, out_texCoord).rgb; 
-    FragColor = vec4(texColor, 0.8); 
+    FragColor = vec4(texColor, uAlpha); 
 }
 
 

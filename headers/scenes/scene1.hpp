@@ -28,6 +28,7 @@ class Scene1
         GLuint mvpMatrixUniform_bwShader; 
         
         Model treeModel; 
+        Model mindFlare; 
         Quad quad; 
         Sphere moonSphere; 
 
