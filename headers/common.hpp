@@ -79,12 +79,13 @@ class FullScreenTexturer
     private: 
         ShaderProgram shaderProgram; 
         GLuint textureUniform; 
+        GLuint alphaUniform; 
 
         Quad quad; 
 
     public: 
         int initialize();
-        void render(GLuint texture); 
+        void render(GLuint texture, float alpha=1.0); 
 }; 
 // ========= FS TEXTURE PROGRAM ======== 
 

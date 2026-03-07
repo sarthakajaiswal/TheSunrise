@@ -217,6 +217,7 @@ int FullScreenTexturer::initialize()
 
     // get uniform locations 
     textureUniform = shaderProgram.getUniformLocation("uTexture"); 
+    alphaUniform = shaderProgram.getUniformLocation("uAlpha"); 
 
     free(vertexShaderSourceCode); vertexShaderSourceCode = NULL; 
     free(fragmentShaderSourceCode); fragmentShaderSourceCode = NULL; 
@@ -225,13 +226,14 @@ int FullScreenTexturer::initialize()
     return (0); 
 } 
 
-void FullScreenTexturer::render(GLuint texture) 
+void FullScreenTexturer::render(GLuint texture, float alpha) 
 {
     // glViewport(0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)); 
     shaderProgram.use();
     glActiveTexture(GL_TEXTURE0); 
     glBindTexture(GL_TEXTURE_2D, texture); 
     glUniform1i(textureUniform, 0);  
+    glUniform1i(alphaUniform, alpha); 
     quad.render();  
     glBindTexture(GL_TEXTURE_2D, 0); 
     shaderProgram.unuse(); 

@@ -7,15 +7,19 @@ Godrays::Godrays()
 int Godrays::initialize() 
 {
     logFile.log("---- Godrays::initialize() ----\n"); 
+    
     assert(initOpenGLState() == 0); 
+    logFile.log("Godrays::initialize()::initOpenGLStart() > completed.\n"); 
 
-    quad.initialize(); 
+    assert(quad.initialize() == 0); 
 
     assert(sceneObjectsFBO.createNormalFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
     assert(lightSourceFBO.createNormalFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
     assert(occlusionFBO.createNormalFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
     assert(sceneFBO.createNormalFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
     assert(motionBlurFBO.createNormalFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
+    assert(finalCompositeFBO.createNormalFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
+    logFile.log("Godrays::initialize() > all required FBOs initialized successfully\n"); 
 
     logFile.log("---- Godrays::initialize() completed successfully ----\n"); 
     return (0); 
@@ -26,8 +30,41 @@ int Godrays::initOpenGLState()
     assert(initOcclusionProgram() == 0); 
     assert(initSceneProgram() == 0); 
     assert(initMotionBlurProgram() == 0); 
+    assert(initFinalCompositeProgram() == 0); 
+
+    assert(fsTexturer.initialize() == 0); 
 
     return (0); 
+} 
+
+// bug: this sets the viewport to complete fullscreen 
+// you have to reset the viewport if using smaller after call to this function 
+GLuint Godrays::render(vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, float exposure, float decay, float density, float weight, int numSamples, vmath::vec3 lightPosition) 
+{
+    createOcclusionTexture(); 
+    createSceneTexture(); 
+
+    vec2 lightPositionOnScreen = convertToScreenSpace(lightPosition, _viewMatrix, _projectionMatrix); 
+    logFile.log("lightPositionOnScreen = %.2f, %.2f\n", lightPositionOnScreen[0], lightPositionOnScreen[1]); 
+    createMotionBlurTexture(exposure, decay, density, weight, numSamples, vec2(lightPositionOnScreen[0], 1.0-lightPositionOnScreen[1])); 
+
+    GLuint finalCompositeTexture = getFinalCompositeTexture(); 
+
+    return (finalCompositeTexture); 
+
+    // fsTexturer.render(finalCompositeTexture); 
+} 
+
+void Godrays::uninitialize() 
+{
+    logFile.log("Godrays::uninitialize() Uninitializing...\n"); 
+    finalCompositeFBO.destroyFBO(); 
+    motionBlurFBO.destroyFBO(); 
+    sceneFBO.destroyFBO(); 
+    occlusionFBO.destroyFBO(); 
+    lightSourceFBO.destroyFBO(); 
+    sceneObjectsFBO.destroyFBO(); 
+    logFile.log("Godrays::uninitialize() Uninitialization completed\n"); 
 } 
 
 int Godrays::initOcclusionProgram() 
@@ -122,7 +159,38 @@ int Godrays::initMotionBlurProgram()
     return (0); 
 } 
 
-GLuint Godrays::getOcclusionTexture() 
+int Godrays::initFinalCompositeProgram() 
+{
+    char* vertexShaderSourceCode = NULL; 
+    char* fragmentShaderSourceCode = NULL; 
+
+    // sihoulette program 
+    vertexShaderSourceCode = FileHandler::fileToString("src/shaders/Godrays/finalComposite.vs"); 
+    fragmentShaderSourceCode = FileHandler::fileToString("src/shaders/Godrays/finalComposite.fs"); 
+
+    std::vector<ShaderSourceCodeAndType> shaders; 
+    shaders.push_back(ShaderSourceCodeAndType(vertexShaderSourceCode, GL_VERTEX_SHADER)); 
+    shaders.push_back(ShaderSourceCodeAndType(fragmentShaderSourceCode, GL_FRAGMENT_SHADER)); 
+
+    std::vector<AttributeWithIndexLocation> attributes; 
+    attributes.push_back(AttributeWithIndexLocation(AMC_ATTRIBUTE_POSITION, "aPosition")); 
+    attributes.push_back(AttributeWithIndexLocation(AMC_ATTRIBUTE_TEXCOORD, "aTexCoord")); 
+    
+    finalCompositeProgram.create(shaders, attributes); 
+
+    // get uniform locations 
+    sceneTextureUniform_finalComposite = finalCompositeProgram.getUniformLocation("uSceneTexture"); 
+    godRaysTextureUniform_finalComposite = finalCompositeProgram.getUniformLocation("uGodRaysTexture"); 
+    godRaysStrengthUniform_finalComposite = finalCompositeProgram.getUniformLocation("uGodRaysStrength"); 
+    
+    free(vertexShaderSourceCode); vertexShaderSourceCode = NULL; 
+    free(fragmentShaderSourceCode); fragmentShaderSourceCode = NULL; 
+    
+    return (0); 
+} 
+
+// creates occlusion texture from objectsFBO and lightSourceFBO (initiated by user) 
+GLuint Godrays::createOcclusionTexture() 
 {
     occlusionFBO.bind(); 
     {
@@ -148,7 +216,8 @@ GLuint Godrays::getOcclusionTexture()
     return (occlusionFBO.getTextureID()); 
 } 
 
-GLuint Godrays::getSceneTexture() 
+// creates scene texture from objectsFBO and lightSourceFBO 
+GLuint Godrays::createSceneTexture() 
 {
     sceneFBO.bind(); 
     {
@@ -174,15 +243,9 @@ GLuint Godrays::getSceneTexture()
     return (sceneFBO.getTextureID()); 
 } 
 
-GLuint Godrays::getMotionBlurTexture() 
+// applies motion blur on occlusion/silhoutte texture 
+GLuint Godrays::createMotionBlurTexture(float exposure, float decay, float density, float weight, int numSamples, vmath::vec2 lightPositionOnScreen) 
 {
-    float gExposure = 0.340; 
-    float gDecay = 0.960; 
-    float gDensity = 0.840; 
-    float gWeight =  0.580; 
-    vmath::vec2 lightPositionOnScreen = vmath::vec2(0.5, 0.5); 
-    float gNumSamples = 100; 
-
     motionBlurFBO.bind(); 
     {
         glClearColor(0.0, 0.0, 0.0, 1.0); 
@@ -190,16 +253,12 @@ GLuint Godrays::getMotionBlurTexture()
 
         motionBlurProgram.use(); 
 
-        glUniform1f(exposureUniform_motionBlur, gExposure);
-        glUniform1f(decayUniform_motionBlur, gDecay);
-        glUniform1f(densityUniform_motionBlur, gDensity);
-        glUniform1f(weightUniform_motionBlur, gWeight);
-        // if (gAutoLightPos) {
-            glUniform2fv(lightPositionOnScreenUniform_motionBlur, 1, lightPositionOnScreen);
-        // } else {
-        //     glUniform2fv(lightPositionOnScreenUniform_motionBlur, 1, gManualLightPos);
-        // }
-        glUniform1i(numSamplesUniform_motionBlur, gNumSamples); 
+        glUniform1f(exposureUniform_motionBlur, exposure);
+        glUniform1f(decayUniform_motionBlur, decay);
+        glUniform1f(densityUniform_motionBlur, density);
+        glUniform1f(weightUniform_motionBlur, weight);
+        glUniform2fv(lightPositionOnScreenUniform_motionBlur, 1, lightPositionOnScreen);
+        glUniform1i(numSamplesUniform_motionBlur, numSamples); 
         
         glActiveTexture(GL_TEXTURE0); 
         glUniform1i(occlusionTextureUniform_motionBlur, 0); 
@@ -213,3 +272,74 @@ GLuint Godrays::getMotionBlurTexture()
 
     return (motionBlurFBO.getTextureID()); 
 } 
+
+// combines scene texture and occlusion/silhoutte texture 
+GLuint Godrays::getFinalCompositeTexture() 
+{
+    finalCompositeFBO.bind(); 
+    {
+        glClearColor(0.0, 0.0, 0.0, 1.0); 
+        glClear(GL_COLOR_BUFFER_BIT); 
+
+        finalCompositeProgram.use(); 
+
+        glActiveTexture(GL_TEXTURE0); 
+        glBindTexture(GL_TEXTURE_2D, sceneFBO.getTextureID()); 
+        glUniform1i(sceneTextureUniform_finalComposite, 0); 
+
+        glActiveTexture(GL_TEXTURE1); 
+        glBindTexture(GL_TEXTURE_2D, motionBlurFBO.getTextureID()); 
+        glUniform1i(godRaysTextureUniform_finalComposite, 1);
+
+        glUniform1f(godRaysStrengthUniform_finalComposite, 1.0f); 
+        
+        quad.render(); 
+        
+        glBindTexture(GL_TEXTURE_2D, 0); 
+        finalCompositeProgram.unuse(); 
+    } 
+    finalCompositeFBO.unbind(); 
+
+    return (finalCompositeFBO.getTextureID()); 
+} 
+
+/* Helper routines */ 
+vmath::mat4 transpose(const vmath::mat4 &m) 
+{ 
+	vmath::mat4 t; 
+	
+	for (int i = 0; i < 4; ++i) 
+	{ 
+		for (int j = 0; j < 4; ++j) 
+		{ 
+			t[i][j] = m[j][i]; 
+		} 
+	} 
+	return t; 
+}
+
+vec2 convertToScreenSpace(vec3 worldPos, mat4 viewMatrix, mat4 projectionMatrix) 
+{
+	// variable declarations 
+	vec2 screenPos; 
+
+	// Step 1: world -> view 
+	vec4 viewPos = vec4(worldPos, 1.0) * transpose(viewMatrix); 
+	// Step 2: view -> clip 
+	vec4 clipPos = viewPos * transpose(projectionMatrix); 
+
+	if(clipPos[3] <= 0.0f) 
+		return (vec2(10.0, 10.0)); // position out of screen 
+	
+	// Step 3: perspective divide 
+	clipPos[0] /= clipPos[3]; 
+	clipPos[1] /= clipPos[3]; 
+	clipPos[2] /= clipPos[3]; 
+
+	// Step 4: NDC [-1,1] -> screen [0,1] 
+	screenPos[0] = (clipPos[0] + 1.0f) * 0.5f; 
+	screenPos[1] = 1.0f - (clipPos[1] + 1.0f) * 0.5f; // flip Y so top-left is (0,0)	
+
+	return (screenPos); 
+}
+

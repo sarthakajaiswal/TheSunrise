@@ -16,6 +16,8 @@ class TextureBlending
         ShaderProgram shaderProgram; 
         GLuint texture1Uniform; 
         GLuint texture2Uniform; 
+        GLuint texture1FactorUniform; 
+        GLuint texture2FactorUniform; 
 
         FBO fbo; 
 
@@ -28,7 +30,7 @@ class TextureBlending
     public: 
         TextureBlending(); 
         int initialize(); 
-        GLuint render(GLuint texture1, GLuint texture2); 
+        GLuint render(GLuint texture1, float tex1Factor, GLuint texture2, float tex2Factor); 
         void uninitialize(); 
         ~TextureBlending(); 
 }; 

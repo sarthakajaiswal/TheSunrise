@@ -181,7 +181,7 @@ void IntroScene::display()
     blurTexture = blueEffect.render(fbo_brightColors.getTextureID(), blurIterations); 
 
     // combining blur and scene texture
-    blendedTexture = blendTextureEffect.render(fbo_scene.getTextureID(), blurTexture); 
+    blendedTexture = blendTextureEffect.render(fbo_scene.getTextureID(), 1.0, blurTexture, 1.0); 
     
     // Finally, render blended texture on screen  
     fsTexture.render(blendedTexture); 

@@ -49,14 +49,16 @@ int TextureBlending::initOpenGLState()
 
     // get uniform locations 
     texture1Uniform = shaderProgram.getUniformLocation("uTexture1"); 
-    texture2Uniform = shaderProgram.getUniformLocation("uTexture2"); 
+    texture2Uniform = shaderProgram.getUniformLocation("uTexture2");  
+    texture1FactorUniform = shaderProgram.getUniformLocation("uTex1Factor"); 
+    texture2FactorUniform = shaderProgram.getUniformLocation("uTex2Factor"); 
 
     free(vertexShaderSourceCode); vertexShaderSourceCode = NULL; 
     free(fragmentShaderSourceCode); fragmentShaderSourceCode = NULL; 
     return (0); 
 } 
 
-GLuint TextureBlending::render(GLuint texture1, GLuint texture2) 
+GLuint TextureBlending::render(GLuint texture1, float tex1Factor, GLuint texture2, float tex2Factor) 
 {
     // function declarations 
     void resize(int width, int height); 
@@ -73,10 +75,12 @@ GLuint TextureBlending::render(GLuint texture1, GLuint texture2)
 	glActiveTexture(GL_TEXTURE0); 
 	glBindTexture(GL_TEXTURE_2D, texture1); 
 	glUniform1i(texture1Uniform, 0);
+    glUniform1f(texture1FactorUniform, tex1Factor); 
 
 	glActiveTexture(GL_TEXTURE1); 
 	glBindTexture(GL_TEXTURE_2D, texture2); 
 	glUniform1i(texture2Uniform, 1); 
+    glUniform1f(texture2FactorUniform, tex1Factor); 
 
 	quad.render(); 
 

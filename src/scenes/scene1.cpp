@@ -11,6 +11,8 @@ float tx, ty, tz;
 float sx=1.0, sy=1.0, sz=1.0; 
 float rx, ry, rz; 
 
+float alpha=0.2; 
+
 Camera scene1Camera; 
 // float cubemapYAngle=178.0f; 
 float modelX = 534.06, modelY = 46.0, modelZ = 501.85; 
@@ -20,6 +22,12 @@ Scene1::Scene1()
 {
     // code  
     exposureValue = 0.2f; 
+
+    exposure_godrays = 0.34f; 
+    decay_godrays = 0.96f; 
+    density_godrays = 0.84f; 
+    weight_godrays = 0.58f; 
+    numSamples_godrays = 50; 
 } 
 
 int Scene1::initialize() 
@@ -30,6 +38,7 @@ int Scene1::initialize()
     // -------- Effects --------- 
     // assert(exposureProgram.initialize() == 0); 
     assert(fsTexturer.initialize() == 0); 
+    assert(textureBlender.initialize() == 0); 
     assert(initBWShader() == 0); 
 
     std::vector<std::string> textureImages = {"res/terrain1.png", "res/terrain3.png", "res/terrain2.png", "res/terrain4.png"}; 
@@ -137,18 +146,6 @@ void Scene1::display()
     } 
     modelMatrix = matrixStack.popMatrix(); 
 
-    // cubemap  
-    matrixStack.pushMatrix(modelMatrix); 
-    {
-        mat4 rotationMatrix = vmath::rotate(162.0f, 1.0f, 0.0f, 0.0f); 
-        rotationMatrix *= vmath::rotate(0.6f, 0.0f, 1.0f, 0.0f); 
-        rotationMatrix *= vmath::rotate(7.11f, 0.0f, 0.0f, 1.0f); 
-        modelMatrix = rotationMatrix; 
-
-        cubemap.render(modelMatrix, viewMatrix, projectionMatrix); 
-    } 
-    modelMatrix = matrixStack.popMatrix(); 
-
     /*********** GODRAYS ************/ 
     godrays.sceneObjectsFBO.bind(); 
     { 
@@ -189,6 +186,28 @@ void Scene1::display()
     } 
     godrays.lightSourceFBO.unbind(); 
 
+    // matrixStack.pushMatrix(modelMatrix);
+    // { 
+    //     mat4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix; 
+    //     glEnable(GL_BLEND); 
+    //     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+        // godrays.render(
+    //         viewMatrix, projectionMatrix, exposure_godrays, decay_godrays, density_godrays, weight_godrays, numSamples_godrays, vec3(490.6f, 455.627f, 2000.0f)); 
+    //     glDisable(GL_BLEND); 
+    // } 
+    // modelMatrix = matrixStack.popMatrix(); 
+
+    // cubemap  
+    matrixStack.pushMatrix(modelMatrix); 
+    {
+        mat4 rotationMatrix = vmath::rotate(162.0f, 1.0f, 0.0f, 0.0f); 
+        rotationMatrix *= vmath::rotate(0.6f, 0.0f, 1.0f, 0.0f); 
+        rotationMatrix *= vmath::rotate(7.11f, 0.0f, 0.0f, 1.0f); 
+        modelMatrix = rotationMatrix; 
+
+        cubemap.render(modelMatrix, viewMatrix, projectionMatrix); 
+    } 
+    modelMatrix = matrixStack.popMatrix(); 
 
     /*****************************************************************************************************************************/
 
@@ -202,12 +221,22 @@ void Scene1::display()
     // glDisable(GL_BLEND); 
     // testFBO.unbind(); 
 
-    GLuint sceneTexture = godrays.getSceneTexture(); 
-    GLuint occlusionTexture = godrays.getOcclusionTexture(); 
-    GLuint motionBlurTexture = godrays.getMotionBlurTexture(); 
+    // GLuint motionBlurTexture = godrays.createMotionBlurTexture(exposure_godrays, decay_godrays, density_godrays, weight_godrays, numSamples_godrays, vec2(0.5, 0.5)); 
+    // GLuint occlusionTexture = godrays.createOcclusionTexture(); 
+    // GLuint sceneTexture = godrays.createSceneTexture(); 
+    // GLuint finalCompositeTexture = godrays.getFinalCompositeTexture(); 
 
-    glViewport(10, 600, 400, 250);  
-    fsTexturer.render(motionBlurTexture); 
+    GLuint finalCompositeTexture = godrays.render(
+            viewMatrix, projectionMatrix, exposure_godrays, decay_godrays, density_godrays, weight_godrays, numSamples_godrays, vec3(490.6f, 455.627f, 2000.0f)); 
+
+    // fsTexturer.render(godrays.getFinalCompositeTexture()); 
+
+    // glViewport(10, 600, 400, 250);    
+    glEnable(GL_BLEND); 
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+    fsTexturer.render(finalCompositeTexture, alpha); 
+    glDisable(GL_BLEND);
+    // fsTexturer.render(motionBlurTexture); 
     // fsTexturer.render(sceneTexture); 
     // fsTexturer.render(occlusionTexture); 
     // fsTexturer.render(gateTexture); 

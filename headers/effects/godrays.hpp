@@ -16,7 +16,7 @@ extern FileHandler logFile;
 
 class Godrays 
 {
-    public: 
+    private: 
         // pass1 
         ShaderProgram silhoutteFromObjectsAndLightProgram; 
         GLuint objectsTextureUniform_silhotte = 0; 
@@ -37,27 +37,41 @@ class Godrays
         GLuint occlusionTextureUniform_motionBlur = 0; 
         GLuint numSamplesUniform_motionBlur = 0; 
 
-        FBO sceneObjectsFBO; 
-        FBO lightSourceFBO; 
+        // pass4 
+        ShaderProgram finalCompositeProgram; 
+        GLuint sceneTextureUniform_finalComposite = 0; 
+        GLuint godRaysTextureUniform_finalComposite = 0; 
+        GLuint godRaysStrengthUniform_finalComposite = 0; 
+
         FBO occlusionFBO; 
         FBO sceneFBO; 
         FBO motionBlurFBO; 
+        FBO finalCompositeFBO; 
 
+        FullScreenTexturer fsTexturer; 
         Quad quad; 
 
         int initOpenGLState(); 
         int initOcclusionProgram(); 
         int initSceneProgram(); 
         int initMotionBlurProgram(); 
-
-        GLuint getOcclusionTexture(); 
-        GLuint getSceneTexture(); 
-        GLuint getMotionBlurTexture(); 
+        int initFinalCompositeProgram(); 
 
     public: 
+        GLuint createOcclusionTexture(); 
+        GLuint createSceneTexture(); 
+        GLuint createMotionBlurTexture(float exposure, float decay, float density, float weight, int numSamples, vmath::vec2 lightPositionOnScreen); 
+        GLuint getFinalCompositeTexture(); 
+        
+        FBO sceneObjectsFBO; 
+        FBO lightSourceFBO; 
+
         Godrays(); 
         int initialize(); 
+        GLuint render(vmath::mat4 viewMatrix, vmath::mat4 projectionMatrix, float exposure, float decay, float density, float weight, int numSamples, vmath::vec3 lightPosition); 
         void uninitialize(); 
 }; 
+
+vec2 convertToScreenSpace(vec3 worldPos, mat4 viewMatrix, mat4 projectionMatrix); 
 
 #endif // _GODRAYS_HPP   

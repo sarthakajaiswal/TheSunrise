@@ -16,10 +16,10 @@ extern Scene2 scene2;
 // extern float cubemapYAngle; 
 extern float modelX, modelY, modelZ; 
 extern float modelSx, modelSy, modelSz;
-
 extern float tx, ty, tz; 
 extern float sx, sy, sz; 
 extern float rx, ry, rz; 
+extern float alpha; 
 
 // scene2 related 
 extern float tHeight1; 
@@ -142,18 +142,26 @@ void scene1Controls(void)
     // ImGui::SliderFloat("dsz", &modelSz, 0.0f, 1.0f);
     // ImGui::SliderFloat("cubemap Y angle:", &cubemapYAngle, 0.0, 360.0);  
 
-    ImGui::SliderFloat("tx", &tx, -100.0f, 1000.0f);
-    ImGui::SliderFloat("ty", &ty, -100.0f, 1000.0f);
-    ImGui::SliderFloat("tz", &tz, -100.0f, 2000.0f);
+    // ImGui::SliderFloat("tx", &tx, -100.0f, 1000.0f);
+    // ImGui::SliderFloat("ty", &ty, -100.0f, 1000.0f);
+    // ImGui::SliderFloat("tz", &tz, -100.0f, 2000.0f);
     
-    ImGui::SliderFloat("sx", &sx, 0.0f, 1.0f);
-    ImGui::SliderFloat("sy", &sy, 0.0f, 1.0f);
-    ImGui::SliderFloat("sz", &sz, 0.0f, 1.0f);
+    // ImGui::SliderFloat("sx", &sx, 0.0f, 1.0f);
+    // ImGui::SliderFloat("sy", &sy, 0.0f, 1.0f);
+    // ImGui::SliderFloat("sz", &sz, 0.0f, 1.0f);
 
-    ImGui::SliderFloat("rx", &rx, 0.0f, 360.0f);
-    ImGui::SliderFloat("ry", &ry, 0.0f, 360.0f);
-    ImGui::SliderFloat("rz", &rz, 0.0f, 360.0f);
-    
+    // ImGui::SliderFloat("rx", &rx, 0.0f, 360.0f);
+    // ImGui::SliderFloat("ry", &ry, 0.0f, 360.0f);
+    // ImGui::SliderFloat("rz", &rz, 0.0f, 360.0f);
+
+
+    ImGui::SliderFloat("exposure", &scene1.exposure_godrays, 0.0f, 1.0f);
+    ImGui::SliderFloat("decay", &scene1.decay_godrays, 0.0f, 1.0f);
+    ImGui::SliderFloat("density", &scene1.density_godrays, 0.0f, 1.0f);
+    ImGui::SliderFloat("weight", &scene1.weight_godrays, 0.0f, 1.0f);
+    ImGui::SliderInt("num samples", &scene1.numSamples_godrays, 0.0f, 100);
+    ImGui::Spacing(); 
+    ImGui::SliderFloat("alpha", &alpha, 0.0f, 1.0f);
 } 
 
 void scene2Controls(void) 

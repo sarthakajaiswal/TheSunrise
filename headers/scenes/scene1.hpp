@@ -7,6 +7,7 @@
 #include "../effects/terrain.hpp" 
 #include "../effects/cubemap.hpp" 
 #include "../effects/godrays.hpp" 
+#include "../effects/textureBlending.hpp" 
 #include "../objects.hpp"
 #include "../assimpModelLoader.hpp"
 #include "../fbo.hpp" 
@@ -21,6 +22,7 @@ class Scene1
         Terrain terrain; 
         Godrays godrays; 
         Cubemap cubemap; 
+        TextureBlending textureBlender; 
 
         ShaderProgram bwShader; 
         GLuint mvpMatrixUniform_bwShader; 
@@ -39,6 +41,12 @@ class Scene1
 
     public: 
         float exposureValue; 
+
+        float exposure_godrays; 
+        float decay_godrays; 
+        float density_godrays; 
+        float weight_godrays; 
+        int numSamples_godrays; 
 
         Scene1(); 
         int initialize(); 
