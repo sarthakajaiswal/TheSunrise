@@ -162,5 +162,16 @@ void scene1Controls(void)
 
 void scene2Controls(void) 
 {
+    ImGui::SliderFloat("tx", &tx, -500.0f, 1000.0f);
+    ImGui::SliderFloat("ty", &ty, -500.0f, 1000.0f);
+    ImGui::SliderFloat("tz", &tz, -500.0f, 2000.0f);
+    
+    ImGui::SliderFloat("sx", &sx, 0.0f, 1000.0f);
+    ImGui::SliderFloat("sy", &sy, 0.0f, 1000.0f);
+    ImGui::SliderFloat("sz", &sz, 0.0f, 1000.0f);
+
+    ImGui::SliderFloat("rx", &rx, 0.0f, 360.0f);
+    ImGui::SliderFloat("ry", &ry, 0.0f, 360.0f);
+    ImGui::SliderFloat("rz", &rz, 0.0f, 360.0f);
 } 
 

@@ -47,6 +47,7 @@ class Camera
         Camera::Camera(std::vector<vmath::vec3> positions, std::vector<float> yaws, std::vector<float> pitches); 
         
         vmath::vec3 getPosition(); 
+        vmath::vec3 getCenter() const; 
         vmath::mat4 getViewMatrix(enum CameraMode mode, float speed = 0.5); 
         void setState(vmath::vec3 position, float yaw, float pitch); 
 

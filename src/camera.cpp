@@ -41,9 +41,14 @@ Camera::Camera(std::vector<vmath::vec3> _positionArray, std::vector<float> _yawA
     this->pitchArray = _pitchArray; 
 }  
 
-vmath::vec3 Camera::getPosition() 
+vmath::vec3 Camera::getPosition()
 {
     return (position); 
+} 
+
+vmath::vec3 Camera::getCenter() const 
+{
+    return (position+direction); 
 } 
 
 vmath::mat4 Camera::getViewMatrix(enum CameraMode mode, float t) 

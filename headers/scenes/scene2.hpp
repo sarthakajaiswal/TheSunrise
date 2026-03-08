@@ -4,7 +4,9 @@
 #include "../shaderProgram.hpp" 
 #include "../objects.hpp"
 #include "../camera.hpp"
+#include "../imgui_manager.hpp" 
 #include "../effects/terrain.hpp"
+#include "../effects/water.hpp"
 
 class Scene2 
 {
@@ -13,6 +15,8 @@ class Scene2
         const float terrainScale = 50.0f; 
         const int textureScale = 12; 
         const float heightScale = 12.0f; 
+
+        Water water; 
 
     public: 
         Scene2(); 

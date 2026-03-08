@@ -15,9 +15,9 @@ ry = 180.0
 
 */ 
 
-float tx, ty, tz; 
-float sx=1.0, sy=1.0, sz=1.0; 
-float rx, ry, rz; 
+// float tx, ty, tz; 
+// float sx=1.0, sy=1.0, sz=1.0; 
+// float rx, ry, rz; 
 
 float alpha=0.2; 
 
