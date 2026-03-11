@@ -67,6 +67,7 @@ int IntroScene::initialize()
 
     texture_marbleColor = loadTexture("res\\BlackMarble.png", FALSE); 
     texture_marbleNormalMap = loadTexture("res\\BlackMarbleNormalMap.png", FALSE); 
+    crackTexture = loadTexture("res\\redCrack.png", FALSE); 
 
     introSceneCamera.automise(path1ControlPoints, path1Yaws, path1Pitches); 
     // introSceneCamera.setState(vec3(-36.09, 0.27, 21.99), -50.50, 1.0); 
@@ -208,12 +209,21 @@ void IntroScene::display()
 
     // combining blur and scene texture
     blendedTexture = blendTextureEffect.render(fbo_scene.getTextureID(), 1.0, blurTexture, 1.0); 
-    
+
     // Finally, render blended texture on screen  
     glEnable(GL_BLEND); 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
     fsTexture.render(blendedTexture, textureAlpha); 
     glDisable(GL_BLEND); 
+
+    // crack texture 
+    if(bShowCrackTexure == true) 
+    {
+        glEnable(GL_BLEND); 
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+        fsTexture.render(crackTexture, 0.1); 
+        glDisable(GL_BLEND); 
+    } 
 
 	// ************** CHECK FBO TEXTURES *************** 
 	// glViewport(1000, 400, 480, 270);
@@ -264,6 +274,9 @@ void IntroScene::update()
 
         if(mainTimer > 22.0 && textureAlpha > 0.0) 
             textureAlpha -= 0.01f; 
+
+        if(mainTimer > 28.0) 
+            bShowCrackTexure = true; 
     } 
     // else 
     // {

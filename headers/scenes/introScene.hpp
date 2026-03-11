@@ -50,8 +50,10 @@ class IntroScene
         GLuint texture_marbleNormalMap = 0; 
         GLuint blurTexture; 
         GLuint blendedTexture; 
+        GLuint crackTexture; 
 
         // ===== event handeling related ====== 
+        bool bShowCrackTexure = false;
         enum Shot shotNumber = SHOT1; 
 
     public: 
