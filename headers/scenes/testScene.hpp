@@ -1,25 +1,34 @@
-// #ifndef _TEST_SCENE 
-// #define _TEST_SCENE 
+#ifndef _TEST_SCENE 
+#define _TEST_SCENE 
 
-// #include "../global_header.hpp" 
-// #include "../shaderProgram.hpp" 
-// #include "../objects.hpp" 
-// #include "../camera.hpp" 
+#include "../global_header.hpp" 
+#include "../shaderProgram.hpp" 
+#include "../objects.hpp" 
+#include "../camera.hpp" 
+#include "../spline.hpp" 
+#include "../imgui_manager.hpp" 
 
-// class TestScene 
-// {
-//     private: 
-//         GLuint shaderProgramObject; 
+class TestScene 
+{
+    private: 
+        ShaderProgram shaderProgramObject; 
+        GLuint mvpMatrixUniform; 
 
-//     public: 
-//         TestScene(); 
+        Cube cube; 
 
-//         int initialize(); 
-//         void display(); 
-//         void update(); 
+        bool initShaderProgram(); 
+
+    public: 
+        TestScene(); 
+
+        int initialize(); 
+        void display(); 
+        void update(); 
         
-//         ~TestScene(); 
-// }; 
+        ~TestScene(); 
+
+        void eventCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam); 
+}; 
 
 
-// #endif /* _TEST_SCENE */ 
+#endif /* _TEST_SCENE */ 

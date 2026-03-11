@@ -2,6 +2,7 @@
 #include "..\headers\scenes\introScene.hpp" 
 #include "..\headers\scenes\scene1.hpp" 
 #include "..\headers\scenes\scene2.hpp" 
+#include "..\headers\scenes\testScene.hpp" 
 
 extern HWND ghwnd; 
 
@@ -22,6 +23,9 @@ extern float rx, ry, rz;
 extern float alpha; 
 
 // scene2 related 
+
+// test scene related 
+extern Spline3D spline; 
 
 bool ImGuiManager::Initialize(HWND hwnd) {
     if (initialized || !ENABLE_IMGUI)
@@ -76,6 +80,7 @@ void ImGuiManager::RenderDebugWindow() {
     void introSceneControls(void);     
     void scene1Controls(void);     
     void scene2Controls(void);     
+    void testSceneControls(void);     
 
     // code 
     if (!initialized || !ENABLE_IMGUI)
@@ -100,6 +105,10 @@ void ImGuiManager::RenderDebugWindow() {
 
         case SCENE_2: 
             scene2Controls(); 
+            break; 
+
+        case TEST_SCENE: 
+            testSceneControls(); 
             break; 
 
         default: 
@@ -165,5 +174,20 @@ void scene2Controls(void)
     ImGui::SliderFloat("rx", &rx, 0.0f, 360.0f);
     ImGui::SliderFloat("ry", &ry, 0.0f, 360.0f);
     ImGui::SliderFloat("rz", &rz, 0.0f, 360.0f);
+} 
+
+void testSceneControls(void) 
+{
+    if (ImGui::Button("Add new random spline point"))
+    {
+        spline.addRandomControlPoint(); 
+    }
+
+    if (ImGui::Button("Add new spline point at camera"))
+    {
+        spline.addControlPointAtPos(testSceneCamera.getPosition()); 
+    }
+
+    ImGui::Text("%.2f-%.2f-%.2f", testSceneCamera.getPosition()[0], testSceneCamera.getPosition()[1], testSceneCamera.getPosition()[2]); 
 } 
 
