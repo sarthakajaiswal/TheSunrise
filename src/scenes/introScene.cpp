@@ -1,16 +1,28 @@
 #include "../../headers/scenes/introScene.hpp" 
 
-Camera introSceneCamera; 
-
-// std::vector<vec3> spline1ControlPoints = 
-// {
-
-// } 
-
-// Spline3D
-
 extern mat4 projectionMatrix; 
 extern void resize(int, int); 
+
+Camera introSceneCamera; 
+
+std::vector<vec3> path1ControlPoints = 
+{
+    {-21.30, 0.93, -8.36}, 
+    {-36.09, 0.27, 21.99} 
+}; 
+std::vector<float> path1Yaws = {-60.20, -50.50}; 
+std::vector<float> path1Pitches = {1.60, 1.00}; 
+
+
+
+
+
+
+
+
+Spline3D introSceneSpline1({vmath::vec3(-21.30, 0.93, -8.36), vmath::vec3(-21.40, 0.95, -8.46)}); 
+
+
 
 IntroScene::IntroScene() 
 {
@@ -60,7 +72,9 @@ int IntroScene::initialize()
     texture_marbleColor = loadTexture("res\\BlackMarble.png", FALSE); 
     texture_marbleNormalMap = loadTexture("res\\BlackMarbleNormalMap.png", FALSE); 
 
-    introSceneCamera.setState(vec3(-7.67, 0.96, -15.00), -45.90, 1.30); 
+    // introSceneCamera.automise(path1ControlPoints, path1Yaws, path1Pitches); 
+    // introSceneCamera.setState(vec3(-36.09, 0.27, 21.99), -50.50, 1.0); 
+    introSceneCamera.setState(vec3(0.0, 0.0, 0.0), -50.50, 1.0); 
 
     logFile.log("------------------ IntroScene::initialize() completed ----------------\n\n"); 
     return (0); 
@@ -77,6 +91,19 @@ void IntroScene::display()
     //     isFirstCall = false; 
     // } 
 
+    mat4 modelMatrix = mat4::identity(); 
+    viewMatrix = introSceneCamera.getViewMatrix(CAMERA_GAME_MODE); 
+
+
+    matrixStack.pushMatrix(modelMatrix); 
+    {
+        // vec3 cameraPosition = introSceneCamera.getPosition(); 
+        // modelMatrix = vmath::translate(-cameraPosition); 
+
+        introSceneSpline1.show(projectionMatrix*viewMatrix*modelMatrix); 
+    } 
+    modelMatrix = matrixStack.popMatrix(); 
+
     // render scene to fbo 
     fbo_scene.bind(); 
     {
@@ -85,7 +112,6 @@ void IntroScene::display()
 
         headingAlphabetsShaderProgram.use(); 
         mat4 modelMatrix = mat4::identity(); 
-        viewMatrix = introSceneCamera.getViewMatrix(CAMERA_GAME_MODE); 
 
         glUniformMatrix4fv(projectionMatrixUniform_heading, 1, GL_FALSE, projectionMatrix);   
         glUniform1f(blendStrengthUniform_heading, blendStrength); 

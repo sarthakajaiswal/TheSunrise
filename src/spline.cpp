@@ -6,9 +6,15 @@ Spline3D::Spline3D() : isOpenGLStateInitialized(false)
     controlPoints.push_back(vmath::vec3(4.0)); 
 } 
 
-Spline3D::Spline3D(std::vector<vmath::vec3> controlPointsArray) : isOpenGLStateInitialized(false) 
+Spline3D::Spline3D(std::vector<vmath::vec3> controlPointsArray)
 {
-    controlPoints = controlPointsArray; 
+    initialize(controlPointsArray); 
+} 
+
+void Spline3D::initialize(std::vector<vmath::vec3> controlPointsArray)
+{
+    isOpenGLStateInitialized = false; 
+    controlPoints = controlPointsArray;
 } 
 
 float 
@@ -250,6 +256,11 @@ Spline3D::initOpenGLState()
 // =================================================================================================================================
 
 Spline1D::Spline1D(std::vector<float> valuesArray) 
+{
+    initialize(valuesArray); 
+} 
+
+void Spline1D::initialize(std::vector<float> valuesArray) 
 {
     values = valuesArray; 
 } 

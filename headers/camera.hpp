@@ -44,11 +44,11 @@ class Camera
 
     public: 
         Camera(); 
-        Camera::Camera(std::vector<vmath::vec3> positions, std::vector<float> yaws, std::vector<float> pitches); 
         
+        void automise(std::vector<vmath::vec3> positions, std::vector<float> yaws, std::vector<float> pitches); 
         vmath::vec3 getPosition(); 
         vmath::vec3 getCenter() const; 
-        vmath::mat4 getViewMatrix(enum CameraMode mode, float speed = 0.5); 
+        vmath::mat4 getViewMatrix(enum CameraMode mode, float t=1.0); 
         void setState(vmath::vec3 position, float yaw, float pitch); 
 
         void setControlPoints(std::vector<vmath::vec3> positions, std::vector<float> yaws, std::vector<float> pitches); 

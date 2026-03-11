@@ -15,8 +15,8 @@ void Camera::updateVectorsAfterChangesInAngle(void)
 
 Camera::Camera() 
             : positionSpline({vmath::vec3(0.0, 1.0, 1.0), vmath::vec3(0.0, 2.0, 2.0)}), 
-                yawSpline({CAMERA_DEFAULT_YAW, CAMERA_DEFAULT_YAW}), 
-                pitchSpline({CAMERA_DEFAULT_PITCH, CAMERA_DEFAULT_PITCH}) 
+                yawSpline({CAMERA_DEFAULT_YAW, CAMERA_DEFAULT_YAW+1.0}), 
+                pitchSpline({CAMERA_DEFAULT_PITCH, CAMERA_DEFAULT_PITCH+1.0}) 
 {
     position = vmath::vec3(0.0, 0.0, 3.0); 
     up = vmath::vec3(0.0, 1.0, 0.0); 
@@ -33,12 +33,15 @@ Camera::Camera()
     up = cross(direction, right);
 } 
 
-Camera::Camera(std::vector<vmath::vec3> _positionArray, std::vector<float> _yawArray, std::vector<float> _pitchArray) 
-            : positionSpline(_positionArray), yawSpline(_yawArray), pitchSpline(_pitchArray) 
+void Camera::automise(std::vector<vmath::vec3> _positionArray, std::vector<float> _yawArray, std::vector<float> _pitchArray) 
 {
     this->positionArray = _positionArray; 
     this->yawArray = _yawArray; 
     this->pitchArray = _pitchArray; 
+
+    positionSpline.initialize(_positionArray); 
+    yawSpline.initialize(_yawArray); 
+    pitchSpline.initialize(_pitchArray); 
 }  
 
 vmath::vec3 Camera::getPosition()
@@ -71,9 +74,6 @@ vmath::mat4 Camera::getViewMatrix(enum CameraMode mode, float t)
         vmath::vec3 center = eye + direction; 
 
         vmath::vec3 up = vmath::vec3(0.0, 1.0, 0.0); 
-
-        logFile.log("t = %.2f => pos = %.2f, %.2f, %.2f yaw=%.2f pitch=%.2f center = %.2f, %.2f, %.2f up = %.2f, %.2f, %.2f\n", 
-                t, eye[0], eye[1], eye[2], yawAtT, pitchAtT, center[0], center[1], center[2], up[0], up[1], up[2]); 
 
         vmath::mat4 viewMatrix = vmath::lookat(eye, center, up); 
         return (viewMatrix);  

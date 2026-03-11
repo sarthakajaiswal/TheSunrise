@@ -9,7 +9,7 @@
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\objects.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\fbo.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\common.cpp
-cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\camera.cpp
+@REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\camera.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\effects\guassianBlur.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\effects\exposure.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\effects\terrain.cpp
@@ -20,10 +20,10 @@ cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\camera.cpp
 cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\scenes\introScene.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\scenes\scene2.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\scenes\scene1.cpp
-cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\scenes\testScene.cpp
+@REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\scenes\testScene.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\imgui_manager.cpp
 cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\camera.cpp
-cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\spline.cpp
+@REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\spline.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\OGL.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\effects\terrain.cpp
 

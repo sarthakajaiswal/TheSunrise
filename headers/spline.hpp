@@ -36,6 +36,8 @@ class Spline3D
         Spline3D(); 
         Spline3D(std::vector<vmath::vec3> controlPointsArray); 
 
+        void initialize(std::vector<vmath::vec3> controlPointsArray); 
+
         void setAlpha(float _alpha); 
         vmath::mat4 getViewMatrix(float t); 
         
@@ -64,6 +66,8 @@ class Spline1D
 
     public: 
         Spline1D(std::vector<float> valuesArray); 
+
+        void initialize(std::vector<float> valuesArray); 
 
         void setAlpha(float _alpha); 
         
