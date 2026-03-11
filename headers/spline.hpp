@@ -9,17 +9,28 @@
 #include <gl/GL.h> 
 
 #include "vmath.h"  
+#include "shaderProgram.hpp" 
+#include "global_header.hpp" 
 
 // requires at least 4 points 
 class Spline3D 
 {
     private: 
-        std::vector<vmath::vec3> positions; 
+        std::vector<vmath::vec3> controlPoints; 
         float alpha = 0.5f; // 0.5 -> centripetal catmull-rom spline 
 
         float getKnotValue(float t, float alpha, vmath::vec3 p0, vmath::vec3 p1); 
         vmath::vec3 catmullRom(vmath::vec3 p0, vmath::vec3 p1, vmath::vec3 p2, vmath::vec3 p3, float t, float alpha);
         vmath::vec3 getPoint(const std::vector<vmath::vec3>& pts, int index);
+
+        // opengl related 
+        ShaderProgram shaderProgram; 
+        GLuint mvpMatrixUniform; 
+        GLuint vao; 
+        GLuint vbo;
+        bool isOpenGLStateInitialized; 
+        std::vector<vmath::vec3> positionsOnSpline; 
+        void initOpenGLState(); 
 
     public: 
         Spline3D(); 
@@ -31,7 +42,7 @@ class Spline3D
         vmath::vec3 evaluatePositionAtT(float globalT); 
         void getPositionsOnSpline(std::vector<vmath::vec3>& positions, int count); 
 
-        // void show() const; 
+        void show(vmath::mat4 _mvpMatrix); 
         void addRandomControlPoint(); 
         void addControlPointAtPos(vmath::vec3 newControlPointPosition); 
 

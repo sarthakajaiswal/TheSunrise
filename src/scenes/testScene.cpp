@@ -13,12 +13,6 @@ int TestScene::initialize()
     assert(initShaderProgram() == true); 
     cube.initialize(); 
 
-    std::vector<vmath::vec3> points; 
-    spline.getPositionsOnSpline(points, 10); 
-
-    for(int i = 0; i < 10; ++i) 
-        logFile.log("%.2f-%.2f-%.2f\n", points[i][0], points[i][1], points[i][2]); 
-
     return (0); 
 } 
 
@@ -27,6 +21,8 @@ void TestScene::display()
     mat4 modelMatrix = mat4::identity(); 
     mat4 viewMatrix = mat4::identity(); 
     viewMatrix = testSceneCamera.getViewMatrix(CAMERA_GAME_MODE); 
+
+    spline.show(projectionMatrix*viewMatrix*modelMatrix); 
 
     shaderProgramObject.use(); 
     glUniformMatrix4fv(mvpMatrixUniform, 1, GL_FALSE, projectionMatrix*viewMatrix*modelMatrix); 

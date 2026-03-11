@@ -2,6 +2,7 @@
 #include "..\headers\scenes\introScene.hpp" 
 #include "..\headers\scenes\scene1.hpp" 
 #include "..\headers\scenes\scene2.hpp" 
+#include "..\headers\scenes\testScene.hpp" 
 
 extern HWND ghwnd; 
 
@@ -22,6 +23,9 @@ extern float rx, ry, rz;
 extern float alpha; 
 
 // scene2 related 
+
+// test scene related 
+extern Spline3D spline; 
 
 bool ImGuiManager::Initialize(HWND hwnd) {
     if (initialized || !ENABLE_IMGUI)
@@ -183,6 +187,16 @@ void scene2Controls(void)
 
 void testSceneControls(void) 
 {
+    if (ImGui::Button("Add new random spline point"))
+    {
+        spline.addRandomControlPoint(); 
+    }
 
+    if (ImGui::Button("Add new spline point at camera"))
+    {
+        spline.addControlPointAtPos(testSceneCamera.getPosition()); 
+    }
+
+    ImGui::Text("%.2f-%.2f-%.2f", testSceneCamera.getPosition()[0], testSceneCamera.getPosition()[1], testSceneCamera.getPosition()[2]); 
 } 
 
