@@ -9,9 +9,11 @@ extern HWND ghwnd;
 bool ImGuiManager::initialized = false;
 
 // scene  
-extern IntroScene introScene; 
+extern IntroScene introScene;  
 extern Scene1 scene1; 
 extern Scene2 scene2; 
+
+// intro scene related 
 
 // scene1 related 
 // extern float cubemapYAngle; 
@@ -121,11 +123,23 @@ void ImGuiManager::RenderDebugWindow() {
 // float lightPos[] = {introScene.lightPosition[0], introScene.lightPosition[1], introScene.lightPosition[2]}; 
 void introSceneControls(void) 
 {
+    extern Camera introSceneCamera;
+    
     ImGui::SliderFloat("lightPosX", &introScene.lightPosition[0], -50.0f, 50.0f);
     ImGui::SliderFloat("lightPosY", &introScene.lightPosition[1], -50.0f, 50.0f);
     ImGui::SliderFloat("lightPosZ", &introScene.lightPosition[2], -50.0f, 50.0f);
     ImGui::SliderInt("Blur iterations:", &introScene.blurIterations, 0, 25); 
     ImGui::SliderFloat("Blend Strength:", &introScene.blendStrength, 0, 10); 
+
+    ImGui::SliderFloat("alpha:", &introScene.textureAlpha, 0.0, 1.0); 
+
+    if (ImGui::Button("Add new random spline point"))
+        spline.addRandomControlPoint(); 
+
+    if (ImGui::Button("Add new spline point at camera"))
+        spline.addControlPointAtPos(introSceneCamera.getPosition()); 
+
+    ImGui::Text("%.2f-%.2f-%.2f", introSceneCamera.getPosition()[0], introSceneCamera.getPosition()[1], introSceneCamera.getPosition()[2]); 
 } 
 
 void scene1Controls(void) 

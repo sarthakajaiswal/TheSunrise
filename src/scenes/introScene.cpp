@@ -1,28 +1,24 @@
 #include "../../headers/scenes/introScene.hpp" 
 
 extern mat4 projectionMatrix; 
-extern void resize(int, int); 
 
 Camera introSceneCamera; 
 
 std::vector<vec3> path1ControlPoints = 
 {
-    {-21.30, 0.93, -8.36}, 
-    {-36.09, 0.27, 21.99} 
+    {-19.19, 1.92, -11.12}, 
+    {-32.29, -4.13, 37.81} 
 }; 
-std::vector<float> path1Yaws = {-60.20, -50.50}; 
-std::vector<float> path1Pitches = {1.60, 1.00}; 
+std::vector<float> path1Yaws = {-60.60, -60.80}; 
+std::vector<float> path1Pitches = {8.10, 8.80}; 
 
-
-
-
-
-
-
-
-Spline3D introSceneSpline1({vmath::vec3(-21.30, 0.93, -8.36), vmath::vec3(-21.40, 0.95, -8.46)}); 
-
-
+std::vector<vec3> path2ControlPoints = 
+{
+    {3.45, 0.41, -3.37}, 
+    {-2.51, -0.84, 14.58} 
+}; 
+std::vector<float> path2Yaws = {-86.30, -68.60}; 
+std::vector<float> path2Pitches = {-0.00, 5.40}; 
 
 IntroScene::IntroScene() 
 {
@@ -72,37 +68,19 @@ int IntroScene::initialize()
     texture_marbleColor = loadTexture("res\\BlackMarble.png", FALSE); 
     texture_marbleNormalMap = loadTexture("res\\BlackMarbleNormalMap.png", FALSE); 
 
-    // introSceneCamera.automise(path1ControlPoints, path1Yaws, path1Pitches); 
+    introSceneCamera.automise(path1ControlPoints, path1Yaws, path1Pitches); 
     // introSceneCamera.setState(vec3(-36.09, 0.27, 21.99), -50.50, 1.0); 
-    introSceneCamera.setState(vec3(0.0, 0.0, 0.0), -50.50, 1.0); 
 
     logFile.log("------------------ IntroScene::initialize() completed ----------------\n\n"); 
     return (0); 
 } 
 
+float t = 0.0; 
 void IntroScene::display() 
 {
-    void resize(int, int); 
-    // code 
-    // static bool isFirstCall = true; 
-    // if(isFirstCall == true) 
-    // {
-    //     localTimer = 0.0f; 
-    //     isFirstCall = false; 
-    // } 
-
     mat4 modelMatrix = mat4::identity(); 
-    viewMatrix = introSceneCamera.getViewMatrix(CAMERA_GAME_MODE); 
-
-
-    matrixStack.pushMatrix(modelMatrix); 
-    {
-        // vec3 cameraPosition = introSceneCamera.getPosition(); 
-        // modelMatrix = vmath::translate(-cameraPosition); 
-
-        introSceneSpline1.show(projectionMatrix*viewMatrix*modelMatrix); 
-    } 
-    modelMatrix = matrixStack.popMatrix(); 
+    viewMatrix = introSceneCamera.getViewMatrix(CAMERA_AUTO_MODE, t); 
+    // viewMatrix = introSceneCamera.getViewMatrix(CAMERA_GAME_MODE); 
 
     // render scene to fbo 
     fbo_scene.bind(); 
@@ -111,7 +89,6 @@ void IntroScene::display()
         glClear(GL_COLOR_BUFFER_BIT); 
 
         headingAlphabetsShaderProgram.use(); 
-        mat4 modelMatrix = mat4::identity(); 
 
         glUniformMatrix4fv(projectionMatrixUniform_heading, 1, GL_FALSE, projectionMatrix);   
         glUniform1f(blendStrengthUniform_heading, blendStrength); 
@@ -134,77 +111,86 @@ void IntroScene::display()
 
         mat4 modelViewMatrix = mat4::identity(); 
         
-        // if(mainTimer < 15.0f) 
-        // {
-            vec3 astromedicompStartingLocation = {astrmomedicompStartingX, 0.0f, astromedicompZ}; 
-            modelMatrix = vmath::translate(astromedicompStartingLocation[0], astromedicompStartingLocation[1], astromedicompStartingLocation[2]); 
-            modelMatrix = modelMatrix * vmath::scale(alphabetSx, alphabetSy, alphabetSz); 
+        if(shotNumber == SHOT1) 
+        {
+            matrixStack.pushMatrix(modelMatrix); 
+            {
+                vec3 astromedicompStartingLocation = {astrmomedicompStartingX, 0.0f, astromedicompZ}; 
+                modelMatrix = vmath::translate(astromedicompStartingLocation[0], astromedicompStartingLocation[1], astromedicompStartingLocation[2]); 
+                modelMatrix = modelMatrix * vmath::scale(alphabetSx, alphabetSy, alphabetSz); 
 
-            modelViewMatrix = viewMatrix * modelMatrix; 
-            glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
-            renderAlphabet_A();    
-            modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
-            glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
-            renderAlphabet_S();    
-            modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
-            glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
-            renderAlphabet_T();    
-            modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
-            glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
-            renderAlphabet_R();    
-            modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
-            glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
-            renderAlphabet_O();    
-            modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
-            glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
-            renderAlphabet_M();    
-            modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
-            glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
-            renderAlphabet_E();    
-            modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
-            glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
-            renderAlphabet_I();    
-            modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
-            glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
-            renderAlphabet_C();    
-            modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
-            glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
-            renderAlphabet_O();    
-            modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
-            glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
-            renderAlphabet_M();    
-            modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
-            glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
-            renderAlphabet_P();    
-        // } 
-        // else 
-        // {
-        //     static bool isFirstTime = true; 
-        //     if(isFirstTime == true) 
-        //     {
-        //         vec3 cpaStartingLocation = {-10.0, 0.0f, astromedicompZ}; 
-        //         modelMatrix = vmath::translate(cpaStartingLocation[0], cpaStartingLocation[1], cpaStartingLocation[2]); 
-        //         modelMatrix = modelMatrix * vmath::scale(alphabetSx, alphabetSy, alphabetSz); 
+                modelViewMatrix = viewMatrix * modelMatrix; 
+                glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+                renderAlphabet_A();    
+                modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+                glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+                renderAlphabet_S();    
+                modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+                glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+                renderAlphabet_T();    
+                modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+                glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+                renderAlphabet_R();    
+                modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+                glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+                renderAlphabet_O();    
+                modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+                glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+                renderAlphabet_M();    
+                modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+                glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+                renderAlphabet_E();    
+                modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+                glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+                renderAlphabet_I();    
+                modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+                glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+                renderAlphabet_C();    
+                modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+                glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+                renderAlphabet_O();    
+                modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+                glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+                renderAlphabet_M();    
+                modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+                glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+                renderAlphabet_P();    
+            } 
+            modelMatrix = matrixStack.popMatrix(); 
+        } 
+        else if(shotNumber == SHOT2)
+        {
+            matrixStack.pushMatrix(modelMatrix); 
+            {
+                static bool isFirstTime = true; 
+                if(isFirstTime == true) 
+                {
+                    vec3 cpaStartingLocation = {-10.0, 0.0f, astromedicompZ}; 
+                    modelMatrix = vmath::translate(cpaStartingLocation[0], cpaStartingLocation[1], cpaStartingLocation[2]); 
+                    modelMatrix = modelMatrix * vmath::scale(alphabetSx, alphabetSy, alphabetSz); 
 
-        //         isFirstTime = false; 
-        //     } 
+                    isFirstTime = false; 
+                } 
 
-        //     modelViewMatrix = viewMatrix * modelMatrix; 
-        //     glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
-        //     renderAlphabet_C();    
-        //     modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
-        //     glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
-        //     renderAlphabet_P();    
-        //     modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
-        //     glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
-        //     renderAlphabet_A();  
-        // } 
+                modelMatrix *= vmath::scale(1.2f, 2.0f, 1.0f); 
 
-        // =========================== ORIGINAL SCENE END =========================== 
+                modelViewMatrix = viewMatrix * modelMatrix; 
+                glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+                renderAlphabet_C();    
+                modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+                glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+                renderAlphabet_P();    
+                modelViewMatrix = modelViewMatrix * vmath::translate(alphabetSpacing, 0.0f, 0.0f); 
+                glUniformMatrix4fv(modelViewMatrixUniform_heading, 1, GL_FALSE, modelViewMatrix); 
+                renderAlphabet_A();  
+            } 
+            modelMatrix = matrixStack.popMatrix(); 
+        } 
 
         headingAlphabetsShaderProgram.unuse(); 
     } 
     fbo_scene.unbind(); 
+    // =========================== ORIGINAL SCENE END =========================== 
 
     // extract bright colors from scene 
     fbo_brightColors.bind(); 
@@ -226,7 +212,7 @@ void IntroScene::display()
     // Finally, render blended texture on screen  
     glEnable(GL_BLEND); 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-    fsTexture.render(blendedTexture); 
+    fsTexture.render(blendedTexture, textureAlpha); 
     glDisable(GL_BLEND); 
 
 	// ************** CHECK FBO TEXTURES *************** 
@@ -242,29 +228,51 @@ void IntroScene::display()
 
 void IntroScene::update() 
 {
-    // code  
-    static float headingGoingBackStep = 0.95f; 
+    if(t < 1.0) 
+        t+=0.001f; 
 
-    // if(mainTimer < 15.0)
+    if(mainTimer < 16.0) 
+    {
+        // shot1 
+        static bool firstTime = true; 
+        if(firstTime == true) 
+        {
+            shotNumber = SHOT1; 
+    
+            t = 0.0; 
+            introSceneCamera.automise(path1ControlPoints, path1Yaws, path1Pitches); 
+            firstTime = false; 
+        } 
+
+        if(mainTimer > 12.0 && textureAlpha > 0.0) 
+            textureAlpha -= 0.01f; 
+    } 
+    if(mainTimer > 16.0 && mainTimer < 30.0) 
+    {
+        // shot2 
+        static bool firstTime = true; 
+        if(firstTime == true) 
+        {
+            shotNumber = SHOT2; 
+
+            introSceneCamera.automise(path2ControlPoints, path2Yaws, path2Pitches); 
+            t = 0.0; 
+            textureAlpha = 1.0f; 
+            
+            firstTime = false; 
+        } 
+
+        if(mainTimer > 22.0 && textureAlpha > 0.0) 
+            textureAlpha -= 0.01f; 
+    } 
+    // else 
     // {
-    //     if(astromedicompZ > -50.0) 
-    //     {
-    //         astromedicompZ -= headingGoingBackStep; 
-    //         if(headingGoingBackStep > 0.008) 
-    //             headingGoingBackStep -= 0.009f; 
-    //     } 
-
-    //     if(mainTimer > 10.5 && blurIterations < 15 && blendStrength < 3.00) 
-    //     {
-    //         blurIterations += 1; 
-    //         blendStrength += 0.1f; 
-    //     } 
+    //     CurrentScene = SCENE_1; 
     // } 
 } 
 
 void IntroScene::uninitialize() 
 {
-
 } 
 
 void IntroScene::eventCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
@@ -379,4 +387,11 @@ bool IntroScene::initBrightColorSeparatorProgram()
 } 
 
 
-
+/* 
+matrixStack.pushMatrix(modelMatrix); 
+{
+    modelMatrix = mat4::identity(); 
+    introSceneSpline1.show(projectionMatrix*viewMatrix*modelMatrix); 
+} 
+modelMatrix = matrixStack.popMatrix(); 
+*/ 

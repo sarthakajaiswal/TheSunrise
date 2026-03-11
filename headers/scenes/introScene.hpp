@@ -51,7 +51,8 @@ class IntroScene
         GLuint blurTexture; 
         GLuint blendedTexture; 
 
-        float localTimer = 0.0f; 
+        // ===== event handeling related ====== 
+        enum Shot shotNumber = SHOT1; 
 
     public: 
         float alphabetSpacing = 3.799; 
@@ -60,6 +61,7 @@ class IntroScene
         float astrmomedicompStartingX = -30.540f; 
         float astromedicompZ = 0.0; 
         float alphabetSx = 1.471f, alphabetSy = 2.706f, alphabetSz = 2.647f; 
+        float textureAlpha = 1.0f; // for fade effect 
 
         // lighting related variable 
         GLfloat lightAmbient[4] = {0.1f, 0.1f, 0.1f, 1.0}; 

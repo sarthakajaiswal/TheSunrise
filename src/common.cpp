@@ -229,6 +229,7 @@ int FullScreenTexturer::initialize()
 void FullScreenTexturer::render(GLuint texture, float alpha) 
 {
     // glViewport(0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)); 
+    glDepthMask(GL_FALSE); 
     shaderProgram.use();
     glActiveTexture(GL_TEXTURE0); 
     glBindTexture(GL_TEXTURE_2D, texture); 
@@ -237,4 +238,5 @@ void FullScreenTexturer::render(GLuint texture, float alpha)
     quad.render();  
     glBindTexture(GL_TEXTURE_2D, 0); 
     shaderProgram.unuse(); 
+    glDepthMask(GL_TRUE); 
 } 

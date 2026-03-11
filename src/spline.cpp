@@ -129,7 +129,6 @@ Spline3D::show(vmath::mat4 _mvpMatrix)
     shaderProgram.use(); 
     glBindVertexArray(vao); 
     glUniformMatrix4fv(mvpMatrixUniform, 1, GL_FALSE, _mvpMatrix); 
-    glPointSize(4.0); 
     glDrawArrays(GL_LINE_STRIP, 0, positionsOnSpline.size()); 
     shaderProgram.unuse(); 
 } 
