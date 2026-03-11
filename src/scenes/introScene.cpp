@@ -2,6 +2,13 @@
 
 Camera introSceneCamera; 
 
+// std::vector<vec3> spline1ControlPoints = 
+// {
+
+// } 
+
+// Spline3D
+
 extern mat4 projectionMatrix; 
 extern void resize(int, int); 
 
@@ -31,8 +38,9 @@ int IntroScene::initialize()
 	logFile.log("IntroScene::initialize > required FBOs created\n"); 
 
     // effects  
-    blueEffect.initialize(); 
+    blurEffect.initialize(); 
     blendTextureEffect.initialize(); 
+    fsTexture.initialize(); 
 
     quad.initialize(); 
     logFile.log("IntroScene::initialize > initializing alphabets...\n"); 
@@ -52,23 +60,29 @@ int IntroScene::initialize()
     texture_marbleColor = loadTexture("res\\BlackMarble.png", FALSE); 
     texture_marbleNormalMap = loadTexture("res\\BlackMarbleNormalMap.png", FALSE); 
 
+    introSceneCamera.setState(vec3(-7.67, 0.96, -15.00), -45.90, 1.30); 
+
     logFile.log("------------------ IntroScene::initialize() completed ----------------\n\n"); 
     return (0); 
 } 
 
 void IntroScene::display() 
 {
+    void resize(int, int); 
     // code 
-    static bool isFirstCall = true; 
-    if(isFirstCall == true) 
-    {
-        localTimer = 0.0f; 
-        isFirstCall = false; 
-    } 
+    // static bool isFirstCall = true; 
+    // if(isFirstCall == true) 
+    // {
+    //     localTimer = 0.0f; 
+    //     isFirstCall = false; 
+    // } 
 
     // render scene to fbo 
     fbo_scene.bind(); 
     {
+        glClearColor(0.1, 0.0, 0.0, 1.0); 
+        glClear(GL_COLOR_BUFFER_BIT); 
+
         headingAlphabetsShaderProgram.use(); 
         mat4 modelMatrix = mat4::identity(); 
         viewMatrix = introSceneCamera.getViewMatrix(CAMERA_GAME_MODE); 
@@ -178,13 +192,16 @@ void IntroScene::display()
 	fbo_brightColors.unbind(); 
 
 	// applying blueEffect on bright colors 
-    blurTexture = blueEffect.render(fbo_brightColors.getTextureID(), blurIterations); 
+    blurTexture = blurEffect.render(fbo_brightColors.getTextureID(), blurIterations); 
 
     // combining blur and scene texture
     blendedTexture = blendTextureEffect.render(fbo_scene.getTextureID(), 1.0, blurTexture, 1.0); 
     
     // Finally, render blended texture on screen  
+    glEnable(GL_BLEND); 
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
     fsTexture.render(blendedTexture); 
+    glDisable(GL_BLEND); 
 
 	// ************** CHECK FBO TEXTURES *************** 
 	// glViewport(1000, 400, 480, 270);
@@ -202,21 +219,21 @@ void IntroScene::update()
     // code  
     static float headingGoingBackStep = 0.95f; 
 
-    if(mainTimer < 15.0)
-    {
-        if(astromedicompZ > -50.0) 
-        {
-            astromedicompZ -= headingGoingBackStep; 
-            if(headingGoingBackStep > 0.008) 
-                headingGoingBackStep -= 0.009f; 
-        } 
+    // if(mainTimer < 15.0)
+    // {
+    //     if(astromedicompZ > -50.0) 
+    //     {
+    //         astromedicompZ -= headingGoingBackStep; 
+    //         if(headingGoingBackStep > 0.008) 
+    //             headingGoingBackStep -= 0.009f; 
+    //     } 
 
-        if(mainTimer > 10.5 && blurIterations < 15 && blendStrength < 3.00) 
-        {
-            blurIterations += 1; 
-            blendStrength += 0.1f; 
-        } 
-    } 
+    //     if(mainTimer > 10.5 && blurIterations < 15 && blendStrength < 3.00) 
+    //     {
+    //         blurIterations += 1; 
+    //         blendStrength += 0.1f; 
+    //     } 
+    // } 
 } 
 
 void IntroScene::uninitialize() 
@@ -226,7 +243,16 @@ void IntroScene::uninitialize()
 
 void IntroScene::eventCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 {
-    introSceneCamera.cameraCallback(hwnd, uMsg, wParam, lParam); 
+    bool doImGuiCapturedEvent = false; 
+    if(ImGuiManager::initialized == true)
+    {
+        ImGuiIO& io = ImGui::GetIO(); 
+        doImGuiCapturedEvent = io.WantCaptureMouse; 
+    } 
+
+    if(!doImGuiCapturedEvent) 
+        introSceneCamera.cameraCallback(hwnd, uMsg, wParam, lParam);  
+
     switch(uMsg) 
     {
         case WM_CHAR: 

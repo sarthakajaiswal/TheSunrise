@@ -18,7 +18,7 @@ Camera::Camera()
                 yawSpline({CAMERA_DEFAULT_YAW, CAMERA_DEFAULT_YAW}), 
                 pitchSpline({CAMERA_DEFAULT_PITCH, CAMERA_DEFAULT_PITCH}) 
 {
-    position = vmath::vec3(0.0, 5.0, 3.0); 
+    position = vmath::vec3(0.0, 0.0, 3.0); 
     up = vmath::vec3(0.0, 1.0, 0.0); 
     target = vmath::vec3(0.0, 0.0, 0.0); 
     front = vmath::vec3(0.0, 0.0, -1.0); 
@@ -95,7 +95,7 @@ void setControlPoints(std::vector<vmath::vec3> positions, std::vector<float> yaw
 
 void Camera::cameraCallback(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
-    const float cameraSpeed = 2.8; 
+    const float cameraSpeed = 0.5; 
     static BOOL bMouseDown = FALSE; 
     
     // mouse event related variables

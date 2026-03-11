@@ -1,6 +1,6 @@
 #include "..\headers\alphabets.hpp" 
 
-const int DEPTH_OF_ALPHABETS = 1.0f; 
+const float DEPTH_OF_ALPHABETS = 0.6f; 
 const Color alphabetColor = {10.0f, 0.0f, 0.0f, 1.0f}; 
 
 // -------- A ------------- 

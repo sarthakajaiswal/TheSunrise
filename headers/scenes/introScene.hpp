@@ -8,6 +8,8 @@
 #include "../alphabets.hpp" 
 #include "../effects/guassianBlur.hpp" 
 #include "../effects/textureBlending.hpp" 
+#include "../imgui_manager.hpp" 
+#include "../spline.hpp" 
 
 class IntroScene 
 {
@@ -36,7 +38,7 @@ class IntroScene
         FullScreenTexturer fsTexture; 
 
         // ===== EFFECTS ===== 
-        GuassianBlur blueEffect; 
+        GuassianBlur blurEffect; 
         TextureBlending blendTextureEffect; 
 
         // ====== FBOs ======= 

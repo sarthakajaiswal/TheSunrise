@@ -92,6 +92,7 @@ void ImGuiManager::RenderDebugWindow() {
     {
         case INTRO_SCENE: 
             introSceneControls(); 
+            break; 
 
         case SCENE_1: 
             scene1Controls(); 
@@ -111,18 +112,9 @@ void ImGuiManager::RenderDebugWindow() {
 // float lightPos[] = {introScene.lightPosition[0], introScene.lightPosition[1], introScene.lightPosition[2]}; 
 void introSceneControls(void) 
 {
-    ImGui::SliderFloat("alphabet spacing", &introScene.alphabetSpacing, 0.0f, 5.0f);
-    ImGui::SliderFloat("amc startX", &introScene.astrmomedicompStartingX, -40.0f, 0.0f);
-    ImGui::SliderFloat("alphabet Sx", &introScene.alphabetSx, -3.0f, 3.0f);
-    ImGui::SliderFloat("alphabet Sy", &introScene.alphabetSy, -3.0f, 3.0f);
-    ImGui::SliderFloat("alphabet Sz", &introScene.alphabetSz, -3.0f, 3.0f);
-    ImGui::SliderFloat("amcZ", &introScene.astromedicompZ, 0.0f, -50.0f);
-
-    // ImGui::SliderFloat3("light position", lightPos, -50.0f, 50.0f);
-    // introScene.lightPosition[0] = lightPos[0]; 
-    // introScene.lightPosition[1] = lightPos[1]; 
-    // introScene.lightPosition[2] = lightPos[2]; 
-
+    ImGui::SliderFloat("lightPosX", &introScene.lightPosition[0], -50.0f, 50.0f);
+    ImGui::SliderFloat("lightPosY", &introScene.lightPosition[1], -50.0f, 50.0f);
+    ImGui::SliderFloat("lightPosZ", &introScene.lightPosition[2], -50.0f, 50.0f);
     ImGui::SliderInt("Blur iterations:", &introScene.blurIterations, 0, 25); 
     ImGui::SliderFloat("Blend Strength:", &introScene.blendStrength, 0, 10); 
 } 

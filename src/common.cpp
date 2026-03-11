@@ -233,7 +233,7 @@ void FullScreenTexturer::render(GLuint texture, float alpha)
     glActiveTexture(GL_TEXTURE0); 
     glBindTexture(GL_TEXTURE_2D, texture); 
     glUniform1i(textureUniform, 0);  
-    glUniform1i(alphaUniform, alpha); 
+    glUniform1f(alphaUniform, alpha); 
     quad.render();  
     glBindTexture(GL_TEXTURE_2D, 0); 
     shaderProgram.unuse(); 
