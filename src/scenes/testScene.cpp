@@ -2,6 +2,7 @@
 
 Camera testSceneCamera; 
 Spline3D spline; 
+Spline1D spline2({50.0, 50.0}); 
 
 TestScene::TestScene() 
 {
@@ -12,6 +13,10 @@ int TestScene::initialize()
 {	
     assert(initShaderProgram() == true); 
     cube.initialize(); 
+
+    for(int i = 0; i <= 10; ++i) 
+        logFile.log("%.2f ", spline2.evaluateValueAtT(i/10.0)); 
+    logFile.log("\n"); 
 
     return (0); 
 } 

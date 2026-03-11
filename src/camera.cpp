@@ -62,8 +62,8 @@ vmath::mat4 Camera::getViewMatrix(enum CameraMode mode, float t)
     {
         vmath::vec3 eye = positionSpline.evaluatePositionAtT(t); 
         
-        float yawAtT = yawSpline.evaluateValue(t); 
-        float pitchAtT = pitchSpline.evaluateValue(t); 
+        float yawAtT = yawSpline.evaluateValueAtT(t); 
+        float pitchAtT = pitchSpline.evaluateValueAtT(t); 
         vmath::vec3 direction; 
         direction[0] = cos(vmath::radians(yawAtT)) * cos(vmath::radians(pitchAtT)); 
         direction[1] = sin(vmath::radians(pitchAtT)); 

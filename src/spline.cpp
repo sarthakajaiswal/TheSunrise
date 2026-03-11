@@ -304,7 +304,7 @@ void Spline1D::setAlpha(float _alpha)
     this->alpha = _alpha; 
 } 
 
-float Spline1D::evaluateValue(float globalT) 
+float Spline1D::evaluateValueAtT(float globalT) 
 {
     int numSegments = values.size() - 1; 
     float scaled = globalT * numSegments; 
@@ -319,18 +319,13 @@ float Spline1D::evaluateValue(float globalT)
     return (catmullRom(V0, V1, V2, V3, localT, this->alpha)); 
 }  
 
-void Spline1D::addRandomValue() 
+void Spline1D::addNewControlValue() 
 {
-    float newValue; 
-    size_t valuesArraySize = values.size(); 
-
-    // calculate new point position based last and second last point 
-    newValue = values[valuesArraySize-1] + fabs(values[valuesArraySize-1] - values[valuesArraySize-2]); 
-    
-    values.push_back(newValue); 
+    // insert new value same as last value 
+    values.push_back(values[values.size()-1]); 
 } 
 
-void Spline1D::addGivenValue(float newValue) 
+void Spline1D::addNewControlValue(float newValue) 
 {
     values.push_back(newValue); 
 } 

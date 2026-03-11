@@ -12,7 +12,7 @@
 #include "shaderProgram.hpp" 
 #include "global_header.hpp" 
 
-// requires at least 4 points 
+// no two corrosponding positions can be same 
 class Spline3D 
 {
     private: 
@@ -67,9 +67,9 @@ class Spline1D
 
         void setAlpha(float _alpha); 
         
-        float evaluateValue(float globalT); 
-        void addRandomValue(); 
-        void addGivenValue(float newValue); 
+        float evaluateValueAtT(float globalT); 
+        void addNewControlValue(); 
+        void addNewControlValue(float newValue); 
 
         /* 
         std::vector<float> buildArcLengthTable(const std::vector<vmath::vec3>& pts, int samples = 1000); 
