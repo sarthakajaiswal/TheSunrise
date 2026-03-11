@@ -21,7 +21,7 @@ class Water
 
             public: 
                 WaterRect(); 
-                int initialize(); 
+                int initialize(float textureScale=1.0); 
                 void render(); 
                 void uninitialize(); 
         }; 
@@ -30,6 +30,7 @@ class Water
         GLuint modelMatrixUniform; 
         GLuint viewMatrixUniform; 
         GLuint projectionMatrixUniform; 
+        GLuint tilingUniform; 
         GLuint reflectionTextureUniform; 
         GLuint refractionTextureUniform; 
         GLuint dudvTextureUniform; 
@@ -41,29 +42,24 @@ class Water
         GLuint lightPositionUniform; 
         GLuint lightColorUniform; 
 
-        ShaderProgram bwShader; 
-        GLuint mvpMatrixUniform_bwShader; 
-
         WaterRect waterRect; 
 
         GLuint dudvTexture; 
         GLuint normalMap; 
+        float textureScale; 
 
         float deltaTime; 
         LARGE_INTEGER startTime, currentTime, freq;
         float one_divided_by_freq; 
 
-        bool isInitialized; 
-
         int initOpenGLState(); 
-        int initBWShader(); 
 
     public: 
-                FBO reflectionFBO; 
+        FBO reflectionFBO; 
         FBO refractionFBO; 
 
         Water(); 
-        int initialize(); 
+        int initialize(float textureScale); 
         void render(mat4 modelMatrix, mat4 viewMatrix, mat4 projectionMatrix, vec3 cameraPosition, vec3 lightPosition, float waveSpeed); 
         void update(); 
         void uninitialize(); 

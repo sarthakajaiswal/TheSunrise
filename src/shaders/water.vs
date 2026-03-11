@@ -11,11 +11,10 @@ uniform mat4 uProjectionMatrix;
 
 uniform vec3 uCameraPosition; 
 uniform vec3 uLightPosition; 
+uniform float uTiling; 
 
 out vec3 out_toCameraVector; 
 out vec3 out_fromLightVector; 
-
-const float tiling = 1.0f; 
 
 void main(void)  
 { 
@@ -23,7 +22,7 @@ void main(void)
 
 	vec4 worldPosition = uModelMatrix * aPosition; 
 	out_toCameraVector = uCameraPosition - worldPosition.xyz; 
-	out_texCoord = vec2(aPosition.x/2.0+0.5, aPosition.z/2.0+0.5) * tiling; 
+	out_texCoord = vec2(aPosition.x/2.0+0.5, aPosition.z/2.0+0.5) * uTiling; 
 	out_fromLightVector = worldPosition.xyz - uLightPosition; 
 
 	vec4 clipPos = gl_Position; 

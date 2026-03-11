@@ -11,7 +11,7 @@ uniform sampler2D uReflectionTexture;
 uniform sampler2D uRefractionTexture;
 uniform sampler2D uDuDvTexture;
 uniform sampler2D uNormalMap;
-uniform sampler2D uDepthMap;
+// uniform sampler2D uDepthMap;
 uniform vec3 uLightColor;
 
 uniform vec2 uScreenSize;

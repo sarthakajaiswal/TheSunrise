@@ -417,6 +417,7 @@ int initialize(void)
     {
         case INTRO_SCENE: 
             introScene.initialize(); 
+            break; 
 
         case SCENE_1:  
             scene1.initialize(); 
@@ -516,6 +517,7 @@ void display(void)
     {
         case INTRO_SCENE: 
             introScene.display(); 
+            break; 
 
         case SCENE_1: 
             scene1.display(); 
@@ -549,6 +551,7 @@ void update(void)
     {
         case INTRO_SCENE: 
             introScene.update(); 
+            break; 
 
         case SCENE_1:  
             scene1.update(); 

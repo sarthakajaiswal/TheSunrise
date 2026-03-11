@@ -13,7 +13,7 @@ class Scene2
     private:
         Terrain terrain; 
         const float terrainScale = 50.0f; 
-        const int textureScale = 12; 
+        const float textureScale = 8.0; 
         const float heightScale = 12.0f; 
 
         Water water; 

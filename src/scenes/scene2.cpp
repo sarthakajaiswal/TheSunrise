@@ -18,9 +18,9 @@ int Scene2::initialize()
 
     std::vector<std::string> textureImages = {"res/terrain5.png", "res/terrain6.png", "res/terrain7.png", "res/terrain8.png"}; 
     std::vector<float> textureHeightRanges = {0.06, 0.4, 0.6, 1.0}; 
-    terrain.initialize("res/terr.png", 2.0f, 75.0f, textureImages, textureHeightRanges, 8.0);
+    terrain.initialize("res/terr.png", 2.0f, 75.0f, textureImages, textureHeightRanges, textureScale);
 
-    water.initialize(); 
+    water.initialize(16.0); 
 
     scene2Camera.setState(vec3(452.49, 161.54, 593.75), 773.50, -3.90); 
 
@@ -81,7 +81,7 @@ void Scene2::display()
         modelMatrix *= vmath::translate(waterPosX, waterPosY, waterPosZ); 
         modelMatrix *= vmath::scale(1000.0f, 1.0f, 1000.0f);
 
-        water.render(modelMatrix, viewMatrix, projectionMatrix, scene2Camera.getPosition(), vec3(1000.0), 1.0); 
+        water.render(modelMatrix, viewMatrix, projectionMatrix, scene2Camera.getPosition(), vec3(1000.0), 4.0); 
     } 
     modelMatrix = matrixStack.popMatrix(); 
 } 
@@ -89,6 +89,7 @@ void Scene2::display()
 void Scene2::update() 
 {
     // code 
+    water.update(); 
 } 
 
 Scene2::~Scene2() 

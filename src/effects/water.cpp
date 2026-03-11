@@ -5,9 +5,11 @@ Water::Water()
     deltaTime = 0.0f; 
 } 
 
-int Water::initialize() 
+int Water::initialize(float _textureScale) 
 {
     logFile.log("---- Water::initialize() started --\n"); 
+
+    this->textureScale = _textureScale; 
 
     int result = initOpenGLState(); 
     // TODO: 
@@ -16,13 +18,11 @@ int Water::initialize()
     if(result == 0) 
 		logFile.log("Water::initialize() > opengl state initialized\n"); 
 
-    assert(initBWShader() == 0); 
-
     assert(reflectionFBO.createNormalFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true); 
     assert(refractionFBO.createNormalFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true); 
     logFile.log("Water::initialize() > fbos created succesfully\n"); 
 
-    assert(waterRect.initialize() == 0); 
+    assert(waterRect.initialize(textureScale) == 0); 
     logFile.log("Water::initialize() > water rect initialized succesfully\n"); 
 
     // textures 
@@ -64,16 +64,17 @@ int Water::initOpenGLState()
     viewMatrixUniform = shaderProgram.getUniformLocation("uViewMatrix"); 
     projectionMatrixUniform = shaderProgram.getUniformLocation("uProjectionMatrix");  
 
+    tilingUniform = shaderProgram.getUniformLocation("uTiling");
     reflectionTextureUniform = shaderProgram.getUniformLocation("uReflectionTexture"); 
     refractionTextureUniform = shaderProgram.getUniformLocation("uRefractionTexture"); 
     dudvTextureUniform = shaderProgram.getUniformLocation("uDuDvTexture"); 
     normalMapUniform = shaderProgram.getUniformLocation("uNormalMap"); 
-    depthMapUniform = shaderProgram.getUniformLocation("uDepthMap");  
+    // depthMapUniform = shaderProgram.getUniformLocation("uDepthMap");  
     screenSizeUniform = shaderProgram.getUniformLocation("uScreenSize"); 
     moveFactorUniform = shaderProgram.getUniformLocation("uMoveFactor"); 
     cameraPositionUniform = shaderProgram.getUniformLocation("uCameraPosition"); 
     lightPositionUniform = shaderProgram.getUniformLocation("uLightPosition"); 
-    lightColorUniform = shaderProgram.getUniformLocation("uLightColor");  
+    lightColorUniform = shaderProgram.getUniformLocation("uLightColor");    
 
     free(vertexShaderSourceCode); vertexShaderSourceCode = NULL; 
     free(fragmentShaderSourceCode); fragmentShaderSourceCode = NULL; 
@@ -95,6 +96,7 @@ void Water::render(mat4 modelMatrix, mat4 viewMatrix, mat4 projectionMatrix, vec
 	glUniformMatrix4fv(viewMatrixUniform, 1, GL_FALSE, viewMatrix); 
 	glUniformMatrix4fv(projectionMatrixUniform, 1, GL_FALSE, projectionMatrix); 
 
+	glUniform1f(tilingUniform, textureScale); 
 	glUniform2fv(screenSizeUniform, 1, vec2(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN))); 
 	glUniform3fv(cameraPositionUniform, 1, cameraPosition); 
 	glUniform3fv(lightPositionUniform, 1, lightPosition); 
@@ -127,22 +129,16 @@ void Water::render(mat4 modelMatrix, mat4 viewMatrix, mat4 projectionMatrix, vec
     waterRect.render(); 
 
 	glBindTexture(GL_TEXTURE_2D, 0); 
-
-    shaderProgram.unuse(); 
-
     glDisable(GL_BLEND); 
 
-    // bwShader.use(); 
-    // glUniformMatrix4fv(mvpMatrixUniform_bwShader, 1, GL_FALSE, projectionMatrix*viewMatrix*modelMatrix); 
-    // waterRect.render(); 
-    // bwShader.unuse(); 
+    shaderProgram.unuse(); 
 } 
 
 void Water::update() 
 {
     QueryPerformanceCounter(&currentTime); 
     this->deltaTime = (float)(this->currentTime.QuadPart - this->startTime.QuadPart)*this->one_divided_by_freq; 
-    this->startTime = this->currentTime; 
+    // this->startTime = this->currentTime; 
 } 
 
 void Water::uninitialize() 
@@ -176,15 +172,15 @@ Water::WaterRect::WaterRect() : vao(0), vbo(0)
 {
 } 
 
-int Water::WaterRect::initialize() 
+int Water::WaterRect::initialize(float textureScale) 
 {
-		const GLfloat quad_PCNT[] =
+    const GLfloat quad_PCNT[] =
 	{						 
 		// position				// color			 // normals				// texcoords
-		1.0f,  0.0f, -1.0f,		0.0f, 1.0f, 0.0f,	 0.0f,  1.0f,  0.0f,	1.0f, 1.0f,
-		-1.0f,  0.0f, -1.0f,	0.0f, 1.0f, 0.0f,	 0.0f,  1.0f,  0.0f,	0.0f, 1.0f,
+		1.0f,  0.0f, -1.0f,		0.0f, 1.0f, 0.0f,	 0.0f,  1.0f,  0.0f,	textureScale, textureScale,
+		-1.0f,  0.0f, -1.0f,	0.0f, 1.0f, 0.0f,	 0.0f,  1.0f,  0.0f,	0.0f, textureScale,
 		-1.0f,  0.0f,  1.0f,	0.0f, 1.0f, 0.0f,	 0.0f,  1.0f,  0.0f,	0.0f, 0.0f,
-		1.0f,  0.0f,  1.0f,		0.0f, 1.0f, 0.0f,	 0.0f,  1.0f,  0.0f,	1.0f, 0.0f,
+		1.0f,  0.0f,  1.0f,		0.0f, 1.0f, 0.0f,	 0.0f,  1.0f,  0.0f,	textureScale, 0.0f,
 	};
 
 	// quad 
@@ -199,10 +195,6 @@ int Water::WaterRect::initialize()
 	// for position 
 	glVertexAttribPointer(AMC_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 11*sizeof(float), (void*)(0 * sizeof(float))); 
 	glEnableVertexAttribArray(AMC_ATTRIBUTE_POSITION); 
-	
-	// for color 
-	glVertexAttribPointer(AMC_ATTRIBUTE_COLOR, 3, GL_FLOAT, GL_FALSE, 11*sizeof(float), (void*)(3 * sizeof(float))); 
-	glEnableVertexAttribArray(AMC_ATTRIBUTE_COLOR); 
 
 	// for normals 
 	glVertexAttribPointer(AMC_ATTRIBUTE_NORMAL, 3, GL_FLOAT, GL_FALSE, 11*sizeof(float), (void*)(6 * sizeof(float))); 
@@ -236,31 +228,4 @@ void Water::WaterRect::uninitialize()
         glDeleteVertexArrays(1, &vao); 
         vao = 0; 
     } 
-} 
-
-
-int Water::initBWShader() 
-{
-    char* vertexShaderSourceCode = NULL; 
-    char* fragmentShaderSourceCode = NULL; 
-
-    vertexShaderSourceCode = FileHandler::fileToString("src/shaders/bw.vs"); 
-    fragmentShaderSourceCode = FileHandler::fileToString("src/shaders/bw.fs"); 
-
-    std::vector<ShaderSourceCodeAndType> shaders; 
-    shaders.push_back(ShaderSourceCodeAndType(vertexShaderSourceCode, GL_VERTEX_SHADER)); 
-    shaders.push_back(ShaderSourceCodeAndType(fragmentShaderSourceCode, GL_FRAGMENT_SHADER)); 
-
-    std::vector<AttributeWithIndexLocation> attributes; 
-    attributes.push_back(AttributeWithIndexLocation(AMC_ATTRIBUTE_POSITION, "aPosition")); 
-    
-    bwShader.create(shaders, attributes); 
-
-    // get uniform locations 
-    mvpMatrixUniform_bwShader = bwShader.getUniformLocation("uMVPMatrix"); 
-
-    free(vertexShaderSourceCode); vertexShaderSourceCode = NULL; 
-    free(fragmentShaderSourceCode); fragmentShaderSourceCode = NULL; 
-    
-    return (0); 
 } 
