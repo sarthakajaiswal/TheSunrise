@@ -3,6 +3,10 @@
 #include <iostream> 
 #include <vector> 
 #include <cstdio> 
+#include <cassert> 
+
+#include <gl/glew.h> 
+#include <gl/GL.h> 
 
 #include "vmath.h"  
 
@@ -18,12 +22,16 @@ class Spline3D
         vmath::vec3 getPoint(const std::vector<vmath::vec3>& pts, int index);
 
     public: 
+        Spline3D(); 
         Spline3D(std::vector<vmath::vec3> controlPointsArray); 
 
         void setAlpha(float _alpha); 
         vmath::mat4 getViewMatrix(float t); 
         
-        vmath::vec3 evaluatePosition(float globalT); 
+        vmath::vec3 evaluatePositionAtT(float globalT); 
+        void getPositionsOnSpline(std::vector<vmath::vec3>& positions, int count); 
+
+        // void show() const; 
         void addRandomControlPoint(); 
         void addControlPointAtPos(vmath::vec3 newControlPointPosition); 
 

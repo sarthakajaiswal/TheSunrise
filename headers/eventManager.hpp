@@ -7,7 +7,7 @@ enum Scene
     INTRO_SCENE = 0, 
     SCENE_1, 
     SCENE_2, 
-    SCENE_3 
+    TEST_SCENE 
 }; 
 
 extern const float introSceneStartTime; 

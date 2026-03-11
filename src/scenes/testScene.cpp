@@ -1,133 +1,100 @@
-// #include "../../headers/scenes/testScene.hpp" 
-// #include "../../headers/shaderProgram.hpp" 
-// #include "../../headers/effects/terrain.hpp" 
-// #include "../../headers/effects/dissolve.hpp" 
+#include "../../headers/scenes/testScene.hpp" 
 
-// #define TEST_TERRAIN
+Camera testSceneCamera; 
+Spline3D spline; 
 
-// #ifdef TEST_TERRAIN
-// static Terrain terrain; 
-// #endif // TEST_TERRAIN 
+TestScene::TestScene() 
+{
+    // code  
+} 
 
-// Dissolve dissolve; 
+int TestScene::initialize() 
+{	
+    assert(initShaderProgram() == true); 
+    cube.initialize(); 
 
-// Camera testSceneCamera; 
-// static float terrainScale = 2.0f; 
+    std::vector<vmath::vec3> points; 
+    spline.getPositionsOnSpline(points, 10); 
 
-// TestScene::TestScene() 
-// {
-//     // code  
-// } 
+    for(int i = 0; i < 10; ++i) 
+        logFile.log("%.2f-%.2f-%.2f\n", points[i][0], points[i][1], points[i][2]); 
 
-// int TestScene::initialize() 
-// {	
-//     std::vector<std::string> terrainTextureImages = 
-//     {
-//         "res/terrain1.png", 
-//         "res/terrain2.png", 
-//         "res/terrain3.png", 
-//         "res/terrain4.png" 
-//     }; 
+    return (0); 
+} 
 
-//     glFrontFace(GL_CW); 
+void TestScene::display() 
+{
+    mat4 modelMatrix = mat4::identity(); 
+    mat4 viewMatrix = mat4::identity(); 
+    viewMatrix = testSceneCamera.getViewMatrix(CAMERA_GAME_MODE); 
 
-//     #ifdef TEST_TERRAIN
-//     int textureScale = 8; 
-// 	terrain.initialize(terrainScale, textureScale, terrainTextureImages); 
-//     testSceneCamera.initialize(vec3(0.0, 2.0, 5.0), 0.0, 0.0); 
-//     #endif // TEST_TERRAIN
+    shaderProgramObject.use(); 
+    glUniformMatrix4fv(mvpMatrixUniform, 1, GL_FALSE, projectionMatrix*viewMatrix*modelMatrix); 
+    cube.render(); 
+    shaderProgramObject.unuse(); 
+} 
 
+void TestScene::update() 
+{
+    // code 
+} 
 
+TestScene::~TestScene() 
+{
+} 
 
-//     dissolve.initialize(); 
+bool TestScene::initShaderProgram()
+{
+    char* vertexShaderSourceCode = NULL; 
+    char* fragmentShaderSourceCode = NULL; 
+    vertexShaderSourceCode = FileHandler::fileToString("src/shaders/bw.vs"); 
+    fragmentShaderSourceCode = FileHandler::fileToString("src/shaders/bw.fs"); 
+    if(vertexShaderSourceCode == NULL || fragmentShaderSourceCode == NULL) 
+        return false; 
 
+    std::vector<ShaderSourceCodeAndType> shaders; 
+    shaders.push_back(ShaderSourceCodeAndType(vertexShaderSourceCode, GL_VERTEX_SHADER)); 
+    shaders.push_back(ShaderSourceCodeAndType(fragmentShaderSourceCode, GL_FRAGMENT_SHADER)); 
 
+    std::vector<AttributeWithIndexLocation> attributes; 
+    attributes.push_back(AttributeWithIndexLocation(AMC_ATTRIBUTE_POSITION, "aPosition")); 
+    attributes.push_back(AttributeWithIndexLocation(AMC_ATTRIBUTE_COLOR, "aColor")); 
+	
+    shaderProgramObject.create(shaders, attributes); 
 
+    // get uniform locations 
+    mvpMatrixUniform = shaderProgramObject.getUniformLocation("uMVPMatrix"); 
 
+    free(vertexShaderSourceCode); vertexShaderSourceCode = NULL; 
+    free(fragmentShaderSourceCode); fragmentShaderSourceCode = NULL; 
 
-//     return (0); 
-// } 
+    return (true); 
+} 
 
-// float cameraX = 5.0; 
-// float cameraY = 300.0; 
-// float cameraZ = 10.0; 
+void TestScene::eventCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
+{   
+    // code 
+    bool doImGuiCapturedEvent = false; 
+    if(ImGuiManager::initialized == true)
+    {
+        ImGuiIO& io = ImGui::GetIO(); 
+        doImGuiCapturedEvent = io.WantCaptureMouse; 
+    } 
 
-// float dissolveValue = 0.0f; 
+    if(!doImGuiCapturedEvent) 
+        testSceneCamera.cameraCallback(hwnd, uMsg, wParam, lParam); 
 
-// void TestScene::display() 
-// {
-//     mat4 modelMatrix = mat4::identity(); 
-//     mat4 viewMatrix = mat4::identity(); 
-    
-//     #ifdef TEST_TERRAIN
-//     viewMatrix = vmath::lookat(vec3(cameraX, cameraY, cameraZ), vec3(125.0*terrainScale, 0.0, 125.0*terrainScale), vec3(0.0, 1.0, 0.0)); //testSceneCamera.getViewMatrix(); 
-//     terrain.Render(modelMatrix, viewMatrix, projectionMatrix); 
-//     #endif // TEST_TERRAIN
+    switch(uMsg) 
+    {
+        case WM_CHAR: 
+            switch(wParam) 
+            {
+            default: 
+                break; 
+            } 
+            break; 
 
-//     // dissolve.render(dissolveValue); 
-// } 
-
-// void TestScene::update() 
-// {
-//     // code 
-// } 
-
-// TestScene::~TestScene() 
-// {
-// } 
-
-// void testSceneCallbacks(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
-// {
-//     float cameraStep = 0.5f; 
-//     switch(uMsg) 
-//     {
-//         case WM_CHAR: 
-//             switch(wParam) 
-//             {
-//             case 'a': 
-//             case 'A': 
-//                 cameraX -= cameraStep; 
-//                 break; 
-
-//             case 'd': 
-//             case 'D': 
-//                 cameraX += cameraStep; 
-//                 break; 
-
-//             case 'w': 
-//             case 'W': 
-//                 cameraZ += cameraStep; 
-//                 break; 
-
-//             case 's': 
-//             case 'S': 
-//                 cameraZ -= cameraStep; 
-//                 break; 
-
-//             case 'q': 
-//             case 'Q': 
-//                 cameraY -= cameraStep; 
-//                 break; 
-
-//             case 'e': 
-//             case 'E': 
-//                 cameraY += cameraStep; 
-//                 break; 
-
-//             case 'Z': 
-//                 dissolveValue += 0.05; 
-//                 break; 
-//             case 'z': 
-//                 dissolveValue -= 0.05; 
-//                 break; 
-
-//             default: 
-//                 break; 
-//             } 
-//             break; 
-
-//         default: 
-//             break; 
-//     } 
-// } 
-
+        default: 
+            break; 
+    }  
+} 

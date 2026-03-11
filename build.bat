@@ -15,13 +15,13 @@
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\effects\cubemap.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\effects\godrays.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\scenes\introScene.cpp
-cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\effects\water.cpp
-cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\scenes\scene2.cpp
+@REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\effects\water.cpp
+@REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\scenes\scene2.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\scenes\scene1.cpp
-@REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\scenes\testScene.cpp
+cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\scenes\testScene.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\imgui_manager.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\camera.cpp
-@REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\spline.cpp
+cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\spline.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\OGL.cpp
 @REM cl.exe /c /EHsc /Fo:output\ /I C:\glew-2.1.0\include src\effects\terrain.cpp
 

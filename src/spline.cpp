@@ -1,17 +1,25 @@
 #include "../headers/spline.hpp" 
 
+Spline3D::Spline3D() 
+{
+    positions.push_back(vmath::vec3(0.0)); 
+    positions.push_back(vmath::vec3(4.0)); 
+} 
+
 Spline3D::Spline3D(std::vector<vmath::vec3> controlPointsArray) 
 {
     positions = controlPointsArray; 
 } 
 
-float Spline3D::getKnotValue(float t, float alpha, vmath::vec3 p0, vmath::vec3 p1) 
+float 
+Spline3D::getKnotValue(float t, float alpha, vmath::vec3 p0, vmath::vec3 p1) 
 {
     float d = vmath::distance(p0, p1); 
     return (t + pow(d, alpha)); 
 } 
 
-vmath::vec3 Spline3D::catmullRom(vmath::vec3 p0, vmath::vec3 p1, vmath::vec3 p2, vmath::vec3 p3, float t, float alpha) 
+vmath::vec3 
+Spline3D::catmullRom(vmath::vec3 p0, vmath::vec3 p1, vmath::vec3 p2, vmath::vec3 p3, float t, float alpha) 
 {
     float t0 = 0.0f; 
     float t1 = getKnotValue(t0, alpha, p0, p1); 
@@ -33,7 +41,8 @@ vmath::vec3 Spline3D::catmullRom(vmath::vec3 p0, vmath::vec3 p1, vmath::vec3 p2,
     return (C); 
 }  
 
-vmath::vec3 Spline3D::getPoint(const std::vector<vmath::vec3>& pts, int index) 
+vmath::vec3 
+Spline3D::getPoint(const std::vector<vmath::vec3>& pts, int index) 
 {
     if(index < 0) 
     {
@@ -50,12 +59,14 @@ vmath::vec3 Spline3D::getPoint(const std::vector<vmath::vec3>& pts, int index)
     return (pts[index]); 
 } 
 
-void Spline3D::setAlpha(float _alpha) 
+void 
+Spline3D::setAlpha(float _alpha) 
 {
     this->alpha = _alpha; 
 } 
 
-vmath::vec3 Spline3D::evaluatePosition(float globalT) 
+vmath::vec3 
+Spline3D::evaluatePositionAtT(float globalT) 
 {
     int numSegments = positions.size() - 1; 
     float scaled = globalT * numSegments; 
@@ -70,14 +81,41 @@ vmath::vec3 Spline3D::evaluatePosition(float globalT)
     return (catmullRom(P0, P1, P2, P3, localT, this->alpha)); 
 }  
 
-vmath::mat4 Spline3D::getViewMatrix(float t) 
+void 
+Spline3D::getPositionsOnSpline(std::vector<vmath::vec3>& positions, int count) 
 {
-    vmath::vec3 camPos = evaluatePosition(t); 
+    float increment;
+    assert(count != 0); 
+
+    // adds support for parameter count=1 by returning point at middle on spline 
+    if(count == 1) 
+    {
+        positions.push_back(evaluatePositionAtT(0.5)); 
+        return; 
+    } 
+    else 
+    {
+        increment = 1.0/(count-1); 
+    } 
+
+    float t = 0.0; 
+    while(t <= 1.0) 
+    {
+        positions.push_back(evaluatePositionAtT(t)); 
+        t += increment; 
+    } 
+} 
+
+vmath::mat4 
+Spline3D::getViewMatrix(float t) 
+{
+    vmath::vec3 camPos = evaluatePositionAtT(t); 
 
     return (vmath::lookat(camPos, vmath::vec3(0.0), vmath::vec3(0.0, 1.0, 0.0))); 
 } 
 
-void Spline3D::addRandomControlPoint() 
+void 
+Spline3D::addRandomControlPoint() 
 {
     vmath::vec3 newControlPoint; 
     size_t positionArraySize = positions.size(); 
@@ -90,7 +128,8 @@ void Spline3D::addRandomControlPoint()
     positions.push_back(newControlPoint); 
 } 
 
-void Spline3D::addControlPointAtPos(vmath::vec3 newControlPointPosition) 
+void 
+Spline3D::addControlPointAtPos(vmath::vec3 newControlPointPosition) 
 {
     positions.push_back(newControlPointPosition); 
 } 
@@ -100,12 +139,12 @@ std::vector<float> Spline3D::buildArcLengthTable(const std::vector<vmath::vec3>&
 {
     std::vector<float> table(samples+1); 
     table[0] = 0.0f; 
-    vmath::vec3 prev = evaluatePosition(pts, 0.0f); 
+    vmath::vec3 prev = evaluatePositionAtT(pts, 0.0f); 
 
     for(int i = 1; i <= samples; ++i) 
     {
         float t = (float)i / samples; 
-        vmath::vec3 curr = evaluatePosition(pts, t); 
+        vmath::vec3 curr = evaluatePositionAtT(pts, t); 
         table[i] = table[i-1] + vmath::distance(prev, curr); 
         prev = curr; 
     } 
@@ -229,12 +268,12 @@ std::vector<float> Spline1D::buildArcLengthTable(const std::vector<float>& pts, 
 {
     std::vector<float> table(samples+1); 
     table[0] = 0.0f; 
-    float prev = evaluatePosition(pts, 0.0f); 
+    float prev = evaluatePositionAtT(pts, 0.0f); 
 
     for(int i = 1; i <= samples; ++i) 
     {
         float t = (float)i / samples; 
-        float curr = evaluatePosition(pts, t); 
+        float curr = evaluatePositionAtT(pts, t); 
         table[i] = table[i-1] + vmath::distance(prev, curr); 
         prev = curr; 
     } 

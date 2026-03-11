@@ -76,6 +76,7 @@ void ImGuiManager::RenderDebugWindow() {
     void introSceneControls(void);     
     void scene1Controls(void);     
     void scene2Controls(void);     
+    void testSceneControls(void);     
 
     // code 
     if (!initialized || !ENABLE_IMGUI)
@@ -92,6 +93,7 @@ void ImGuiManager::RenderDebugWindow() {
     {
         case INTRO_SCENE: 
             introSceneControls(); 
+            break; 
 
         case SCENE_1: 
             scene1Controls(); 
@@ -99,6 +101,10 @@ void ImGuiManager::RenderDebugWindow() {
 
         case SCENE_2: 
             scene2Controls(); 
+            break; 
+
+        case TEST_SCENE: 
+            testSceneControls(); 
             break; 
 
         default: 
@@ -173,5 +179,10 @@ void scene2Controls(void)
     ImGui::SliderFloat("rx", &rx, 0.0f, 360.0f);
     ImGui::SliderFloat("ry", &ry, 0.0f, 360.0f);
     ImGui::SliderFloat("rz", &rz, 0.0f, 360.0f);
+} 
+
+void testSceneControls(void) 
+{
+
 } 
 
