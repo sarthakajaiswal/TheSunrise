@@ -5,6 +5,11 @@ GLuint FBO::getTextureID() const
 	return textures[0]; 
 } 
 
+GLuint FBO::getDepthID() const 
+{
+	return rbo; 
+} 
+
 bool FBO::createNormalFBO(GLuint textureWidth, GLuint textureHeight) 
 {
     // variable declarations 
@@ -24,11 +29,23 @@ bool FBO::createNormalFBO(GLuint textureWidth, GLuint textureHeight)
 	// Bind newly created framebuffer 
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo); 
 
-	glGenRenderbuffers(1, &rbo); 
-	glBindRenderbuffer(GL_RENDERBUFFER, rbo); 
+	// glGenRenderbuffers(1, &rbo); 
+	// glBindRenderbuffer(GL_RENDERBUFFER, rbo); 
 
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, textureWidth, textureHeight); 
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);  
+	// glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, textureWidth, textureHeight); 
+	// glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);  
+
+	glGenTextures(1, &rbo);
+
+	glBindTexture(GL_TEXTURE_2D, rbo); 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, textureWidth, textureHeight, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_SHORT, NULL); 
+	glGenerateMipmap(GL_TEXTURE_2D);  
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, rbo, 0); 
 
 	// Create an empty but full-capable and compatible texture as color buffers 
 	glGenTextures(1, &textures[0]);
@@ -180,7 +197,7 @@ void FBO::destroyFBO()
 	}  
 	if(rbo)
 	{
-		glDeleteRenderbuffers(1, &rbo); 
+		glDeleteTextures(1, &rbo); 
 		rbo = 0; 
 	} 
 	 

@@ -50,9 +50,8 @@ GLuint Godrays::render(vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, f
 
     GLuint finalCompositeTexture = getFinalCompositeTexture(); 
 
+    fsTexturer.render(finalCompositeTexture); 
     return (finalCompositeTexture); 
-
-    // fsTexturer.render(finalCompositeTexture); 
 } 
 
 void Godrays::uninitialize() 
@@ -201,11 +200,17 @@ GLuint Godrays::createOcclusionTexture()
 
         glActiveTexture(GL_TEXTURE0); 
         glBindTexture(GL_TEXTURE_2D, sceneObjectsFBO.getTextureID()); 
-        glUniform1i(objectsTextureUniform_silhotte, 0); 
+        // glUniform1i(objectsTextureUniform_silhotte, 0); 
 
         glActiveTexture(GL_TEXTURE1); 
+        glBindTexture(GL_TEXTURE_2D, sceneObjectsFBO.getDepthID()); 
+
+        glActiveTexture(GL_TEXTURE2); 
         glBindTexture(GL_TEXTURE_2D, lightSourceFBO.getTextureID()); 
-        glUniform1i(lightSourceTextureUniform_silhoutte, 1); 
+        // glUniform1i(lightSourceTextureUniform_silhoutte, 1); 
+
+        glActiveTexture(GL_TEXTURE3); 
+        glBindTexture(GL_TEXTURE_2D, lightSourceFBO.getDepthID()); 
 
         quad.render(); 
         
@@ -228,11 +233,15 @@ GLuint Godrays::createSceneTexture()
 
         glActiveTexture(GL_TEXTURE0); 
         glBindTexture(GL_TEXTURE_2D, sceneObjectsFBO.getTextureID()); 
-        glUniform1i(objectsTextureUniform_scene, 0); 
-
         glActiveTexture(GL_TEXTURE1); 
+        glBindTexture(GL_TEXTURE_2D, sceneObjectsFBO.getDepthID()); 
+        // glUniform1i(objectsTextureUniform_scene, 0); 
+
+        glActiveTexture(GL_TEXTURE2); 
         glBindTexture(GL_TEXTURE_2D, lightSourceFBO.getTextureID()); 
-        glUniform1i(lightSourceTextureUniform_scene, 1); 
+        glActiveTexture(GL_TEXTURE3); 
+        glBindTexture(GL_TEXTURE_2D, lightSourceFBO.getDepthID()); 
+        // glUniform1i(lightSourceTextureUniform_scene, 1); 
 
         quad.render(); 
         

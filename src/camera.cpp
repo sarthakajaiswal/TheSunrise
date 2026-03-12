@@ -2,7 +2,7 @@
 #include "../headers/fileHandler.hpp"
 extern FileHandler logFile; 
 
-const float CAMERA_SPEED = 0.5; 
+const float CAMERA_SPEED = 2.0; 
 
 void Camera::updateVectorsAfterChangesInAngle(void) 
 {

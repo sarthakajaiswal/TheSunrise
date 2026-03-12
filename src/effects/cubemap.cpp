@@ -31,8 +31,10 @@ void Cubemap::render(vmath::mat4 _rotationMatrix, vmath::mat4 _viewMatrix, vmath
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture); 
 	glUniform1i(skyboxSamplerUniform, 0); 
 
+    glDepthMask(GL_FALSE);
     cube.render(); 
-
+    glDepthMask(GL_TRUE); 
+    
     shaderProgramObject.unuse(); 
 } 
 
