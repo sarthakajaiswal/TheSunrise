@@ -2,6 +2,8 @@
 #include "../headers/fileHandler.hpp"
 extern FileHandler logFile; 
 
+const float CAMERA_SPEED = 0.5; 
+
 void Camera::updateVectorsAfterChangesInAngle(void) 
 {
     direction[0] = cos(vmath::radians(yaw)) * cos(vmath::radians(pitch)); 
@@ -95,7 +97,6 @@ void setControlPoints(std::vector<vmath::vec3> positions, std::vector<float> yaw
 
 void Camera::cameraCallback(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) 
 {
-    const float cameraSpeed = 0.5; 
     static BOOL bMouseDown = FALSE; 
     
     // mouse event related variables
@@ -167,30 +168,30 @@ void Camera::cameraCallback(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
             {
             case 'w': 
             case 'W':   
-                position += cameraSpeed * front; 
+                position += CAMERA_SPEED * front; 
                 break; 
             case 's': 
             case 'S': 
-                position -= cameraSpeed * front; 
+                position -= CAMERA_SPEED * front; 
                 break; 
             case 'a': 
             case 'A': 
-                position -= normalize(cross(front, up)) * cameraSpeed; 
+                position -= normalize(cross(front, up)) * CAMERA_SPEED; 
                 break; 
             case 'd': 
             case 'D': 
-                position += normalize(cross(front, up)) * cameraSpeed; 
+                position += normalize(cross(front, up)) * CAMERA_SPEED; 
                 break; 
 
             case 'q': 
             case 'Q': 
                 // position[1] -= sensitivity * 2.0; 
-                position[1] -= cameraSpeed * 2.0; 
+                position[1] -= CAMERA_SPEED * 2.0; 
                 break; 
             case 'e': 
             case 'E': 
                 // position[1] += sensitivity * 2.0;
-                position[1] += cameraSpeed * 2.0;
+                position[1] += CAMERA_SPEED * 2.0;
                 break; 
 
             case 'g': 
