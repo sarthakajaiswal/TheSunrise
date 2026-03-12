@@ -84,7 +84,7 @@ Model::loadTextureFromFile(const char* filePath)
             format = GL_RGBA;
             break;
         }
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -275,10 +275,10 @@ Model::setupMesh(Model::Mesh& mesh)
     GLsizei stride = sizeof(struct Vertex); 
     glVertexAttribPointer(AMC_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, stride, (void*)(0*sizeof(float))); 
     glEnableVertexAttribArray(AMC_ATTRIBUTE_POSITION); 
-    glVertexAttribPointer(AMC_ATTRIBUTE_NORMAL, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3*sizeof(float))); 
-    glEnableVertexAttribArray(AMC_ATTRIBUTE_NORMAL); 
-    glVertexAttribPointer(AMC_ATTRIBUTE_TEXCOORD, 2, GL_FLOAT, GL_FALSE, stride, (void*)(5*sizeof(float))); 
+    glVertexAttribPointer(AMC_ATTRIBUTE_TEXCOORD, 2, GL_FLOAT, GL_FALSE, stride, (void*)(3*sizeof(float))); 
     glEnableVertexAttribArray(AMC_ATTRIBUTE_TEXCOORD); 
+    glVertexAttribPointer(AMC_ATTRIBUTE_NORMAL, 3, GL_FLOAT, GL_FALSE, stride, (void*)(5*sizeof(float))); 
+    glEnableVertexAttribArray(AMC_ATTRIBUTE_NORMAL); 
     glVertexAttribPointer(AMC_ATTRIBUTE_TANGENT, 3, GL_FLOAT, GL_FALSE, stride, (void*)(8*sizeof(float))); 
     glEnableVertexAttribArray(AMC_ATTRIBUTE_TANGENT); 
     glVertexAttribPointer(AMC_ATTRIBUTE_BITANGENT, 3, GL_FLOAT, GL_FALSE, stride, (void*)(11*sizeof(float))); 
@@ -326,9 +326,14 @@ Model::draw(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _proj
             glUniform1i(glGetUniformLocation(shaderProgramObject, "uSpecular"), 2); 
         } 
 
+        glEnable(GL_BLEND); 
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+
         glBindVertexArray(meshes[i].vao); 
         glDrawElements(GL_TRIANGLES, meshes[i].indices.size(), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0); 
+        
+        glDisable(GL_BLEND); 
     } 
 
     glUseProgram(0); 
@@ -412,9 +417,14 @@ Model::initShaderProgram(void)
     "	vec3 lightDirection = normalize(uLightPosition.xyz - out_fragPosition);\n" \
     "	vec3 diffuse = max(dot(normalizedNormal, lightDirection), 0.0) * uLightColor;\n" \
     
-    "	vec3 diffuseColor = texture(uDiffuse, out_texCoord).rgb;\n" \
-    "	vec3 color = diffuseColor * diffuse;\n" \
-    "	FragColor = vec4(color, 1.0);\n" \
+    "	vec4 diffuseColor = texture(uDiffuse, out_texCoord);\n" \
+    // "	vec3 color = diffuseColor * diffuse;\n" 
+    // "	FragColor = vec4(color, 1.0);\n" 
+
+    "   if(diffuseColor.a < 0.01)\n" \
+    "       discard;\n" \
+
+    "	FragColor = vec4(diffuseColor.rgb, 1.0);\n" \
     "}\n"; 
 
     GLuint fragmentShaderObject = glCreateShader(GL_FRAGMENT_SHADER); 

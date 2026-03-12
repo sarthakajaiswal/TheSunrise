@@ -1,28 +1,21 @@
 #include "../../headers/scenes/scene1.hpp" 
 
-/* 
-tree model positions: 
-660.032f, 27.08f, 948.01f  | 0.189f, 0.199f, 0.224f
-439.514f, 18.81f, 1337.290f
-650.896f, 18.81f, 1337.290f | 0.79, 0.59, 0.044 
-*/ 
-
-/* 
-mind flayer final 
-pos= -129.13, -33.11, 596.22 
-scale= 38.74, 34.43, 1.98
-ry = 180.0 
-
-*/ 
-
 // float tx, ty, tz; 
 // float sx=1.0, sy=1.0, sz=1.0; 
 // float rx, ry, rz; 
 
-float alpha=0.2; 
+// initial 
+float flareModelTx0 = 530.90f, flareModelTy0 = -121.92f, flareModelTz0 = 1709.79f; 
+float flareModelSx0 = 3.64f, flareModelSy0 = 4.31f, flareModelSz0 = 5.36f;
+// final 
+float flareModelTx1 = 530.90f, flareModelTy1 = -6.03f, flareModelTz1 = 1544.01f; 
+float flareModelSx1 = 30.74f, flareModelSy1 = 22.43f, flareModelSz1 = 5.0f; 
+// current (initially set to initial values) 
+float flareModelTx=flareModelTx0, flareModelTy=flareModelTy0, flareModelTz=flareModelTz0; 
+float flareModelSx=flareModelSx0, flareModelSy=flareModelSy0, flareModelSz=flareModelSz0; 
+bool bAnimateFlareModel = true; 
 
 Camera scene1Camera; 
-// float cubemapYAngle=178.0f; 
 float modelX = 534.06, modelY = 46.0, modelZ = 501.85; 
 float modelSx = 1.0, modelSy = 1.0, modelSz = 1.0; 
 
@@ -123,21 +116,21 @@ void Scene1::display()
 
     // ---------- 
 
-    // // moon 
-    // matrixStack.pushMatrix(modelMatrix); 
-    // {
-    //     modelMatrix = mat4::identity(); 
+    // moon 
+    matrixStack.pushMatrix(modelMatrix); 
+    {
+        modelMatrix = mat4::identity(); 
 
-    //     vmath::mat4 translationMatrix = vmath::translate(490.6f, 455.627f, 2000.0f); 
-    //     vmath::mat4 scaleMatrix = vmath::scale(125.0f, 125.0f, 125.0f); 
-    //     modelMatrix = translationMatrix * scaleMatrix; 
+        vmath::mat4 translationMatrix = vmath::translate(490.6f, 455.627f, 2000.0f); 
+        vmath::mat4 scaleMatrix = vmath::scale(125.0f, 125.0f, 125.0f); 
+        modelMatrix = translationMatrix * scaleMatrix; 
 
-    //     bwShader.use(); 
-    //     glUniformMatrix4fv(mvpMatrixUniform_bwShader, 1, GL_FALSE, projectionMatrix*viewMatrix*modelMatrix); 
-    //     moonSphere.render(); 
-    //     bwShader.unuse(); 
-    // } 
-    // modelMatrix = matrixStack.popMatrix(); 
+        bwShader.use(); 
+        glUniformMatrix4fv(mvpMatrixUniform_bwShader, 1, GL_FALSE, projectionMatrix*viewMatrix*modelMatrix); 
+        moonSphere.render(); 
+        bwShader.unuse(); 
+    } 
+    modelMatrix = matrixStack.popMatrix(); 
 
     // terrain 
     matrixStack.pushMatrix(modelMatrix); 
@@ -156,88 +149,107 @@ void Scene1::display()
     } 
     modelMatrix = matrixStack.popMatrix(); 
 
-    /*********** GODRAYS ************/ 
-    godrays.sceneObjectsFBO.bind(); 
-    { 
-        // terrain 
-        matrixStack.pushMatrix(modelMatrix); 
-        {
-            terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition()); 
-        } 
-        modelMatrix = matrixStack.popMatrix(); 
+    // mind flayer 
+    matrixStack.pushMatrix(modelMatrix); 
+    {
+        modelMatrix = mat4::identity(); 
+        // // initial 
+        // modelMatrix *= vmath::translate(530.90f, -121.92f, 1709.79f); 
+        // modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f); 
+        // modelMatrix *= vmath::scale(3.64f, 4.31f, 5.36f);
 
-        // tree 
-        matrixStack.pushMatrix(modelMatrix); 
-        {
-            modelMatrix *= vmath::translate(660.032f, 27.08f, 948.01f); 
-            modelMatrix *= vmath::scale(0.189f, 0.199f, 0.224f);
-            treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
-        } 
-        modelMatrix = matrixStack.popMatrix(); 
+        // final 
+        // modelMatrix *= vmath::translate(530.90f, -6.03f, 1544.01f); 
+        modelMatrix *= vmath::translate(flareModelTx, flareModelTy, flareModelTz); 
+        modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f); 
+        // modelMatrix *= vmath::scale(38.74f, 34.43f, 1.98f); 
+        modelMatrix *= vmath::scale(flareModelSx, flareModelSy, flareModelSz); 
 
-        // mind flayer 
-        matrixStack.pushMatrix(modelMatrix); 
-        {
-            modelMatrix = mat4::identity(); 
-            // // initial 
-            // modelMatrix *= vmath::translate(530.90f, -121.92f, 1709.79f); 
-            // modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f); 
-            // modelMatrix *= vmath::scale(3.64f, 4.31f, 5.36f);
-
-            // final 
-            modelMatrix *= vmath::translate(530.90f, -6.03f, 1544.01f); 
-            modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f); 
-            modelMatrix *= vmath::scale(38.74f, 34.43f, 1.98f); 
-
-            mindFlare.draw(modelMatrix, viewMatrix, projectionMatrix); 
-        } 
-        modelMatrix = matrixStack.popMatrix(); 
-
-        // cubemap  
-        matrixStack.pushMatrix(modelMatrix); 
-        {
-            mat4 rotationMatrix = vmath::rotate(162.0f, 1.0f, 0.0f, 0.0f); 
-            rotationMatrix *= vmath::rotate(0.6f, 0.0f, 1.0f, 0.0f); 
-            rotationMatrix *= vmath::rotate(7.11f, 0.0f, 0.0f, 1.0f); 
-            modelMatrix = rotationMatrix; 
-            modelMatrix *= vmath::scale(vec3(10.0)); 
-
-            cubemap.render(modelMatrix, viewMatrix, projectionMatrix); 
-        } 
-        modelMatrix = matrixStack.popMatrix(); 
-    } 
-    godrays.sceneObjectsFBO.unbind(); 
-
-    godrays.lightSourceFBO.bind(); 
-    { 
-        matrixStack.pushMatrix(modelMatrix); 
-        {
-            modelMatrix = mat4::identity(); 
-
-            vmath::mat4 translationMatrix = vmath::translate(490.6f, 455.627f, 2000.0f); 
-            vmath::mat4 scaleMatrix = vmath::scale(125.0f, 125.0f, 125.0f); 
-            modelMatrix = translationMatrix * scaleMatrix; 
-
-            bwShader.use(); 
-            glUniformMatrix4fv(mvpMatrixUniform_bwShader, 1, GL_FALSE, projectionMatrix*viewMatrix*modelMatrix); 
-            moonSphere.render(); 
-            bwShader.unuse(); 
-        } 
-        modelMatrix = matrixStack.popMatrix(); 
-    } 
-    godrays.lightSourceFBO.unbind(); 
-
-    matrixStack.pushMatrix(modelMatrix);
-    { 
-        mat4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix; 
-        glEnable(GL_BLEND); 
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-        godrays.render(
-            viewMatrix, projectionMatrix, exposure_godrays, decay_godrays, density_godrays, weight_godrays, numSamples_godrays, vec3(490.6f, 455.627f, 2000.0f)); 
-        glDisable(GL_BLEND); 
+        mindFlare.draw(modelMatrix, viewMatrix, projectionMatrix); 
     } 
     modelMatrix = matrixStack.popMatrix(); 
 
+    // /*********** GODRAYS ************/ 
+    // godrays.sceneObjectsFBO.bind(); 
+    // { 
+    //     // terrain 
+    //     matrixStack.pushMatrix(modelMatrix); 
+    //     {
+    //         terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition()); 
+    //     } 
+    //     modelMatrix = matrixStack.popMatrix(); 
+
+    //     // tree 
+    //     matrixStack.pushMatrix(modelMatrix); 
+    //     {
+    //         modelMatrix *= vmath::translate(660.032f, 27.08f, 948.01f); 
+    //         modelMatrix *= vmath::scale(0.189f, 0.199f, 0.224f);
+    //         treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
+    //     } 
+    //     modelMatrix = matrixStack.popMatrix(); 
+
+    //     // mind flayer 
+    //     matrixStack.pushMatrix(modelMatrix); 
+    //     {
+    //         modelMatrix = mat4::identity(); 
+    //         // // initial 
+    //         // modelMatrix *= vmath::translate(530.90f, -121.92f, 1709.79f); 
+    //         // modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f); 
+    //         // modelMatrix *= vmath::scale(3.64f, 4.31f, 5.36f);
+
+    //         // final 
+    //         modelMatrix *= vmath::translate(530.90f, -6.03f, 1544.01f); 
+    //         modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f); 
+    //         modelMatrix *= vmath::scale(38.74f, 34.43f, 1.98f); 
+
+    //         mindFlare.draw(modelMatrix, viewMatrix, projectionMatrix); 
+    //     } 
+    //     modelMatrix = matrixStack.popMatrix(); 
+    // } 
+    // godrays.sceneObjectsFBO.unbind(); 
+
+    // godrays.lightSourceFBO.bind(); 
+    // { 
+    //     matrixStack.pushMatrix(modelMatrix); 
+    //     {
+    //         modelMatrix = mat4::identity(); 
+
+    //         vmath::mat4 translationMatrix = vmath::translate(490.6f, 455.627f, 2000.0f); 
+    //         vmath::mat4 scaleMatrix = vmath::scale(125.0f, 125.0f, 125.0f); 
+    //         modelMatrix = translationMatrix * scaleMatrix; 
+
+    //         bwShader.use(); 
+    //         glUniformMatrix4fv(mvpMatrixUniform_bwShader, 1, GL_FALSE, projectionMatrix*viewMatrix*modelMatrix); 
+    //         moonSphere.render(); 
+    //         bwShader.unuse(); 
+    //     } 
+    //     modelMatrix = matrixStack.popMatrix(); 
+    // } 
+    // godrays.lightSourceFBO.unbind(); 
+
+    // matrixStack.pushMatrix(modelMatrix);
+    // { 
+    //     mat4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix; 
+    //     glEnable(GL_BLEND); 
+    //     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+    //     godrays.render(
+    //         viewMatrix, projectionMatrix, exposure_godrays, decay_godrays, density_godrays, weight_godrays, numSamples_godrays, vec3(490.6f, 455.627f, 2000.0f)); 
+    //     glDisable(GL_BLEND); 
+    // } 
+    // modelMatrix = matrixStack.popMatrix(); 
+
+    // cubemap  
+    matrixStack.pushMatrix(modelMatrix); 
+    {
+        mat4 rotationMatrix = vmath::rotate(162.0f, 1.0f, 0.0f, 0.0f); 
+        rotationMatrix *= vmath::rotate(0.6f, 0.0f, 1.0f, 0.0f); 
+        rotationMatrix *= vmath::rotate(7.11f, 0.0f, 0.0f, 1.0f); 
+        modelMatrix = rotationMatrix; 
+        modelMatrix *= vmath::scale(vec3(10.0)); 
+
+        cubemap.render(modelMatrix, viewMatrix, projectionMatrix); 
+    } 
+    modelMatrix = matrixStack.popMatrix(); 
 
 
     /*****************************************************************************************************************************/
@@ -276,6 +288,24 @@ void Scene1::display()
 void Scene1::update() 
 {
     // code 
+    // model scale and translate alpha
+    static float modelAnimateSpeedInverse = 100.0f; 
+    float modelTxD=(flareModelTx1-flareModelTx0)/modelAnimateSpeedInverse;
+    float modelTyD=(flareModelTy1-flareModelTy0)/modelAnimateSpeedInverse;
+    float modelTzD=(flareModelTz1-flareModelTz0)/modelAnimateSpeedInverse; 
+    float modelSxD=(flareModelSx1-flareModelSx0)/modelAnimateSpeedInverse;
+    float modelSyD=(flareModelSy1-flareModelSy0)/modelAnimateSpeedInverse; 
+    float modelSzD=(flareModelSz1-flareModelSz0)/modelAnimateSpeedInverse; 
+
+    if(bAnimateFlareModel == true && flareModelSy <= flareModelSy1) 
+    {
+        flareModelTx += modelTxD; 
+        flareModelTy += modelTyD; 
+        flareModelTz += modelTzD; 
+        flareModelSx += modelSxD; 
+        flareModelSy += modelSyD; 
+        flareModelSz += modelSzD; 
+    } 
 } 
 
 void Scene1::uninitialize()  
