@@ -147,7 +147,7 @@ void Scene1::display()
         modelMatrix = mat4::identity(); 
         modelMatrix *= vmath::translate(660.032f, 27.08f, 948.01f); 
         modelMatrix *= vmath::scale(0.189f, 0.199f, 0.224f);
-        treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
+        treeModel.draw(modelMatrix, viewMatrix, projectionMatrix, true, 150.0, 400.0, vec3(0.0, 0.0, 0.0), scene1Camera.getPosition()); 
     } 
     modelMatrix = matrixStack.popMatrix(); 
 

@@ -294,12 +294,28 @@ Model::setupMesh(Model::Mesh& mesh)
 } 
 
 void 
-Model::draw(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix) 
+Model::draw(
+    vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, 
+    bool bFog, float fogStart, float fogEnd, vmath::vec3 fogColor, vmath::vec3 viewPosition 
+) 
 {
     if(shaderProgramObject == 0) 
         assert(initShaderProgram() == 0); 
 
     glUseProgram(shaderProgramObject); 
+
+    if(bFog == true) 
+    {
+        glUniform1i(isFogUniform, 1); 
+        glUniform1f(fogStartUniform, fogStart); 
+        glUniform1f(fogEndUniform, fogEnd); 
+        glUniform3fv(fogColorUniform, 1, fogColor); 
+        glUniform3fv(viewPositionUniform, 1, viewPosition); 
+    } 
+    else 
+    {
+        glUniform1i(isFogUniform, 0); 
+    } 
 
     for(unsigned int i = 0; i < meshes.size(); ++i) 
     {
@@ -411,6 +427,12 @@ Model::initShaderProgram(void)
     "uniform vec4 uLightPosition = vec4(100.0, 100.0, 100.0, 1.0);\n" \
     "uniform vec3 uLightColor = vec3(1.0, 1.0, 1.0);\n" \
 
+    "uniform vec3 uViewPosition;\n" \
+    "uniform int uIsFogEnabled;\n" \
+    "uniform float uFogStart;\n" \
+    "uniform float uFogEnd;\n" \
+    "uniform vec3 uFogColor;\n" \
+
     "void main(void)\n" \
     "{\n" \
     "	vec3 normalizedNormal = normalize(out_normal);\n" \
@@ -424,7 +446,18 @@ Model::initShaderProgram(void)
     "   if(diffuseColor.a < 0.01)\n" \
     "       discard;\n" \
 
-    "	FragColor = vec4(diffuseColor.rgb, 1.0);\n" \
+    /* ----- fog color ----- */ 
+    "   float fogFactor = 1.0;\n" \
+    "   if(uIsFogEnabled == 1)\n" \
+    "   {\n" \
+    "       float cameraToPixelDistance = length(uViewPosition - out_fragPosition);\n" \
+    "       float fogRange = uFogEnd - uFogStart;\n" \
+    "       float fogDist = uFogEnd - cameraToPixelDistance;\n" \
+    "       fogFactor = fogDist / fogRange;\n" \
+    "       fogFactor = clamp(fogFactor, 0.0, 1.0);\n" \
+    "   }\n" \
+
+    "	FragColor = mix(vec4(uFogColor, 1.0), diffuseColor, fogFactor);\n" \
     "}\n"; 
 
     GLuint fragmentShaderObject = glCreateShader(GL_FRAGMENT_SHADER); 
@@ -500,6 +533,11 @@ Model::initShaderProgram(void)
     // ----- SENDING DATA INTO UNIFORM ---------- 
     mvpMatrixUniform = glGetUniformLocation(shaderProgramObject, "uMVPMatrix"); 
     modelMatrixUniform = glGetUniformLocation(shaderProgramObject, "uModelMatrix"); 
+    viewPositionUniform = glGetUniformLocation(shaderProgramObject, "uViewPosition"); 
+    isFogUniform = glGetUniformLocation(shaderProgramObject, "uIsFogEnabled"); 
+    fogStartUniform = glGetUniformLocation(shaderProgramObject, "uFogStart"); 
+    fogEndUniform = glGetUniformLocation(shaderProgramObject, "uFogEnd"); 
+    fogColorUniform = glGetUniformLocation(shaderProgramObject, "uFogColor"); 
 
     return (0); 
 } 
