@@ -95,7 +95,10 @@ class Terrain
         void InitVertices(int width, int depth, float* heightData, std::vector<Vertex>& vertices); 
         void InitIndices(int width, int depth, std::vector<unsigned int>& indices); 
         float* LoadHeightMap(const char* filePath, int* pWidth, int* pDepth); 
+        
         int InitOpenGLState(); 
+        void createTerrainProgram(); 
+        void createOcclusionProgram(); 
 
     public: 
         Terrain(); 

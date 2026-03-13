@@ -171,6 +171,14 @@ int Terrain::InitOpenGLState()
 
     glBindVertexArray(0); 
 
+    createTerrainProgram(); 
+    createOcclusionProgram(); 
+
+    return (0); 
+} 
+
+void Terrain::createTerrainProgram() 
+{
     /*************** terrain program ****************/
     char* vertexShaderSourceCode = FileHandler::fileToString("src/shaders/terrain.vs"); 
     char* fragmentShaderSourceCode = FileHandler::fileToString("src/shaders/terrain.fs"); 
@@ -225,16 +233,19 @@ int Terrain::InitOpenGLState()
     fogStartUniform             = terrainShaderProgram.getUniformLocation("uFogStart"); 
     fogEndUniform               = terrainShaderProgram.getUniformLocation("uFogEnd"); 
     fogColorUniform             = terrainShaderProgram.getUniformLocation("uFogColor"); 
+} 
 
+void Terrain::createOcclusionProgram() 
+{
     /*************** occlusion program ****************/ 
-    vertexShaderSourceCode = FileHandler::fileToString("src/shaders/occlusion.vs"); 
-    fragmentShaderSourceCode = FileHandler::fileToString("src/shaders/occlusion.fs"); 
+    char* vertexShaderSourceCode = FileHandler::fileToString("src/shaders/occlusion.vs"); 
+    char* fragmentShaderSourceCode = FileHandler::fileToString("src/shaders/occlusion.fs"); 
 
-    shaders.clear(); 
+    std::vector<ShaderSourceCodeAndType> shaders; 
     shaders.push_back(ShaderSourceCodeAndType(vertexShaderSourceCode, GL_VERTEX_SHADER));  
     shaders.push_back(ShaderSourceCodeAndType(fragmentShaderSourceCode, GL_FRAGMENT_SHADER));  
 
-    attributes.clear(); 
+    std::vector<AttributeWithIndexLocation> attributes; 
     attributes.push_back(AttributeWithIndexLocation(AMC_ATTRIBUTE_POSITION, "aPosition")); 
 
     occlusionProgram.create(shaders, attributes); 
@@ -250,10 +261,8 @@ int Terrain::InitOpenGLState()
         fragmentShaderSourceCode = 0; 
     } 
 
-    modelMatrixUniform = occlusionProgram.getUniformLocation("uMVPMatrix"); 
-
-    return (0); 
-} 
+    mvpMatrixUniform_occlusion = occlusionProgram.getUniformLocation("uMVPMatrix"); 
+}
 
 Terrain::Terrain() 
 {
@@ -321,9 +330,6 @@ void Terrain::render(
     float fogStart, float fogEnd, vec3 fogColor
 ) 
 {
-    if(isInitialized == false) 
-        throw render_called_before_initialize("Terrain::render() > terrain is not initialized yet\n"); 
-
     terrainShaderProgram.use(); 
 
     glUniformMatrix4fv(modelMatrixUniform, 1, GL_FALSE, _modelMatrix); 
