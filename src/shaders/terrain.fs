@@ -24,7 +24,11 @@ uniform int uIsFogEnabled;
 
 vec4 uLightPosition; 
 uniform vec3 uLightColor; 
-uniform vec3 uViewPosition; 
+uniform vec3 uViewPosition;
+
+uniform float uFogStart; 
+uniform float uFogEnd; 
+uniform vec3 uFogColor; 
 
 void main(void) 
 { 

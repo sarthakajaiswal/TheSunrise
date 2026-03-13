@@ -221,6 +221,11 @@ int Terrain::InitOpenGLState()
     lightPositionUniform        = shaderProgramObject.getUniformLocation("uLightPosition"); 
     isFogUniform                = shaderProgramObject.getUniformLocation("uIsFogEnabled"); 
 
+    isFogUniform                = shaderProgramObject.getUniformLocation("uIsFogEnabled"); 
+    fogStartUniform             = shaderProgramObject.getUniformLocation("uFogStart"); 
+    fogEndUniform               = shaderProgramObject.getUniformLocation("uFogEnd"); 
+    fogColorUniform             = shaderProgramObject.getUniformLocation("uFogColor"); 
+
     return (0); 
 } 
 
@@ -282,7 +287,13 @@ int Terrain::initialize(const char* heightmapImagePath, float _worldScale, float
     return (0); 
 } 
 
-void Terrain::render(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, vec3 viewPosition) 
+void Terrain::render(
+    vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, 
+    vec3 viewPosition, 
+    bool bLight, bool bFog, 
+    vec3 lightPosition, vec3 lightColor, 
+    float fogStart, float fogEnd, vec3 fogColor
+) 
 {
     if(isInitialized == false) 
         throw render_called_before_initialize("Terrain::render() > terrain is not initialized yet\n"); 
@@ -302,106 +313,27 @@ void Terrain::render(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::m
 
     glUniform3fv(viewPositionUniform, 1, viewPosition); 
 
-    glUniform1i(isLightUniform, 0); 
+    if(bLight == true) 
+    {
+        glUniform1i(isLightUniform, 1); 
+        glUniform3fv(lightPositionUniform, 1, lightPosition); 
+        glUniform3fv(lightColorUniform, 1, lightColor); 
+    } 
+    else 
+    {
+        glUniform1i(isLightUniform, 0); 
+    } 
 
-    glActiveTexture(GL_TEXTURE0); 
-    glBindTexture(GL_TEXTURE_2D, textures[0]); 
-    glUniform1i(texture1Uniform, 0); 
-
-    glActiveTexture(GL_TEXTURE1); 
-    glBindTexture(GL_TEXTURE_2D, textures[1]); 
-    glUniform1i(texture2Uniform, 1); 
-
-    glActiveTexture(GL_TEXTURE2); 
-    glBindTexture(GL_TEXTURE_2D, textures[2]); 
-    glUniform1i(texture3Uniform, 2); 
-
-    glActiveTexture(GL_TEXTURE3); 
-    glBindTexture(GL_TEXTURE_2D, textures[3]); 
-    glUniform1i(texture4Uniform, 3); 
-
-    float maxAniso = 0.0f; 
-    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &maxAniso); 
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, maxAniso); 
-
-    glBindVertexArray(vao);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0); 
-    glBindVertexArray(0); 
-
-    shaderProgramObject.unuse(); 
-} 
-
-void Terrain::renderWithLight(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, vec3 viewPosition, vec3 lightPosition, vec3 lightColor) 
-{
-    if(isInitialized == false) 
-        throw render_called_before_initialize("Terrain::render() > terrain is not initialized yet\n"); 
-
-    shaderProgramObject.use(); 
-
-    glUniformMatrix4fv(modelMatrixUniform, 1, GL_FALSE, _modelMatrix); 
-    glUniformMatrix4fv(viewMatrixUniform, 1, GL_FALSE, _viewMatrix); 
-    glUniformMatrix4fv(projectionMatrixUniform, 1, GL_FALSE, _projectionMatrix);  
-
-    glUniform1f(heightScaleUniform, heightScale); 
-    glUniform1f(hRange1Uniform, textureHeightRanges[0]); 
-    glUniform1f(hRange2Uniform, textureHeightRanges[1]); 
-    glUniform1f(hRange3Uniform, textureHeightRanges[2]); 
-    glUniform1f(hRange4Uniform, textureHeightRanges[3]); 
-
-    glUniform3fv(viewPositionUniform, 1, viewPosition); 
-
-    glUniform1i(isLightUniform, 1); 
-    glUniform3fv(lightPositionUniform, 1, lightPosition); 
-    glUniform3fv(lightColorUniform, 1, lightColor); 
-
-    glActiveTexture(GL_TEXTURE0); 
-    glBindTexture(GL_TEXTURE_2D, textures[0]); 
-    glUniform1i(texture1Uniform, 0); 
-
-    glActiveTexture(GL_TEXTURE1); 
-    glBindTexture(GL_TEXTURE_2D, textures[1]); 
-    glUniform1i(texture2Uniform, 1); 
-
-    glActiveTexture(GL_TEXTURE2); 
-    glBindTexture(GL_TEXTURE_2D, textures[2]); 
-    glUniform1i(texture3Uniform, 2); 
-
-    glActiveTexture(GL_TEXTURE3); 
-    glBindTexture(GL_TEXTURE_2D, textures[3]); 
-    glUniform1i(texture4Uniform, 3); 
-
-    float maxAniso = 0.0f; 
-    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &maxAniso); 
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY, maxAniso); 
-
-    glBindVertexArray(vao);
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0); 
-    glBindVertexArray(0); 
-
-    shaderProgramObject.unuse(); 
-} 
-
-void Terrain::renderWithFog(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, vec3 viewPosition) 
-{
-    if(isInitialized == false) 
-        throw render_called_before_initialize("Terrain::render() > terrain is not initialized yet\n"); 
-
-    shaderProgramObject.use(); 
-
-    glUniform1i(isFogUniform, 1); 
-
-    glUniformMatrix4fv(modelMatrixUniform, 1, GL_FALSE, _modelMatrix); 
-    glUniformMatrix4fv(viewMatrixUniform, 1, GL_FALSE, _viewMatrix); 
-    glUniformMatrix4fv(projectionMatrixUniform, 1, GL_FALSE, _projectionMatrix);  
-    // glUniformMatrix4fv(normalMatrixUniform, 1, GL_FALSE, (_modelMatrix).transpose()); 
-
-    glUniform1f(heightScaleUniform, heightScale); 
-    glUniform1f(hRange1Uniform, textureHeightRanges[0]); 
-    glUniform1f(hRange2Uniform, textureHeightRanges[1]); 
-    glUniform1f(hRange3Uniform, textureHeightRanges[2]); 
-    glUniform1f(hRange4Uniform, textureHeightRanges[3]); 
-
-    glUniform3fv(viewPositionUniform, 1, viewPosition); 
+    if(bFog == true) 
+    {
+        glUniform1i(isFogUniform, 1); 
+        glUniform1f(fogStartUniform, fogStart); 
+        glUniform1f(fogEndUniform, fogEnd); 
+    } 
+    else 
+    {
+        glUniform1i(isFogUniform, 0); 
+    } 
 
     glActiveTexture(GL_TEXTURE0); 
     glBindTexture(GL_TEXTURE_2D, textures[0]); 

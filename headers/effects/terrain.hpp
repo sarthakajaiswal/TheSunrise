@@ -78,6 +78,9 @@ class Terrain
         GLuint lightColorUniform; 
 
         GLuint isFogUniform; 
+        GLuint fogStartUniform; 
+        GLuint fogEndUniform; 
+        GLuint fogColorUniform; 
 
         std::vector<unsigned int> indices; 
         GLuint vao, vbo, ebo; 
@@ -99,17 +102,20 @@ class Terrain
             ); 
         void render(
                 vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, 
-                vec3 viewPosition
-            ); 
-        void renderWithLight(
-                vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, 
                 vec3 viewPosition, 
-                vec3 lightPosition, vec3 lightColor
+                bool bLight=false, bool bFog=false, 
+                vec3 lightPosition=vec3(0.0), vec3 lightColor=vec3(0.0), 
+                float fogStart=0.0, float fogEnd=0.0, vec3 fogColor=vec3(0.0)
             ); 
-        void renderWithFog(
-                vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, 
-                vec3 viewPosition
-            ); 
+        // void renderWithLight(
+        //         vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, 
+        //         vec3 viewPosition, 
+        //         vec3 lightPosition, vec3 lightColor
+        //     ); 
+        // void renderWithFog(
+        //         vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, 
+        //         vec3 viewPosition
+        //     ); 
         void uninitialize(); 
         ~Terrain(); 
 }; 
