@@ -19,29 +19,39 @@ uniform float hRange2;
 uniform float hRange3; 
 uniform float hRange4; 
     
-vec4 uLightPosition = vec4(0.0, 50.0, 50.0, 1.0); 
-vec3 lightColor = vec3(1.0, 1.0, 1.0); 
+uniform int uIsLightEnabled; 
+uniform int uIsFogEnabled; 
+
+vec4 uLightPosition; 
+uniform vec3 uLightColor; 
 uniform vec3 uViewPosition; 
 
 void main(void) 
 { 
+    vec3 lightColor = vec3(1.0);
+ 
     /* -------- light color --------- */
     vec3 skyColor = vec3(0.7, 0.9, 0.9); 
     vec3 groundColor = vec3(0.4, 0.3, 0.2); 
     float mixFactor = dot(out_normal, vec3(0.0, 1.0, 0.0)) * 0.5 + 0.5; 
     vec3 ambientColor = mix(groundColor, skyColor, mixFactor); 
 
-    vec3 lightDirection = normalize(vec3(out_worldPosition - uLightPosition.xyz)); 
-    float diffuse = max(0.0, dot(-lightDirection, out_normal)); 
-    vec3 diffuseColor = diffuse * lightColor; 
+    lightColor = ambientColor; 
 
-    float shininess = 32.0f; 
-    vec3 reflectionVector = normalize(reflect(lightDirection, out_normal)); 
-    vec3 viewDirection = normalize(vec3(uViewPosition - out_worldPosition)); 
-    float specular = pow(max(0.0, dot(reflectionVector, viewDirection)), shininess); 
-    vec3 specularColor = specular * lightColor; 
+    if(uIsLightEnabled == 1) 
+    {
+        vec3 lightDirection = normalize(vec3(out_worldPosition - uLightPosition.xyz)); 
+        float diffuse = max(0.0, dot(-lightDirection, out_normal)); 
+        vec3 diffuseColor = diffuse * uLightColor; 
 
-    lightColor = (ambientColor + diffuseColor + specularColor); 
+        float shininess = 32.0f; 
+        vec3 reflectionVector = normalize(reflect(lightDirection, out_normal)); 
+        vec3 viewDirection = normalize(vec3(uViewPosition - out_worldPosition)); 
+        float specular = pow(max(0.0, dot(reflectionVector, viewDirection)), shininess); 
+        vec3 specularColor = specular * uLightColor; 
+
+        lightColor += (diffuseColor + specularColor); 
+    } 
 
     /* -------- texture color --------- */ 
     float height = out_worldPosition.y/uHeightScale; 

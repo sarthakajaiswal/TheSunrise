@@ -55,7 +55,7 @@ Scene2 scene2;
 OutroScene outroScene; 
 TestScene testScene; 
 
-enum Scene CurrentScene = OUTRO_SCENE; 
+enum Scene CurrentScene = SCENE_1; 
 
 // ==================== ENTRY-POINT FUNCTION ================ 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) 

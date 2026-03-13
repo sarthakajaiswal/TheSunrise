@@ -118,81 +118,82 @@ void Scene1::display()
 
     // ---------- 
 
-    // // moon 
-    // matrixStack.pushMatrix(modelMatrix); 
-    // {
-    //     modelMatrix = mat4::identity(); 
+    // moon 
+    matrixStack.pushMatrix(modelMatrix); 
+    {
+        modelMatrix = mat4::identity(); 
 
-    //     vmath::mat4 translationMatrix = vmath::translate(490.6f, 455.627f, 2000.0f); 
-    //     vmath::mat4 scaleMatrix = vmath::scale(125.0f, 125.0f, 125.0f); 
-    //     modelMatrix = translationMatrix * scaleMatrix; 
+        vmath::mat4 translationMatrix = vmath::translate(490.6f, 455.627f, 2000.0f); 
+        vmath::mat4 scaleMatrix = vmath::scale(125.0f, 125.0f, 125.0f); 
+        modelMatrix = translationMatrix * scaleMatrix; 
 
-    //     bwShader.use(); 
-    //     glUniformMatrix4fv(mvpMatrixUniform_bwShader, 1, GL_FALSE, projectionMatrix*viewMatrix*modelMatrix); 
-    //     moonSphere.render(); 
-    //     bwShader.unuse(); 
-    // } 
-    // modelMatrix = matrixStack.popMatrix(); 
+        bwShader.use(); 
+        glUniformMatrix4fv(mvpMatrixUniform_bwShader, 1, GL_FALSE, projectionMatrix*viewMatrix*modelMatrix); 
+        moonSphere.render(); 
+        bwShader.unuse(); 
+    } 
+    modelMatrix = matrixStack.popMatrix(); 
 
-    // // terrain 
-    // matrixStack.pushMatrix(modelMatrix); 
-    // {
-    //     terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition()); 
-    // } 
-    // modelMatrix = matrixStack.popMatrix(); 
+    // terrain 
+    matrixStack.pushMatrix(modelMatrix); 
+    {
+        terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition()); 
+        // terrain.renderWithLight(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition(), vec3(50.0), vec3(1.0, 0.0, 0.0)); 
+    } 
+    modelMatrix = matrixStack.popMatrix(); 
 
-    // // tree 
-    // matrixStack.pushMatrix(modelMatrix); 
-    // {
-    //     modelMatrix = mat4::identity(); 
-    //     modelMatrix *= vmath::translate(660.032f, 27.08f, 948.01f); 
-    //     modelMatrix *= vmath::scale(0.189f, 0.199f, 0.224f);
-    //     treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
-    // } 
-    // modelMatrix = matrixStack.popMatrix(); 
+    // tree 
+    matrixStack.pushMatrix(modelMatrix); 
+    {
+        modelMatrix = mat4::identity(); 
+        modelMatrix *= vmath::translate(660.032f, 27.08f, 948.01f); 
+        modelMatrix *= vmath::scale(0.189f, 0.199f, 0.224f);
+        treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
+    } 
+    modelMatrix = matrixStack.popMatrix(); 
 
-    // // mind flayer 
-    // matrixStack.pushMatrix(modelMatrix); 
-    // {
-    //     modelMatrix = mat4::identity(); 
-    //     modelMatrix *= vmath::translate(flareModelTx, flareModelTy, flareModelTz); 
-    //     modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
-    //     modelMatrix *= vmath::scale(flareModelSx, flareModelSy, flareModelSz); 
+    // mind flayer 
+    matrixStack.pushMatrix(modelMatrix); 
+    {
+        modelMatrix = mat4::identity(); 
+        modelMatrix *= vmath::translate(flareModelTx, flareModelTy, flareModelTz); 
+        modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
+        modelMatrix *= vmath::scale(flareModelSx, flareModelSy, flareModelSz); 
 
-    //     mindFlare.draw(modelMatrix, viewMatrix, projectionMatrix); 
-    // } 
-    // modelMatrix = matrixStack.popMatrix(); 
+        mindFlare.draw(modelMatrix, viewMatrix, projectionMatrix); 
+    } 
+    modelMatrix = matrixStack.popMatrix(); 
 
-    /*********** GODRAYS ************/ 
-    godrays.sceneObjectsFBO.bind(); 
-    { 
-        // terrain 
-        matrixStack.pushMatrix(modelMatrix); 
-        {
-            terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition()); 
-        } 
-        modelMatrix = matrixStack.popMatrix(); 
+    // /*********** GODRAYS ************/ 
+    // godrays.sceneObjectsFBO.bind(); 
+    // { 
+    //     // terrain 
+    //     matrixStack.pushMatrix(modelMatrix); 
+    //     {
+    //         terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition()); 
+    //     } 
+    //     modelMatrix = matrixStack.popMatrix(); 
 
-        // tree 
-        matrixStack.pushMatrix(modelMatrix); 
-        {
-            modelMatrix *= vmath::translate(660.032f, 27.08f, 948.01f); 
-            modelMatrix *= vmath::scale(0.189f, 0.199f, 0.224f);
-            treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
-        } 
-        modelMatrix = matrixStack.popMatrix(); 
+    //     // tree 
+    //     matrixStack.pushMatrix(modelMatrix); 
+    //     {
+    //         modelMatrix *= vmath::translate(660.032f, 27.08f, 948.01f); 
+    //         modelMatrix *= vmath::scale(0.189f, 0.199f, 0.224f);
+    //         treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
+    //     } 
+    //     modelMatrix = matrixStack.popMatrix(); 
 
-        // mind flayer 
-        matrixStack.pushMatrix(modelMatrix); 
-        {
-            modelMatrix = mat4::identity(); 
-            modelMatrix *= vmath::translate(flareModelTx, flareModelTy, flareModelTz); 
-            modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
-            modelMatrix *= vmath::scale(flareModelSx, flareModelSy, flareModelSz); 
+    //     // mind flayer 
+    //     matrixStack.pushMatrix(modelMatrix); 
+    //     {
+    //         modelMatrix = mat4::identity(); 
+    //         modelMatrix *= vmath::translate(flareModelTx, flareModelTy, flareModelTz); 
+    //         modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
+    //         modelMatrix *= vmath::scale(flareModelSx, flareModelSy, flareModelSz); 
 
-            mindFlare.draw(modelMatrix, viewMatrix, projectionMatrix); 
-        } 
-        modelMatrix = matrixStack.popMatrix(); 
+    //         mindFlare.draw(modelMatrix, viewMatrix, projectionMatrix); 
+    //     } 
+    //     modelMatrix = matrixStack.popMatrix(); 
 
         // cubemap  
         matrixStack.pushMatrix(modelMatrix); 
@@ -206,38 +207,38 @@ void Scene1::display()
             cubemap.render(modelMatrix, viewMatrix, projectionMatrix); 
         } 
         modelMatrix = matrixStack.popMatrix(); 
-    } 
-    godrays.sceneObjectsFBO.unbind(); 
+    // } 
+    // godrays.sceneObjectsFBO.unbind(); 
 
-    godrays.lightSourceFBO.bind(); 
-    { 
-        matrixStack.pushMatrix(modelMatrix); 
-        {
-            modelMatrix = mat4::identity(); 
+    // godrays.lightSourceFBO.bind(); 
+    // { 
+    //     matrixStack.pushMatrix(modelMatrix); 
+    //     {
+    //         modelMatrix = mat4::identity(); 
 
-            vmath::mat4 translationMatrix = vmath::translate(490.6f, 455.627f, 2000.0f); 
-            vmath::mat4 scaleMatrix = vmath::scale(125.0f, 125.0f, 125.0f); 
-            modelMatrix = translationMatrix * scaleMatrix; 
+    //         vmath::mat4 translationMatrix = vmath::translate(490.6f, 455.627f, 2000.0f); 
+    //         vmath::mat4 scaleMatrix = vmath::scale(125.0f, 125.0f, 125.0f); 
+    //         modelMatrix = translationMatrix * scaleMatrix; 
 
-            bwShader.use(); 
-            glUniformMatrix4fv(mvpMatrixUniform_bwShader, 1, GL_FALSE, projectionMatrix*viewMatrix*modelMatrix); 
-            moonSphere.render(); 
-            bwShader.unuse(); 
-        } 
-        modelMatrix = matrixStack.popMatrix(); 
-    } 
-    godrays.lightSourceFBO.unbind(); 
+    //         bwShader.use(); 
+    //         glUniformMatrix4fv(mvpMatrixUniform_bwShader, 1, GL_FALSE, projectionMatrix*viewMatrix*modelMatrix); 
+    //         moonSphere.render(); 
+    //         bwShader.unuse(); 
+    //     } 
+    //     modelMatrix = matrixStack.popMatrix(); 
+    // } 
+    // godrays.lightSourceFBO.unbind(); 
 
-    matrixStack.pushMatrix(modelMatrix);
-    { 
-        mat4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix; 
-        glEnable(GL_BLEND); 
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-        godrays.render(
-            viewMatrix, projectionMatrix, exposure_godrays, decay_godrays, density_godrays, weight_godrays, numSamples_godrays, vec3(490.6f, 455.627f, 2000.0f)); 
-        glDisable(GL_BLEND); 
-    } 
-    modelMatrix = matrixStack.popMatrix(); 
+    // matrixStack.pushMatrix(modelMatrix);
+    // { 
+    //     mat4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix; 
+    //     glEnable(GL_BLEND); 
+    //     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+    //     godrays.render(
+    //         viewMatrix, projectionMatrix, exposure_godrays, decay_godrays, density_godrays, weight_godrays, numSamples_godrays, vec3(490.6f, 455.627f, 2000.0f)); 
+    //     glDisable(GL_BLEND); 
+    // } 
+    // modelMatrix = matrixStack.popMatrix(); 
 
 
     /*****************************************************************************************************************************/

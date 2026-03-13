@@ -73,7 +73,11 @@ class Terrain
         GLuint hRange3Uniform; 
         GLuint hRange4Uniform; 
         GLuint viewPositionUniform; 
+        GLuint isLightUniform; 
+        GLuint lightPositionUniform; 
+        GLuint lightColorUniform; 
 
+        GLuint isFogUniform; 
 
         std::vector<unsigned int> indices; 
         GLuint vao, vbo, ebo; 
@@ -94,6 +98,15 @@ class Terrain
                 std::vector<std::string> textureImages, std::vector<float> _textureHeightRanges, float _textureScale
             ); 
         void render(
+                vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, 
+                vec3 viewPosition
+            ); 
+        void renderWithLight(
+                vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, 
+                vec3 viewPosition, 
+                vec3 lightPosition, vec3 lightColor
+            ); 
+        void renderWithFog(
                 vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, 
                 vec3 viewPosition
             ); 
