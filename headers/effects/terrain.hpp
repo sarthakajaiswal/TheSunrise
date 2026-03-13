@@ -107,15 +107,6 @@ class Terrain
                 vec3 lightPosition=vec3(0.0), vec3 lightColor=vec3(0.0), 
                 float fogStart=0.0, float fogEnd=0.0, vec3 fogColor=vec3(0.0)
             ); 
-        // void renderWithLight(
-        //         vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, 
-        //         vec3 viewPosition, 
-        //         vec3 lightPosition, vec3 lightColor
-        //     ); 
-        // void renderWithFog(
-        //         vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, 
-        //         vec3 viewPosition
-        //     ); 
         void uninitialize(); 
         ~Terrain(); 
 }; 

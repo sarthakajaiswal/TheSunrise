@@ -8,11 +8,6 @@ out vec4 FragColor;
 
 uniform sampler2D uTextures[4]; 
 uniform float uHeightScale; 
-
-// const float hRange1 = 0.1; 
-// const float hRange2 = 0.3; 
-// const float hRange3 = 0.5; 
-// const float hRange4 = 0.75; 
     
 uniform float hRange1; 
 uniform float hRange2; 
@@ -94,6 +89,18 @@ void main(void)
         textureColor = texture(uTextures[3], out_texCoord).rgb; 
     } 
 
+    /* ----- fog color ----- */ 
+    float fogFactor = 1.0; 
+    if(uIsFogEnabled == 1) 
+    {
+        float cameraToPixelDistance = length(uViewPosition - out_worldPosition); 
+        float fogRange = uFogEnd - uFogStart; 
+        float fogDist = uFogEnd - cameraToPixelDistance; 
+        fogFactor = fogDist / fogRange; 
+        fogFactor = clamp(fogFactor, 0.0, 1.0); 
+    } 
+
     /* ----- final color ----- */ 
-    FragColor = vec4(textureColor * lightColor, 1.0f); 
+    vec4 textureAndLightColor = vec4(textureColor * lightColor, 1.0f); 
+    FragColor = mix(vec4(uFogColor, 1.0), textureAndLightColor, fogFactor); // add fog component 
 } 

@@ -329,6 +329,7 @@ void Terrain::render(
         glUniform1i(isFogUniform, 1); 
         glUniform1f(fogStartUniform, fogStart); 
         glUniform1f(fogEndUniform, fogEnd); 
+        glUniform3fv(fogColorUniform, 1, fogColor); 
     } 
     else 
     {

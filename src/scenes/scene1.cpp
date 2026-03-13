@@ -137,7 +137,7 @@ void Scene1::display()
     // terrain 
     matrixStack.pushMatrix(modelMatrix); 
     {
-        terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition(), true, false, vec3(50.0), vec3(1.0, 0.0, 0.0)); 
+        terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition(), true, true, vec3(50.0), vec3(1.0, 0.0, 0.0), 150.0, 400.0, vec3(0.0, 0.0, 0.0)); 
     } 
     modelMatrix = matrixStack.popMatrix(); 
 
