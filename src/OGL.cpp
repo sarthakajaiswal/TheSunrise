@@ -52,9 +52,10 @@ float mainTimer = 0.0f;
 IntroScene introScene; 
 Scene1 scene1; 
 Scene2 scene2; 
+OutroScene outroScene; 
 TestScene testScene; 
 
-enum Scene CurrentScene = SCENE_1; 
+enum Scene CurrentScene = OUTRO_SCENE; 
 
 // ==================== ENTRY-POINT FUNCTION ================ 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) 
@@ -219,7 +220,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         case SCENE_2: 
             scene2.eveneCallback(hwnd, uMsg, wParam, lParam);
-            break; 
+            break;
+            
+        case OUTRO_SCENE: 
+            outroScene.eveneCallback(hwnd, uMsg, wParam, lParam);
+            break;
 
         case TEST_SCENE: 
             testScene.eventCallback(hwnd, uMsg, wParam, lParam); 
@@ -432,6 +437,10 @@ int initialize(void)
             scene2.initialize(); 
             break; 
 
+        case OUTRO_SCENE: 
+            outroScene.initialize(); 
+            break; 
+
         case TEST_SCENE: 
             testScene.initialize(); 
             break; 
@@ -535,6 +544,10 @@ void display(void)
         case SCENE_2: 
             scene2.display(); 
             break; 
+
+        case OUTRO_SCENE: 
+            outroScene.display(); 
+            break; 
         
         case TEST_SCENE: 
             testScene.display(); 
@@ -572,6 +585,10 @@ void update(void)
 
         case SCENE_2: 
             scene2.update(); 
+            break; 
+
+        case OUTRO_SCENE: 
+            outroScene.update(); 
             break; 
 
         case TEST_SCENE: 

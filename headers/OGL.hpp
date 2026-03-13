@@ -14,6 +14,7 @@
 #include "scenes/introScene.hpp" 
 #include "scenes/scene1.hpp" 
 #include "scenes/scene2.hpp" 
+#include "scenes/outroScene.hpp" 
 #include "scenes/testScene.hpp" 
 
 // ds 

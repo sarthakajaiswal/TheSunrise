@@ -7,6 +7,7 @@ enum Scene
     INTRO_SCENE = 0, 
     SCENE_1, 
     SCENE_2, 
+    OUTRO_SCENE, 
     TEST_SCENE 
 }; 
 

@@ -26,6 +26,9 @@ extern float alpha;
 
 // scene2 related 
 
+// outro scene related 
+extern float slideAlpha; 
+
 // test scene related 
 extern Spline3D spline; 
 
@@ -83,6 +86,7 @@ void ImGuiManager::RenderDebugWindow() {
     void scene1Controls(void);     
     void scene2Controls(void);     
     void testSceneControls(void);     
+    void outroSceneControls(void);     
 
     // code 
     if (!initialized || !ENABLE_IMGUI)
@@ -107,6 +111,10 @@ void ImGuiManager::RenderDebugWindow() {
 
         case SCENE_2: 
             scene2Controls(); 
+            break; 
+
+        case OUTRO_SCENE: 
+            outroSceneControls(); 
             break; 
 
         case TEST_SCENE: 
@@ -188,6 +196,12 @@ void scene2Controls(void)
     ImGui::SliderFloat("rx", &rx, 0.0f, 360.0f);
     ImGui::SliderFloat("ry", &ry, 0.0f, 360.0f);
     ImGui::SliderFloat("rz", &rz, 0.0f, 360.0f);
+} 
+
+void outroSceneControls(void) 
+{
+    ImGui::SliderFloat("alpha", &slideAlpha, 0.0f, 1.0f);
+    ImGui::Text("alpha = %.3f", slideAlpha); 
 } 
 
 void testSceneControls(void) 
