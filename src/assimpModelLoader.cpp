@@ -358,7 +358,7 @@ Model::render(
 void 
 Model::renderOcclusion(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix) 
 {
-    if(modelsShaderProgram == 0) 
+    if(occlusionProgram == 0) 
         assert(initOcclusionShaderProgram() == 0); 
 
     glUseProgram(occlusionProgram);  

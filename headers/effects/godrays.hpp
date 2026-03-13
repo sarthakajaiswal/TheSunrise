@@ -14,61 +14,49 @@
 
 extern FileHandler logFile; 
 
+/* 
+    Input 
+    Occlusion texture via occlusionFBO 
+    scene texture via parameter  
+
+    Flow: 
+    Occclusion FBO is created by user itself in occlusionFBO 
+    scene texture is also given by user as parameter to renderWithScene() 
+    Godrays class applied radial blur to create godrays texture in godraysFBO 
+    and then in renderWithScene() godrays texture and scene texture are combined to get final output on screen 
+*/ 
+
 class Godrays 
 {
     private: 
-        // pass1 
-        ShaderProgram silhoutteFromObjectsAndLightProgram; 
-        GLuint objectsTextureUniform_silhotte = 0; 
-        GLuint lightSourceTextureUniform_silhoutte = 0;  
-        
-        // pass2 
-        ShaderProgram sceneFromObjectsAndLightProgram;  
-        GLuint objectsTextureUniform_scene = 0; 
-        GLuint lightSourceTextureUniform_scene = 0;  
-        
-        // pass3 
-        ShaderProgram motionBlurProgram; 
-        GLuint exposureUniform_motionBlur = 0; 
-        GLuint decayUniform_motionBlur = 0; 
-        GLuint densityUniform_motionBlur = 0; 
-        GLuint weightUniform_motionBlur = 0; 
-        GLuint lightPositionOnScreenUniform_motionBlur = 0; 
-        GLuint occlusionTextureUniform_motionBlur = 0; 
-        GLuint numSamplesUniform_motionBlur = 0; 
+        ShaderProgram radialBlurProgram; 
+        GLuint exposureUniform_radialBlur = 0; 
+        GLuint decayUniform_radialBlur = 0; 
+        GLuint densityUniform_radialBlur = 0; 
+        GLuint weightUniform_radialBlur = 0; 
+        GLuint lightPositionOnScreenUniform_radialBlur = 0; 
+        GLuint occlusionTextureUniform_radialBlur = 0; 
+        GLuint numSamplesUniform_radialBlur = 0; 
 
-        // pass4 
         ShaderProgram finalCompositeProgram; 
         GLuint sceneTextureUniform_finalComposite = 0; 
         GLuint godRaysTextureUniform_finalComposite = 0; 
         GLuint godRaysStrengthUniform_finalComposite = 0; 
 
-        FBO occlusionFBO; 
-        FBO sceneFBO; 
-        FBO motionBlurFBO; 
-        FBO finalCompositeFBO; 
-
-        FullScreenTexturer fsTexturer; 
+        FBO godraysFBO; 
         Quad quad; 
 
-        int initOpenGLState(); 
-        int initOcclusionProgram(); 
-        int initSceneProgram(); 
-        int initMotionBlurProgram(); 
+        int initRadialBlurProgram(); 
         int initFinalCompositeProgram(); 
 
-    public: 
-        GLuint createOcclusionTexture(); 
-        GLuint createSceneTexture(); 
-        GLuint createMotionBlurTexture(float exposure, float decay, float density, float weight, int numSamples, vmath::vec2 lightPositionOnScreen); 
-        GLuint getFinalCompositeTexture(); 
-        
-        FBO sceneObjectsFBO; 
-        FBO lightSourceFBO; 
+        GLuint createRadialBlurTexture(GLuint occlusionTexture, float exposure, float decay, float density, float weight, int numSamples, vmath::vec2 lightPositionOnScreen); 
+
+    public:         
+        FBO occlusionFBO; 
 
         Godrays(); 
         int initialize(); 
-        GLuint render(vmath::mat4 viewMatrix, vmath::mat4 projectionMatrix, float exposure, float decay, float density, float weight, int numSamples, vmath::vec3 lightPosition); 
+        void renderWithScene(GLuint sceneTexture, vmath::mat4 viewMatrix, vmath::mat4 projectionMatrix, float exposure, float decay, float density, float weight, float strength, int numSamples, vmath::vec3 lightPosition); 
         void uninitialize(); 
 }; 
 

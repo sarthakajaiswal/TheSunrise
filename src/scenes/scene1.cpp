@@ -30,6 +30,7 @@ Scene1::Scene1()
     decay_godrays = 0.96f; 
     density_godrays = 0.84f; 
     weight_godrays = 0.58f; 
+    strength_godrays = 1.0f; 
     numSamples_godrays = 50; 
 } 
 
@@ -65,14 +66,14 @@ int Scene1::initialize()
     // assert(quad.initialize() == 0); 
     logFile.log("Loading Models...\n"); 
     assert(treeModel.initialize("res/models/game_tree/scene.gltf") == 0); 
-    assert(mindFlare.initialize("res/models/mind_flayer/mind_flayer.obj") == 0); 
+    // assert(mindFlare.initialize("res/models/mind_flayer/mind_flayer.obj") == 0); 
     logFile.log("Models Loaded\n"); 
 
     assert(moonSphere.initialize() == 0);
 
     // -------- FBO and textures --------- 
     // assert(floatingPointFBO.createFloatingPointFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
-    assert(testFBO.createNormalFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
+    assert(sceneFBO.createNormalFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
 
     gateTexture = loadTexture("res\\gate.png"); 
     if(gateTexture == 0) 
@@ -111,90 +112,40 @@ void Scene1::display()
 
     // exposureProgram.render(floatingPointFBO.getTextureID(), exposureValue); 
 
-    // glEnable(GL_BLEND); 
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-    // fsTexturer.render(quoteTexture); 
-    // glDisable(GL_BLEND); 
-
-    // ---------- 
-
-    // moon 
-    matrixStack.pushMatrix(modelMatrix); 
+    sceneFBO.bind(); 
     {
-        modelMatrix = mat4::identity(); 
+        // terrain 
+        matrixStack.pushMatrix(modelMatrix); 
+        {
+            terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition(), true, true, vec3(50.0), vec3(1.0, 0.0, 0.0), 150.0, 400.0, vec3(0.0, 0.0, 0.0)); 
+        } 
+        modelMatrix = matrixStack.popMatrix(); 
 
-        vmath::mat4 translationMatrix = vmath::translate(490.6f, 455.627f, 2000.0f); 
-        vmath::mat4 scaleMatrix = vmath::scale(125.0f, 125.0f, 125.0f); 
-        modelMatrix = translationMatrix * scaleMatrix; 
+        // tree 
+        matrixStack.pushMatrix(modelMatrix); 
+        {
+            modelMatrix = mat4::identity(); 
+            modelMatrix *= vmath::translate(660.032f, 27.08f, 948.01f); 
+            modelMatrix *= vmath::scale(0.189f, 0.199f, 0.224f);
+            treeModel.render(modelMatrix, viewMatrix, projectionMatrix, true, 150.0, 400.0, vec3(0.0, 0.0, 0.0), scene1Camera.getPosition()); 
+        } 
+        modelMatrix = matrixStack.popMatrix(); 
 
-        bwShader.use(); 
-        glUniformMatrix4fv(mvpMatrixUniform_bwShader, 1, GL_FALSE, projectionMatrix*viewMatrix*modelMatrix); 
-        moonSphere.render(); 
-        bwShader.unuse(); 
-    } 
-    modelMatrix = matrixStack.popMatrix(); 
+        // moon 
+        matrixStack.pushMatrix(modelMatrix); 
+        {
+            modelMatrix = mat4::identity(); 
 
-    // terrain 
-    matrixStack.pushMatrix(modelMatrix); 
-    {
-        terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition(), true, true, vec3(50.0), vec3(1.0, 0.0, 0.0), 150.0, 400.0, vec3(0.0, 0.0, 0.0)); 
-        // terrain.renderOcclusion(mat4::identity(), viewMatrix, projectionMatrix); 
-    } 
-    modelMatrix = matrixStack.popMatrix(); 
+            vmath::mat4 translationMatrix = vmath::translate(490.6f, 455.627f, 2000.0f); 
+            vmath::mat4 scaleMatrix = vmath::scale(125.0f, 125.0f, 125.0f); 
+            modelMatrix = translationMatrix * scaleMatrix; 
 
-    // tree 
-    matrixStack.pushMatrix(modelMatrix); 
-    {
-        modelMatrix = mat4::identity(); 
-        modelMatrix *= vmath::translate(660.032f, 27.08f, 948.01f); 
-        modelMatrix *= vmath::scale(0.189f, 0.199f, 0.224f);
-        treeModel.render(modelMatrix, viewMatrix, projectionMatrix, true, 150.0, 400.0, vec3(0.0, 0.0, 0.0), scene1Camera.getPosition()); 
-        // treeModel.renderOcclusion(modelMatrix, viewMatrix, projectionMatrix); 
-    } 
-    modelMatrix = matrixStack.popMatrix(); 
-
-    // // mind flayer 
-    // matrixStack.pushMatrix(modelMatrix); 
-    // {
-    //     modelMatrix = mat4::identity(); 
-    //     modelMatrix *= vmath::translate(flareModelTx, flareModelTy, flareModelTz); 
-    //     modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
-    //     modelMatrix *= vmath::scale(flareModelSx, flareModelSy, flareModelSz); 
-
-    //     mindFlare.render(modelMatrix, viewMatrix, projectionMatrix); 
-    // } 
-    // modelMatrix = matrixStack.popMatrix(); 
-
-    // /*********** GODRAYS ************/ 
-    // godrays.sceneObjectsFBO.bind(); 
-    // { 
-    //     // terrain 
-    //     matrixStack.pushMatrix(modelMatrix); 
-    //     {
-    //         terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition()); 
-    //     } 
-    //     modelMatrix = matrixStack.popMatrix(); 
-
-    //     // tree 
-    //     matrixStack.pushMatrix(modelMatrix); 
-    //     {
-    //         modelMatrix *= vmath::translate(660.032f, 27.08f, 948.01f); 
-    //         modelMatrix *= vmath::scale(0.189f, 0.199f, 0.224f);
-    //         treeModel.draw(modelMatrix, viewMatrix, projectionMatrix); 
-    //     } 
-    //     modelMatrix = matrixStack.popMatrix(); 
-
-    //     // mind flayer 
-    //     matrixStack.pushMatrix(modelMatrix); 
-    //     {
-    //         modelMatrix = mat4::identity(); 
-    //         modelMatrix *= vmath::translate(flareModelTx, flareModelTy, flareModelTz); 
-    //         modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
-    //         modelMatrix *= vmath::scale(flareModelSx, flareModelSy, flareModelSz); 
-
-    //         mindFlare.draw(modelMatrix, viewMatrix, projectionMatrix); 
-    //     } 
-    //     modelMatrix = matrixStack.popMatrix(); 
+            bwShader.use(); 
+            glUniformMatrix4fv(mvpMatrixUniform_bwShader, 1, GL_FALSE, projectionMatrix*viewMatrix*modelMatrix); 
+            moonSphere.render(); 
+            bwShader.unuse(); 
+        } 
+        modelMatrix = matrixStack.popMatrix(); 
 
         // cubemap  
         matrixStack.pushMatrix(modelMatrix); 
@@ -208,71 +159,57 @@ void Scene1::display()
             cubemap.render(modelMatrix, viewMatrix, projectionMatrix); 
         } 
         modelMatrix = matrixStack.popMatrix(); 
-    // } 
-    // godrays.sceneObjectsFBO.unbind(); 
+    } 
+    sceneFBO.unbind(); 
 
-    // godrays.lightSourceFBO.bind(); 
-    // { 
-    //     matrixStack.pushMatrix(modelMatrix); 
-    //     {
-    //         modelMatrix = mat4::identity(); 
+    /*********** GODRAYS ************/ 
+    godrays.occlusionFBO.bind(); 
+    { 
+        glClearColor(0.0, 0.0, 0.0, 1.0); 
+        glClear(GL_COLOR_BUFFER_BIT); 
 
-    //         vmath::mat4 translationMatrix = vmath::translate(490.6f, 455.627f, 2000.0f); 
-    //         vmath::mat4 scaleMatrix = vmath::scale(125.0f, 125.0f, 125.0f); 
-    //         modelMatrix = translationMatrix * scaleMatrix; 
+        // terrain 
+        matrixStack.pushMatrix(modelMatrix); 
+        {
+            terrain.renderOcclusion(mat4::identity(), viewMatrix, projectionMatrix); 
+        } 
+        modelMatrix = matrixStack.popMatrix(); 
 
-    //         bwShader.use(); 
-    //         glUniformMatrix4fv(mvpMatrixUniform_bwShader, 1, GL_FALSE, projectionMatrix*viewMatrix*modelMatrix); 
-    //         moonSphere.render(); 
-    //         bwShader.unuse(); 
-    //     } 
-    //     modelMatrix = matrixStack.popMatrix(); 
-    // } 
-    // godrays.lightSourceFBO.unbind(); 
+        // tree 
+        matrixStack.pushMatrix(modelMatrix); 
+        {
+            modelMatrix *= vmath::translate(660.032f, 27.08f, 948.01f); 
+            modelMatrix *= vmath::scale(0.189f, 0.199f, 0.224f);
+            treeModel.renderOcclusion(modelMatrix, viewMatrix, projectionMatrix); 
+        } 
+        modelMatrix = matrixStack.popMatrix(); 
 
-    // matrixStack.pushMatrix(modelMatrix);
-    // { 
-    //     mat4 mvpMatrix = projectionMatrix * viewMatrix * modelMatrix; 
-    //     glEnable(GL_BLEND); 
-    //     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-    //     godrays.render(
-    //         viewMatrix, projectionMatrix, exposure_godrays, decay_godrays, density_godrays, weight_godrays, numSamples_godrays, vec3(490.6f, 455.627f, 2000.0f)); 
-    //     glDisable(GL_BLEND); 
-    // } 
-    // modelMatrix = matrixStack.popMatrix(); 
+        // moon 
+        matrixStack.pushMatrix(modelMatrix); 
+        {
+            modelMatrix = mat4::identity(); 
 
+            vmath::mat4 translationMatrix = vmath::translate(490.6f, 455.627f, 2000.0f); 
+            vmath::mat4 scaleMatrix = vmath::scale(125.0f, 125.0f, 125.0f); 
+            modelMatrix = translationMatrix * scaleMatrix; 
 
-    /*****************************************************************************************************************************/
+            bwShader.use(); 
+            glUniformMatrix4fv(mvpMatrixUniform_bwShader, 1, GL_FALSE, projectionMatrix*viewMatrix*modelMatrix); 
+            moonSphere.render(); 
+            bwShader.unuse(); 
+        } 
+        modelMatrix = matrixStack.popMatrix(); 
+    } 
+    godrays.occlusionFBO.unbind(); 
 
-    // void resize(int, int); 
-    // resize(winWidth, winHeight); 
+    godrays.renderWithScene(
+                sceneFBO.getTextureID(), 
+                viewMatrix, projectionMatrix, 
+                exposure_godrays, decay_godrays, density_godrays, weight_godrays, strength_godrays, numSamples_godrays, vmath::vec3(490.6f, 455.627f, 2000.0f)
+            ); 
 
-    // testFBO.bind(); 
-    // glEnable(GL_BLEND); 
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-    // fsTexturer.render(godrays.sceneObjectsFBO.getTextureID()); 
-    // glDisable(GL_BLEND); 
-    // testFBO.unbind(); 
-
-    // GLuint motionBlurTexture = godrays.createMotionBlurTexture(exposure_godrays, decay_godrays, density_godrays, weight_godrays, numSamples_godrays, vec2(0.5, 0.5)); 
-    // GLuint occlusionTexture = godrays.createOcclusionTexture(); 
-    // GLuint sceneTexture = godrays.createSceneTexture(); 
-    // GLuint finalCompositeTexture = godrays.getFinalCompositeTexture(); 
-
-    // GLuint finalCompositeTexture = godrays.render(
-    //         viewMatrix, projectionMatrix, exposure_godrays, decay_godrays, density_godrays, weight_godrays, numSamples_godrays, vec3(490.6f, 455.627f, 2000.0f)); 
-
-    // fsTexturer.render(godrays.getFinalCompositeTexture()); 
-
-    // glViewport(10, 600, 400, 250);    
-    // glEnable(GL_BLEND); 
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-    // fsTexturer.render(gateTexture); 
-    // glDisable(GL_BLEND);
-    // fsTexturer.render(motionBlurTexture); 
-    // fsTexturer.render(sceneTexture); 
-    // fsTexturer.render(occlusionTexture); 
-    // fsTexturer.render(gateTexture); 
+    // glViewport(1200, 600, 400, 250);    
+    // fsTexturer.render(godrays.occlusionFBO.getTextureID()); 
 } 
 
 void Scene1::update() 
@@ -382,3 +319,17 @@ void Scene1::eventCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         modelMatrix *= vmath::scale(sx, sy, sz);
 */ 
 
+/* 
+        // mind flayer 
+        matrixStack.pushMatrix(modelMatrix); 
+        {
+            modelMatrix = mat4::identity(); 
+            modelMatrix *= vmath::translate(flareModelTx, flareModelTy, flareModelTz); 
+            modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
+            modelMatrix *= vmath::scale(flareModelSx, flareModelSy, flareModelSz); 
+
+            mindFlare.renderOcclusion(modelMatrix, viewMatrix, projectionMatrix); 
+        } 
+        modelMatrix = matrixStack.popMatrix(); 
+
+*/ 

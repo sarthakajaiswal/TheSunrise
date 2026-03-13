@@ -33,7 +33,7 @@ class Scene1
         Sphere moonSphere; 
 
         FBO floatingPointFBO; 
-        FBO testFBO; 
+        FBO sceneFBO; 
 
         GLuint quoteTexture; 
         GLuint gateTexture; 
@@ -47,6 +47,7 @@ class Scene1
         float decay_godrays; 
         float density_godrays; 
         float weight_godrays; 
+        float strength_godrays; 
         int numSamples_godrays; 
 
         Scene1(); 

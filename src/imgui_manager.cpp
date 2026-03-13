@@ -178,6 +178,7 @@ void scene1Controls(void)
     ImGui::SliderFloat("decay", &scene1.decay_godrays, 0.0f, 1.0f);
     ImGui::SliderFloat("density", &scene1.density_godrays, 0.0f, 1.0f);
     ImGui::SliderFloat("weight", &scene1.weight_godrays, 0.0f, 1.0f);
+    ImGui::SliderFloat("strength", &scene1.strength_godrays, 0.0f, 2.0);
     ImGui::SliderInt("num samples", &scene1.numSamples_godrays, 0.0f, 100);
     ImGui::Spacing(); 
     ImGui::SliderFloat("alpha", &alpha, 0.0f, 1.0f);
