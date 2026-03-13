@@ -294,15 +294,15 @@ Model::setupMesh(Model::Mesh& mesh)
 } 
 
 void 
-Model::draw(
+Model::render(
     vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, 
     bool bFog, float fogStart, float fogEnd, vmath::vec3 fogColor, vmath::vec3 viewPosition 
 ) 
 {
-    if(shaderProgramObject == 0) 
-        assert(initShaderProgram() == 0); 
+    if(modelsShaderProgram == 0) 
+        assert(initModelsShaderProgram() == 0); 
 
-    glUseProgram(shaderProgramObject); 
+    glUseProgram(modelsShaderProgram); 
 
     if(bFog == true) 
     {
@@ -321,25 +321,25 @@ Model::draw(
     {
         vmath::mat4 mvpMatrix = _projectionMatrix * _viewMatrix * _modelMatrix * meshes[i].nodeTransform; 
         glUniformMatrix4fv(modelMatrixUniform, 1, GL_FALSE, _modelMatrix*meshes[i].nodeTransform); 
-        glUniformMatrix4fv(mvpMatrixUniform, 1, GL_FALSE, mvpMatrix); 
+        glUniformMatrix4fv(mvpMatrixUniform_modelsProgram, 1, GL_FALSE, mvpMatrix); 
 
         if(meshes[i].textures.size() >= 1) 
         {
             glActiveTexture(GL_TEXTURE0); 
             glBindTexture(GL_TEXTURE_2D, meshes[i].textures[0].id); 
-            glUniform1i(glGetUniformLocation(shaderProgramObject, "uDiffuse"), 0); 
+            glUniform1i(glGetUniformLocation(modelsShaderProgram, "uDiffuse"), 0); 
         } 
         if(meshes[i].textures.size() >= 2) 
         {
             glActiveTexture(GL_TEXTURE1); 
             glBindTexture(GL_TEXTURE_2D, meshes[i].textures[1].id); 
-            glUniform1i(glGetUniformLocation(shaderProgramObject, "uNormal"), 1); 
+            glUniform1i(glGetUniformLocation(modelsShaderProgram, "uNormal"), 1); 
         } 
         if(meshes[i].textures.size() >= 3) 
         {
             glActiveTexture(GL_TEXTURE2); 
             glBindTexture(GL_TEXTURE_2D, meshes[i].textures[2].id); 
-            glUniform1i(glGetUniformLocation(shaderProgramObject, "uSpecular"), 2); 
+            glUniform1i(glGetUniformLocation(modelsShaderProgram, "uSpecular"), 2); 
         } 
 
         glEnable(GL_BLEND); 
@@ -355,16 +355,36 @@ Model::draw(
     glUseProgram(0); 
 } 
 
-int 
-Model::initShaderProgram(void) 
+void 
+Model::renderOcclusion(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix) 
 {
-    // function declarations 
+    if(modelsShaderProgram == 0) 
+        assert(initOcclusionShaderProgram() == 0); 
+
+    glUseProgram(occlusionProgram);  
+
+    for(unsigned int i = 0; i < meshes.size(); ++i) 
+    {
+        vmath::mat4 mvpMatrix = _projectionMatrix * _viewMatrix * _modelMatrix * meshes[i].nodeTransform; 
+        glUniformMatrix4fv(mvpMatrixUniform_occlusion, 1, GL_FALSE, mvpMatrix); 
+
+        glBindVertexArray(meshes[i].vao); 
+        glDrawElements(GL_TRIANGLES, meshes[i].indices.size(), GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0); 
+    } 
+
+    glUseProgram(0); 
+} 
+
+int 
+Model::initModelsShaderProgram(void) 
+{
+        // function declarations 
     void uninitialize(void); 
 
     // code 
-    // ================= vertex shader ======================= 
-    // 1) Write the shader source code 
-    const GLchar* vertexShaderSourceCode = 
+    /**************************************** OCCLUSION PROGRAM ****************************************/
+    const GLchar* ModelProgramVertexShaderSourceCode = 
     "#version 460 core\n" \
 
     "in vec4 aPosition;\n" \
@@ -387,7 +407,7 @@ Model::initShaderProgram(void)
     "}\n"; 
 
     GLuint vertexShaderObject = glCreateShader(GL_VERTEX_SHADER); 
-    glShaderSource(vertexShaderObject, 1, (const GLchar**)&vertexShaderSourceCode, NULL); 
+    glShaderSource(vertexShaderObject, 1, (const GLchar**)&ModelProgramVertexShaderSourceCode, NULL); 
     glCompileShader(vertexShaderObject); 
 
     GLint status = 0; 
@@ -414,7 +434,7 @@ Model::initShaderProgram(void)
     } 
     
     // ======================= FRAGMENT SHADER =========================== 
-    const char* fragmentShaderSourceCode = 
+    const char* modelsProgramFragmentShaderSourceCode = 
     "#version 460 core\n" \
 
     "in vec2 out_texCoord;\n" \
@@ -462,7 +482,7 @@ Model::initShaderProgram(void)
 
     GLuint fragmentShaderObject = glCreateShader(GL_FRAGMENT_SHADER); 
 
-    glShaderSource(fragmentShaderObject, 1, (const GLchar**)&fragmentShaderSourceCode, NULL); 
+    glShaderSource(fragmentShaderObject, 1, (const GLchar**)&modelsProgramFragmentShaderSourceCode, NULL); 
     glCompileShader(fragmentShaderObject); 
 
     status = 0; 
@@ -489,37 +509,29 @@ Model::initShaderProgram(void)
         uninitialize(); 
     }
 
-    // ================================= create, attach, link shader program object =========================== 
-    // 1) Create shader program object 
-    shaderProgramObject = glCreateProgram(); 
+    modelsShaderProgram = glCreateProgram(); 
+    glAttachShader(modelsShaderProgram, vertexShaderObject); 
+    glBindAttribLocation(modelsShaderProgram, AMC_ATTRIBUTE_POSITION, "aPosition");
+    glBindAttribLocation(modelsShaderProgram, AMC_ATTRIBUTE_TEXCOORD, "aTexCoord");
+    glBindAttribLocation(modelsShaderProgram, AMC_ATTRIBUTE_NORMAL, "aNormal");
+    glAttachShader(modelsShaderProgram, fragmentShaderObject); 
 
-    // 2) attch shaders to this shader program object 
-    glAttachShader(shaderProgramObject, vertexShaderObject); 
+    glLinkProgram(modelsShaderProgram); 
 
-    // bind shader attribute at certain index in shader to save index in host program 
-    glBindAttribLocation(shaderProgramObject, AMC_ATTRIBUTE_POSITION, "aPosition");
-    glBindAttribLocation(shaderProgramObject, AMC_ATTRIBUTE_TEXCOORD, "aTexCoord");
-    glBindAttribLocation(shaderProgramObject, AMC_ATTRIBUTE_NORMAL, "aNormal");
-
-    glAttachShader(shaderProgramObject, fragmentShaderObject); 
-
-    // 3) tell to link shader objects to shader program objects 
-    glLinkProgram(shaderProgramObject); 
-
-    // 4) check for link error log 
+    // check linking status 
     status = 0; 
     infoLogLength = 0; 
     szInfoLog = 0; 
-    glGetProgramiv(shaderProgramObject, GL_LINK_STATUS, &status); 
+    glGetProgramiv(modelsShaderProgram, GL_LINK_STATUS, &status); 
     if(status == GL_FALSE) 
     {
-        glGetProgramiv(shaderProgramObject, GL_INFO_LOG_LENGTH, &infoLogLength); 
+        glGetProgramiv(modelsShaderProgram, GL_INFO_LOG_LENGTH, &infoLogLength); 
         if(infoLogLength > 0) 
         {
             szInfoLog = (GLchar*)malloc(infoLogLength * sizeof(GLchar)); 
             if(szInfoLog != NULL) 
             {
-                glGetProgramInfoLog(shaderProgramObject, infoLogLength, NULL, szInfoLog); 
+                glGetProgramInfoLog(modelsShaderProgram, infoLogLength, NULL, szInfoLog); 
                 logFile.log("shader program object = %s\n", szInfoLog); 
 
                 free(szInfoLog); 
@@ -531,16 +543,144 @@ Model::initShaderProgram(void)
     } 
 
     // ----- SENDING DATA INTO UNIFORM ---------- 
-    mvpMatrixUniform = glGetUniformLocation(shaderProgramObject, "uMVPMatrix"); 
-    modelMatrixUniform = glGetUniformLocation(shaderProgramObject, "uModelMatrix"); 
-    viewPositionUniform = glGetUniformLocation(shaderProgramObject, "uViewPosition"); 
-    isFogUniform = glGetUniformLocation(shaderProgramObject, "uIsFogEnabled"); 
-    fogStartUniform = glGetUniformLocation(shaderProgramObject, "uFogStart"); 
-    fogEndUniform = glGetUniformLocation(shaderProgramObject, "uFogEnd"); 
-    fogColorUniform = glGetUniformLocation(shaderProgramObject, "uFogColor"); 
+    mvpMatrixUniform_modelsProgram = glGetUniformLocation(modelsShaderProgram, "uMVPMatrix"); 
+    modelMatrixUniform = glGetUniformLocation(modelsShaderProgram, "uModelMatrix"); 
+    viewPositionUniform = glGetUniformLocation(modelsShaderProgram, "uViewPosition"); 
+    isFogUniform = glGetUniformLocation(modelsShaderProgram, "uIsFogEnabled"); 
+    fogStartUniform = glGetUniformLocation(modelsShaderProgram, "uFogStart"); 
+    fogEndUniform = glGetUniformLocation(modelsShaderProgram, "uFogEnd"); 
+    fogColorUniform = glGetUniformLocation(modelsShaderProgram, "uFogColor"); 
 
     return (0); 
 } 
+
+int 
+Model::initOcclusionShaderProgram(void) 
+{
+    void uninitialize(void); 
+
+    const GLchar* vertexShaderSourceCode = 
+        "#version 460 core\n" \
+
+        "in vec4 aPosition;\n" \
+        "uniform mat4 uMVPMatrix;\n" \
+        
+        "void main(void) \n" \
+        "{\n" \
+        "	gl_Position = uMVPMatrix * aPosition;\n" \
+        "}\n"; 
+
+    GLuint vertexShaderObject = glCreateShader(GL_VERTEX_SHADER); 
+    glShaderSource(vertexShaderObject, 1, (const GLchar**)&vertexShaderSourceCode, NULL); 
+    glCompileShader(vertexShaderObject); 
+
+    GLint status = 0; 
+    GLint infoLogLength = 0; 
+    GLchar* szInfoLog = NULL; 
+    glGetShaderiv(vertexShaderObject, GL_COMPILE_STATUS, &status); 
+    if(status == GL_FALSE) 
+    {
+        glGetShaderiv(vertexShaderObject, GL_INFO_LOG_LENGTH, &infoLogLength); 
+        if(infoLogLength > 0) 
+        {
+            szInfoLog = (GLchar*)malloc(infoLogLength * sizeof(GLchar)); 
+            if(szInfoLog != NULL) 
+            {
+                glGetShaderInfoLog(vertexShaderObject, infoLogLength, NULL, szInfoLog); 
+                logFile.log("vertex shader compilation log = %s\n", szInfoLog);  
+            
+                free(szInfoLog); 
+                szInfoLog = NULL; 
+            }
+        }
+
+        uninitialize(); 
+    } 
+    
+    // ======================= FRAGMENT SHADER =========================== 
+    const char* fragmentShaderSourceCode = 
+        "#version 460 core\n" \
+
+        "out vec4 FragColor;\n" \
+        "void main(void)\n" \
+        "{\n" \
+        "	FragColor = vec4(0.0);\n" \
+        "}\n"; 
+
+    GLuint fragmentShaderObject = glCreateShader(GL_FRAGMENT_SHADER); 
+
+    glShaderSource(fragmentShaderObject, 1, (const GLchar**)&fragmentShaderSourceCode, NULL); 
+    glCompileShader(fragmentShaderObject); 
+
+    status = 0; 
+    infoLogLength = 0; 
+    szInfoLog = NULL; 
+
+    glGetShaderiv(fragmentShaderObject, GL_COMPILE_STATUS, &status); 
+    if(status == GL_FALSE) 
+    {
+        glGetShaderiv(fragmentShaderObject, GL_INFO_LOG_LENGTH, &infoLogLength); 
+        if(infoLogLength > 0) 
+        {
+            szInfoLog = (GLchar*)malloc(infoLogLength * sizeof(GLchar)); 
+            if(szInfoLog != NULL) 
+            {
+                glGetShaderInfoLog(fragmentShaderObject, infoLogLength, NULL, szInfoLog); 
+                logFile.log("OcclusionProgram Fragment shader compilation log = %s\n", szInfoLog); 
+
+                free(szInfoLog); 
+                szInfoLog = NULL; 
+            }
+        }
+
+        uninitialize(); 
+    }
+
+    occlusionProgram = glCreateProgram(); 
+
+    glAttachShader(occlusionProgram, vertexShaderObject); 
+    glBindAttribLocation(occlusionProgram, AMC_ATTRIBUTE_POSITION, "aPosition");
+    glAttachShader(occlusionProgram, fragmentShaderObject); 
+
+    glLinkProgram(occlusionProgram); 
+
+    // check for link error log 
+    status = 0; 
+    infoLogLength = 0; 
+    szInfoLog = 0; 
+    glGetProgramiv(occlusionProgram, GL_LINK_STATUS, &status); 
+    if(status == GL_FALSE) 
+    {
+        glGetProgramiv(occlusionProgram, GL_INFO_LOG_LENGTH, &infoLogLength); 
+        if(infoLogLength > 0) 
+        {
+            szInfoLog = (GLchar*)malloc(infoLogLength * sizeof(GLchar)); 
+            if(szInfoLog != NULL) 
+            {
+                glGetProgramInfoLog(occlusionProgram, infoLogLength, NULL, szInfoLog); 
+                logFile.log("OcclusionProgram = %s\n", szInfoLog); 
+
+                free(szInfoLog); 
+                szInfoLog = NULL; 
+            }
+        }
+
+        uninitialize(); 
+    } 
+
+    // ----- SENDING DATA INTO UNIFORM ---------- 
+    mvpMatrixUniform_occlusion = glGetUniformLocation(occlusionProgram, "uMVPMatrix");
+
+    return (0); 
+} 
+
+// int 
+// Model::initOpenGLState(void) 
+// {
+//     assert(initModelsShaderProgram() == 0); 
+//     assert(initOcclusionShaderProgram() == 0); 
+//     return (0); 
+// } 
 
 Model::~Model() 
 {
@@ -567,22 +707,22 @@ Model::~Model()
         glDeleteTextures(1, &loadedTextures[i].id); 
     loadedTextures.clear(); 
 
-    if(shaderProgramObject) 
+    if(modelsShaderProgram) 
     {
-        glUseProgram(shaderProgramObject); 
+        glUseProgram(modelsShaderProgram); 
         
         GLint numShaders; 
-        glGetProgramiv(shaderProgramObject, GL_ATTACHED_SHADERS, &numShaders); 
+        glGetProgramiv(modelsShaderProgram, GL_ATTACHED_SHADERS, &numShaders); 
         if(numShaders > 0) 
         {
             GLuint* pShaders = (GLuint*)malloc(numShaders * sizeof(GLuint)); 
             if(pShaders != NULL) 
             {
-                glGetAttachedShaders(shaderProgramObject, numShaders, NULL, pShaders);
+                glGetAttachedShaders(modelsShaderProgram, numShaders, NULL, pShaders);
                 
                 for(GLint i = 0; i < numShaders; ++i) 
                 {
-                    glDetachShader(shaderProgramObject, pShaders[i]); 
+                    glDetachShader(modelsShaderProgram, pShaders[i]); 
                     glDeleteShader(pShaders[i]); 
                     pShaders[i] = 0; 
                 }
@@ -593,6 +733,6 @@ Model::~Model()
         }
 
         glUseProgram(0); 
-        glDeleteProgram(shaderProgramObject);   
+        glDeleteProgram(modelsShaderProgram);   
     }
 } 

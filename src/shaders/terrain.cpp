@@ -230,11 +230,11 @@ int Terrain::InitOpenGLState()
     vertexShaderSourceCode = FileHandler::fileToString("src/shaders/occlusion.vs"); 
     fragmentShaderSourceCode = FileHandler::fileToString("src/shaders/occlusion.fs"); 
 
-    shaders.clear(); 
+    std::vector<ShaderSourceCodeAndType> shaders; 
     shaders.push_back(ShaderSourceCodeAndType(vertexShaderSourceCode, GL_VERTEX_SHADER));  
     shaders.push_back(ShaderSourceCodeAndType(fragmentShaderSourceCode, GL_FRAGMENT_SHADER));  
 
-    attributes.clear(); 
+    std::vector<AttributeWithIndexLocation> attributes; 
     attributes.push_back(AttributeWithIndexLocation(AMC_ATTRIBUTE_POSITION, "aPosition")); 
 
     occlusionProgram.create(shaders, attributes); 

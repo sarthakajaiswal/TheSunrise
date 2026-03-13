@@ -48,14 +48,17 @@ class Model
 		std::string directory; 
 		std::vector<ModelTexture> loadedTextures; 
 
-		GLuint shaderProgramObject = 0; 
-		GLuint mvpMatrixUniform = 0; 
+		GLuint modelsShaderProgram = 0; 
+		GLuint mvpMatrixUniform_modelsProgram = 0; 
 		GLuint modelMatrixUniform = 0; 
 		GLuint viewPositionUniform = 0; 
 		GLuint isFogUniform = 0; 
 		GLuint fogStartUniform = 0; 
 		GLuint fogEndUniform = 0; 
 		GLuint fogColorUniform = 0; 
+
+		GLuint occlusionProgram = 0; 
+		GLuint mvpMatrixUniform_occlusion = 0; 
 
 		std::vector<ModelTexture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
 		GLuint loadTextureFromFile(const char* filePath); 
@@ -67,8 +70,11 @@ class Model
 		void processNode(aiNode* node, const aiScene* scene, vmath::mat4 parentTransform); 
 		Mesh processMesh(aiMesh* mesh, const aiScene* scene); 
 		void setupMesh(Mesh& mesh); 
-		void draw(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, bool bFog=false, float fogStart=0.0, float fogEnd=0.0, vmath::vec3 fogColor=vec3(0.0), vmath::vec3 viewPosition=vec3(0.0)); 
-		int initShaderProgram(void); 
+		void render(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, bool bFog=false, float fogStart=0.0, float fogEnd=0.0, vmath::vec3 fogColor=vec3(0.0), vmath::vec3 viewPosition=vec3(0.0)); 
+		void renderOcclusion(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix); 
+		// int initOpenGLState(void); 
+		int initModelsShaderProgram(void); 
+		int initOcclusionShaderProgram(void); 
 		~Model(); 
 }; 
 

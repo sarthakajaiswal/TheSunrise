@@ -137,7 +137,8 @@ void Scene1::display()
     // terrain 
     matrixStack.pushMatrix(modelMatrix); 
     {
-        terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition(), true, true, vec3(50.0), vec3(1.0, 0.0, 0.0), 150.0, 400.0, vec3(0.0, 0.0, 0.0)); 
+        // terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition(), true, true, vec3(50.0), vec3(1.0, 0.0, 0.0), 150.0, 400.0, vec3(0.0, 0.0, 0.0)); 
+        terrain.renderOcclusion(mat4::identity(), viewMatrix, projectionMatrix); 
     } 
     modelMatrix = matrixStack.popMatrix(); 
 
@@ -147,7 +148,8 @@ void Scene1::display()
         modelMatrix = mat4::identity(); 
         modelMatrix *= vmath::translate(660.032f, 27.08f, 948.01f); 
         modelMatrix *= vmath::scale(0.189f, 0.199f, 0.224f);
-        treeModel.draw(modelMatrix, viewMatrix, projectionMatrix, true, 150.0, 400.0, vec3(0.0, 0.0, 0.0), scene1Camera.getPosition()); 
+        // treeModel.render(modelMatrix, viewMatrix, projectionMatrix, true, 150.0, 400.0, vec3(0.0, 0.0, 0.0), scene1Camera.getPosition()); 
+        treeModel.renderOcclusion(modelMatrix, viewMatrix, projectionMatrix); 
     } 
     modelMatrix = matrixStack.popMatrix(); 
 
@@ -159,7 +161,7 @@ void Scene1::display()
         modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
         modelMatrix *= vmath::scale(flareModelSx, flareModelSy, flareModelSz); 
 
-        mindFlare.draw(modelMatrix, viewMatrix, projectionMatrix); 
+        mindFlare.render(modelMatrix, viewMatrix, projectionMatrix); 
     } 
     modelMatrix = matrixStack.popMatrix(); 
 

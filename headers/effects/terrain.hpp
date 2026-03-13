@@ -58,7 +58,7 @@ class Terrain
         std::vector<GLuint> textures; 
         std::vector<float> textureHeightRanges; 
 
-        ShaderProgram shaderProgramObject; 
+        ShaderProgram terrainShaderProgram; 
         GLuint modelMatrixUniform; 
         GLuint viewMatrixUniform; 
         GLuint projectionMatrixUniform; 
@@ -81,6 +81,9 @@ class Terrain
         GLuint fogStartUniform; 
         GLuint fogEndUniform; 
         GLuint fogColorUniform; 
+
+        ShaderProgram occlusionProgram;
+        GLuint mvpMatrixUniform_occlusion; 
 
         std::vector<unsigned int> indices; 
         GLuint vao, vbo, ebo; 
@@ -107,6 +110,9 @@ class Terrain
                 vec3 lightPosition=vec3(0.0), vec3 lightColor=vec3(0.0), 
                 float fogStart=0.0, float fogEnd=0.0, vec3 fogColor=vec3(0.0)
             ); 
+        void renderOcclusion(
+            vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix
+        ); 
         void uninitialize(); 
         ~Terrain(); 
 }; 
