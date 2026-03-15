@@ -25,7 +25,6 @@ int Godrays::initialize()
 void Godrays::renderWithScene(GLuint sceneTexture, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, float exposure, float decay, float density, float weight, float strength, int numSamples, vmath::vec3 lightPosition) 
 {
     vec2 lightPositionOnScreen = convertToScreenSpace(lightPosition, _viewMatrix, _projectionMatrix); 
-    logFile.log("lightPositionOnScreen = %.2f, %.2f\n", lightPositionOnScreen[0], lightPositionOnScreen[1]); 
     GLuint godraysTexture = createRadialBlurTexture(occlusionFBO.getTextureID(), exposure, decay, density, weight, numSamples, vec2(lightPositionOnScreen[0], 1.0-lightPositionOnScreen[1])); 
 
     finalCompositeProgram.use(); 

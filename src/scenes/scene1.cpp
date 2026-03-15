@@ -11,7 +11,7 @@ float flareModelTx0 = 530.90f, flareModelTy0 = -121.92f, flareModelTz0 = 1709.79
 float flareModelSx0 = 3.64f, flareModelSy0 = 4.31f, flareModelSz0 = 5.36f;
 // final 
 float flareModelTx1 = 530.90f, flareModelTy1 = -6.03f, flareModelTz1 = 1544.01f; 
-float flareModelSx1 = 30.74f, flareModelSy1 = 22.43f, flareModelSz1 = 5.0f; 
+float flareModelSx1 = 30.74f, flareModelSy1 = 22.43f, flareModelSz1 = 15.0f; 
 // current (initially set to initial values) 
 float flareModelTx=flareModelTx0, flareModelTy=flareModelTy0, flareModelTz=flareModelTz0; 
 float flareModelSx=flareModelSx0, flareModelSy=flareModelSy0, flareModelSz=flareModelSz0; 
@@ -26,12 +26,12 @@ Scene1::Scene1()
     // code  
     exposureValue = 0.2f; 
 
-    exposure_godrays = 0.34f; 
-    decay_godrays = 0.96f; 
-    density_godrays = 0.84f; 
-    weight_godrays = 0.58f; 
-    strength_godrays = 1.0f; 
-    numSamples_godrays = 50; 
+    exposure_godrays = 0.179f; 
+    decay_godrays = 0.92f; 
+    density_godrays = 1.00f; 
+    weight_godrays = 0.90f; 
+    strength_godrays = 0.935f; 
+    numSamples_godrays = 60; 
 } 
 
 int Scene1::initialize() 
@@ -66,7 +66,7 @@ int Scene1::initialize()
     // assert(quad.initialize() == 0); 
     logFile.log("Loading Models...\n"); 
     assert(treeModel.initialize("res/models/game_tree/scene.gltf") == 0); 
-    // assert(mindFlare.initialize("res/models/mind_flayer/mind_flayer.obj") == 0); 
+    assert(mindFlare.initialize("res/models/mind_flayer/MindFlayer.glb") == 0); 
     logFile.log("Models Loaded\n"); 
 
     assert(moonSphere.initialize() == 0);
@@ -117,7 +117,7 @@ void Scene1::display()
         // terrain 
         matrixStack.pushMatrix(modelMatrix); 
         {
-            terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition(), true, true, vec3(50.0), vec3(1.0, 0.0, 0.0), 150.0, 400.0, vec3(0.0, 0.0, 0.0)); 
+            terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition(), true, true, vec3(50.0), vec3(1.0, 0.0, 0.0), 150.0, 450.0, vec3(0.0, 0.0, 0.0)); 
         } 
         modelMatrix = matrixStack.popMatrix(); 
 
@@ -127,7 +127,7 @@ void Scene1::display()
             modelMatrix = mat4::identity(); 
             modelMatrix *= vmath::translate(660.032f, 27.08f, 948.01f); 
             modelMatrix *= vmath::scale(0.189f, 0.199f, 0.224f);
-            treeModel.render(modelMatrix, viewMatrix, projectionMatrix, true, 150.0, 400.0, vec3(0.0, 0.0, 0.0), scene1Camera.getPosition()); 
+            treeModel.render(modelMatrix, viewMatrix, projectionMatrix, true, 150.0, 450.0, vec3(0.0, 0.0, 0.0), scene1Camera.getPosition()); 
         } 
         modelMatrix = matrixStack.popMatrix(); 
 
@@ -144,6 +144,18 @@ void Scene1::display()
             glUniformMatrix4fv(mvpMatrixUniform_bwShader, 1, GL_FALSE, projectionMatrix*viewMatrix*modelMatrix); 
             moonSphere.render(); 
             bwShader.unuse(); 
+        } 
+        modelMatrix = matrixStack.popMatrix(); 
+
+        // mind flayer 
+        matrixStack.pushMatrix(modelMatrix); 
+        {
+            modelMatrix = mat4::identity(); 
+            modelMatrix *= vmath::translate(flareModelTx, flareModelTy, flareModelTz); 
+            modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
+            modelMatrix *= vmath::scale(flareModelSx, flareModelSy, flareModelSz); 
+
+            mindFlare.render(modelMatrix, viewMatrix, projectionMatrix, true, 150.0, 600.0, vec3(0.0, 0.0, 0.0), scene1Camera.getPosition()); 
         } 
         modelMatrix = matrixStack.popMatrix(); 
 
@@ -165,7 +177,7 @@ void Scene1::display()
     /*********** GODRAYS ************/ 
     godrays.occlusionFBO.bind(); 
     { 
-        glClearColor(0.0, 0.0, 0.0, 1.0); 
+        glClearColor(0.1, 0.0, 0.0, 1.0); 
         glClear(GL_COLOR_BUFFER_BIT); 
 
         // terrain 
@@ -183,6 +195,18 @@ void Scene1::display()
             treeModel.renderOcclusion(modelMatrix, viewMatrix, projectionMatrix); 
         } 
         modelMatrix = matrixStack.popMatrix(); 
+
+        // mind flayer 
+        matrixStack.pushMatrix(modelMatrix); 
+        {
+            modelMatrix = mat4::identity(); 
+            modelMatrix *= vmath::translate(flareModelTx, flareModelTy, flareModelTz); 
+            modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
+            modelMatrix *= vmath::scale(flareModelSx, flareModelSy, flareModelSz); 
+
+            mindFlare.renderOcclusion(modelMatrix, viewMatrix, projectionMatrix); 
+        } 
+        modelMatrix = matrixStack.popMatrix();
 
         // moon 
         matrixStack.pushMatrix(modelMatrix); 
@@ -209,7 +233,7 @@ void Scene1::display()
             ); 
 
     // glViewport(1200, 600, 400, 250);    
-    // fsTexturer.render(godrays.occlusionFBO.getTextureID()); 
+    // fsTexturer.render(sceneFBO.getTextureID()); 
 } 
 
 void Scene1::update() 
