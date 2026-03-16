@@ -9,6 +9,9 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "../headers/stb_image.h"
 
+#include <al\al.h> 
+#include <al\alc.h>
+
 // ====================== GLOBAL CONSTANTS ================== 
 const int WIN_WIDTH = 800; 
 const int WIN_HEIGHT = 600;
@@ -44,8 +47,12 @@ mat4 viewMatrix;
 
 Stack<vmath::mat4> matrixStack; 
 
+// timer related variables 
 LARGE_INTEGER startTime, currentTime, freq; 
 float mainTimer = 0.0f; 
+
+// audio related variables 
+ALuint audioBuffer, audioSource; 
 
 // ====================== Scene VARIABLES ================== 
 // TestScene testScene; 
@@ -55,7 +62,7 @@ Scene2 scene2;
 OutroScene outroScene; 
 TestScene testScene; 
 
-enum Scene CurrentScene = SCENE_1; 
+enum Scene CurrentScene = INTRO_SCENE; 
 
 // ==================== ENTRY-POINT FUNCTION ================ 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) 
@@ -88,8 +95,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     wndClass.lpfnWndProc = WndProc; 
     wndClass.hInstance = hInstance; 
     wndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH); 
-    wndClass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(MYICON)); 
-    wndClass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(MYICON)); 
+    wndClass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(ID_MYICON)); 
+    wndClass.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(ID_MYICON)); 
     wndClass.hCursor = LoadCursor(NULL, IDC_ARROW); 
     wndClass.lpszClassName = szAppName; 
     wndClass.lpszMenuName = NULL; 
@@ -150,6 +157,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     float one_divided_by_freq = 1.0f/(float)freq.QuadPart; 
 
     QueryPerformanceCounter(&startTime); 
+
+    alSourcePlay(audioSource); 
+    assert(alGetError() == AL_NO_ERROR); 
 
     // game loop 
     while(bDone == FALSE) 
@@ -352,6 +362,7 @@ int initialize(void)
     void printGLInfo(void); 
     void resize(int, int); 
     void uninitialize(void); 
+    BOOL initializeAudio(void); 
 
     // variable declarations 
     PIXELFORMATDESCRIPTOR pfd; 
@@ -449,6 +460,16 @@ int initialize(void)
             break; 
     } 
 
+    if(initializeAudio() == FALSE)
+    {
+        logFile.log("Failed to initialize audio\n"); 
+        return (-7); 
+    } 
+    else 
+    {
+        logFile.log("Audio Succesfully initialized\n"); 
+    } 
+
     // depth related code 
     glClearDepth(1.0); 
     glEnable(GL_DEPTH_TEST); 
@@ -497,6 +518,126 @@ void printGLInfo(void)
     } 
 
     logFile.log("****************************************************************\n"); 
+} 
+
+BOOL initializeAudio(void) 
+{
+    // Variable decalarations
+    ALCdevice *audioDevice;
+    ALCcontext *alContext;
+
+    HRSRC hResource = NULL;
+    HANDLE hAudioBuffer = NULL;
+
+    LPVOID audioBufferData = NULL;
+    DWORD sizeOfAudioDataInBytes = 0;
+
+    // Code
+    // Step 1 : Open Default audio device
+    // Null means default audio device is yet to be opened
+    audioDevice = alcOpenDevice(NULL);
+    // Checks error for ALC function call above
+    if(alcGetError(audioDevice) != ALC_NO_ERROR)
+    {
+        logFile.log("InitializeAudio(): alcOpenDevice() Failed. \n");
+        return(FALSE);
+
+    }
+    // Step 2: Create OpenAL context
+    alContext = alcCreateContext(audioDevice, NULL);
+    if(alcGetError(audioDevice) != ALC_NO_ERROR)
+    {
+        logFile.log("InitializeAudio(): alcCreateContext() Failed. \n");
+        return(FALSE);
+    }
+
+    // Step 3: This is similar to wglMakeCurrent() to make the above create context as a current context
+    alcMakeContextCurrent(alContext);
+    if(alcGetError(audioDevice) != ALC_NO_ERROR)
+    {
+        logFile.log("InitializeAudio(): alcMakeContextCurrent() Failed. \n");
+        return(FALSE);
+    }
+
+    // Step 4: Create Audio buffer
+    alGenBuffers(1, &audioBuffer); 
+    if(alGetError() != AL_NO_ERROR)
+    {
+        logFile.log("InitializeAudio(): alGenBuffers() Failed. \n");
+        return(FALSE);
+    }
+    // Step : 5 Load WAV resource data
+    // Load WAV Resource
+    // 5A : Find Resource, & get its handle
+    hResource = FindResource(NULL, MAKEINTRESOURCE(ID_MUSIC), TEXT("WAVE"));
+    if(hResource == NULL)
+    {
+        logFile.log("InitializeAudio(): FindResource() Failed. \n");
+        return(FALSE);
+    }
+    // 5B : Use the resource handle to load it in memory
+    // And returns handle to it
+    hAudioBuffer = LoadResource(NULL, hResource);
+    if(hAudioBuffer == NULL)
+    {
+        logFile.log("InitializeAudio(): LoadResource() Failed. \n");
+        return(FALSE);
+    }
+    
+    // 5C : Get startng byte-offset of this data in memory
+    audioBufferData = LockResource(hAudioBuffer);
+    if(audioBufferData == NULL)
+    {
+        logFile.log("InitializeAudio(): LockResource() Failed. \n");
+        return(FALSE);
+    }
+
+    // 5D : Get the size of audio dAata
+    sizeOfAudioDataInBytes = SizeofResource(NULL, hResource);
+    if(sizeOfAudioDataInBytes == 0)
+    {
+        logFile.log("InitializeAudio(): LockResource() Failed. \n");
+        return(FALSE);
+    }
+    logFile.log("\nSize returned by SizeOfResource() = %d\n", sizeOfAudioDataInBytes);
+
+    // STEP 6
+    // Load WAVE data into audio buffer
+    // Size in bytes, frequency of audio data in hertz
+    sizeOfAudioDataInBytes = sizeOfAudioDataInBytes - (sizeOfAudioDataInBytes%4); 
+    alBufferData(audioBuffer, AL_FORMAT_STEREO16, audioBufferData, sizeOfAudioDataInBytes, 44100);
+    // alBufferData(audioBuffer, AL_FORMAT_MONO16, audioBufferData, sizeOfAudioDataInBytes, 44100);
+    if(alGetError() != AL_NO_ERROR)
+    {
+        logFile.log("InitializeAudio(): alBufferData() Failed. \n");
+        return(FALSE);
+    }
+
+    // STEP 7
+    // Create Audio Source
+    alGenSources(1, &audioSource);
+    if(alGetError() != AL_NO_ERROR)
+    {
+        logFile.log("InitializeAudio(): alGenSources() Failed. \n");
+        return(FALSE);
+    }
+
+
+    // Step 8
+    // Give the audio buffer to audio source
+    alSourcei(audioSource, AL_BUFFER, audioBuffer);
+    if(alGetError() != AL_NO_ERROR)
+    {
+        logFile.log("InitializeAudio(): alSourcei() Failed. \n");
+        return(FALSE);
+    }
+
+    // These 2 are not needed now since win32 frees the memory
+    // Unload WAV resource
+    // UnlockResource(hResource);
+    // FreeResource(hAudioBuffer);
+
+    return (TRUE);
 } 
 
 void resize(int width, int height) 

@@ -26,9 +26,9 @@
 // ===================== LIBRARIES ==========================
 #pragma comment(lib, "user32.lib") 
 #pragma comment(lib, "gdi32.lib") 
-
 #pragma comment(lib, "glew32.lib") 
 #pragma comment(lib, "opengl32.lib") 
+#pragma comment(lib, "OpenAL32.lib") 
 
 // ===================== GLOBAL FUNCTIONS ===================
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM); 

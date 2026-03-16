@@ -1,3 +1,4 @@
 #include "headers/resources.hpp" 
 
-MYICON ICON res/icon.ico 
+ID_MYICON ICON res/icon.ico 
+ID_MUSIC WAVE "res/TheSunrise.wav"
