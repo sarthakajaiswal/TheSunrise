@@ -23,6 +23,7 @@ extern float tx, ty, tz;
 extern float sx, sy, sz; 
 extern float rx, ry, rz; 
 extern float alpha; 
+extern float dissolveValue; 
 
 // scene2 related 
 
@@ -182,6 +183,8 @@ void scene1Controls(void)
     ImGui::SliderInt("num samples", &scene1.numSamples_godrays, 0.0f, 100);
     ImGui::Spacing(); 
     ImGui::SliderFloat("alpha", &alpha, 0.0f, 1.0f);
+    ImGui::Spacing(); 
+    ImGui::SliderFloat("dissolve value", &dissolveValue, 0.0f, 1.0f);
 } 
 
 void scene2Controls(void) 

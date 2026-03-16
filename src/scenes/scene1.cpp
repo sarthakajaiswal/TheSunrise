@@ -34,6 +34,8 @@ Scene1::Scene1()
     numSamples_godrays = 60; 
 } 
 
+GLuint tex_dissolve; 
+float dissolveValue; 
 int Scene1::initialize() 
 {	
     // code 
@@ -78,7 +80,9 @@ int Scene1::initialize()
     gateTexture = loadTexture("res\\gate.png"); 
     if(gateTexture == 0) 
         throw texture_loading_failure("Scene1::initialize() > gate texture loading failed\n");
-        
+
+    tex_dissolve = loadTexture("res/dissolveTex.png"); 
+
     // quoteTexture = loadTexture("res\\phrase1.png"); 
     // if(quoteTexture == 0) 
     //     throw texture_loading_failure("Scene1::initialize() > phrase1 texture loading failed\n");
@@ -155,7 +159,7 @@ void Scene1::display()
             modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
             modelMatrix *= vmath::scale(flareModelSx, flareModelSy, flareModelSz); 
 
-            mindFlare.render(modelMatrix, viewMatrix, projectionMatrix, true, 150.0, 600.0, vec3(0.0, 0.0, 0.0), scene1Camera.getPosition()); 
+            mindFlare.render(modelMatrix, viewMatrix, projectionMatrix, true, 150.0, 600.0, vec3(0.0, 0.0, 0.0), scene1Camera.getPosition(), true, tex_dissolve, dissolveValue); 
         } 
         modelMatrix = matrixStack.popMatrix(); 
 
@@ -204,7 +208,7 @@ void Scene1::display()
             modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
             modelMatrix *= vmath::scale(flareModelSx, flareModelSy, flareModelSz); 
 
-            mindFlare.renderOcclusion(modelMatrix, viewMatrix, projectionMatrix); 
+            mindFlare.renderOcclusion(modelMatrix, viewMatrix, projectionMatrix, true, tex_dissolve, dissolveValue); 
         } 
         modelMatrix = matrixStack.popMatrix();
 

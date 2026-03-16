@@ -296,7 +296,8 @@ Model::setupMesh(Model::Mesh& mesh)
 void 
 Model::render(
     vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, 
-    bool bFog, float fogStart, float fogEnd, vmath::vec3 fogColor, vmath::vec3 viewPosition 
+    bool bFog, float fogStart, float fogEnd, vmath::vec3 fogColor, vmath::vec3 viewPosition, 
+    bool bDissolve,  GLuint _dissolveTexture, float _dissolveAmount
 ) 
 {
     if(modelsShaderProgram == 0) 
@@ -316,6 +317,18 @@ Model::render(
     {
         glUniform1i(isFogUniform, 0); 
     } 
+
+    if(bDissolve == true) 
+    {
+        glUniform1i(enableDissolveUniform, 1); 
+        glUniform1f(dissolveAmountUniform, _dissolveAmount); 
+        glActiveTexture(GL_TEXTURE3); 
+        glBindTexture(GL_TEXTURE_2D, _dissolveTexture);
+        glUniform1i(dissolveTextureUniform, 3); 
+    } 
+    else 
+        glUniform1i(enableDissolveUniform, 0); 
+
 
     for(unsigned int i = 0; i < meshes.size(); ++i) 
     {
@@ -356,12 +369,23 @@ Model::render(
 } 
 
 void 
-Model::renderOcclusion(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix) 
+Model::renderOcclusion(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, bool bDissolve,  GLuint _dissolveTexture, float _dissolveAmount) 
 {
     if(occlusionProgram == 0) 
         assert(initOcclusionShaderProgram() == 0); 
 
     glUseProgram(occlusionProgram);  
+
+    if(bDissolve == true) 
+    {
+        glUniform1i(glGetUniformLocation(occlusionProgram, "uIsDissolveEnabled"), 1); 
+        glUniform1f(glGetUniformLocation(occlusionProgram, "uDissolveAmount"), _dissolveAmount); 
+        glActiveTexture(GL_TEXTURE3); 
+        glBindTexture(GL_TEXTURE_2D, _dissolveTexture);
+        glUniform1i(glGetUniformLocation(occlusionProgram, "uDissolveTexture"), 3); 
+    } 
+    else 
+        glUniform1i(glGetUniformLocation(occlusionProgram, "uIsDissolveEnabled"), 0); 
 
     for(unsigned int i = 0; i < meshes.size(); ++i) 
     {
@@ -443,26 +467,34 @@ Model::initModelsShaderProgram(void)
 
     "out vec4 FragColor;\n" \
 
+    // lighting related 
     "uniform sampler2D uDiffuse;\n" \
     "uniform vec4 uLightPosition = vec4(100.0, 100.0, 100.0, 1.0);\n" \
     "uniform vec3 uLightColor = vec3(1.0, 1.0, 1.0);\n" \
 
+    // fog related 
     "uniform vec3 uViewPosition;\n" \
     "uniform int uIsFogEnabled;\n" \
     "uniform float uFogStart;\n" \
     "uniform float uFogEnd;\n" \
     "uniform vec3 uFogColor;\n" \
 
+    // dissolve related 
+    "uniform float uDissolveAmount;\n" \
+    "uniform sampler2D uDissolveTexture;\n" \
+    "uniform int uIsDissolveEnabled;\n" \
+    "uniform vec3 uGlowColor = vec3(1.0, 0.0, 0.0);\n" \
+    "uniform float uGlowRange = 0.02f;\n" \
+    "uniform float uGlowFallOff = 0.05f;\n" \
+
     "void main(void)\n" \
     "{\n" \
+    /* ----- light color ----- */ 
     "	vec3 normalizedNormal = normalize(out_normal);\n" \
     "	vec3 lightDirection = normalize(uLightPosition.xyz - out_fragPosition);\n" \
     "	vec3 diffuse = max(dot(normalizedNormal, lightDirection), 0.0) * uLightColor;\n" \
     
     "	vec4 diffuseColor = texture(uDiffuse, out_texCoord);\n" \
-    // "	vec3 color = diffuseColor * diffuse;\n" 
-    // "	FragColor = vec4(color, 1.0);\n" 
-
     "   if(diffuseColor.a < 0.01)\n" \
     "       discard;\n" \
 
@@ -477,7 +509,24 @@ Model::initModelsShaderProgram(void)
     "       fogFactor = clamp(fogFactor, 0.0, 1.0);\n" \
     "   }\n" \
 
+    /* ----- dissolve with glow ----- */ 
+    "	vec3 glowColor = vec3(0.0f);\n" \
+    "	if(uIsDissolveEnabled == 1)\n" \
+    "	{\n" \
+    "		float dissolve = texture(uDissolveTexture, out_texCoord).r;\n" \
+    "		dissolve = dissolve * 0.999;\n" 
+    "		float isVisible = dissolve - uDissolveAmount;\n" \
+    "		if(isVisible < 0.0f)\n" \
+    "			discard;\n" \
+
+    "		float isGlowing = smoothstep(uGlowRange+uGlowFallOff, uGlowRange, isVisible);\n" \
+    "		glowColor = uGlowColor * isGlowing;\n" \
+    "	}\n" \
+
+    // mixing fog with light 
     "	FragColor = mix(vec4(uFogColor, 1.0), diffuseColor, fogFactor);\n" \
+    // mixing glow (dissolve effect) 
+    "	FragColor += vec4(glowColor, 1.0);\n" \
     "}\n"; 
 
     GLuint fragmentShaderObject = glCreateShader(GL_FRAGMENT_SHADER); 
@@ -550,7 +599,9 @@ Model::initModelsShaderProgram(void)
     fogStartUniform = glGetUniformLocation(modelsShaderProgram, "uFogStart"); 
     fogEndUniform = glGetUniformLocation(modelsShaderProgram, "uFogEnd"); 
     fogColorUniform = glGetUniformLocation(modelsShaderProgram, "uFogColor"); 
-
+    enableDissolveUniform = glGetUniformLocation(modelsShaderProgram, "uIsDissolveEnabled"); 
+    dissolveAmountUniform = glGetUniformLocation(modelsShaderProgram, "uDissolveAmount"); 
+    dissolveTextureUniform = glGetUniformLocation(modelsShaderProgram, "uDissolveTexture"); 
     return (0); 
 } 
 
@@ -563,10 +614,14 @@ Model::initOcclusionShaderProgram(void)
         "#version 460 core\n" \
 
         "in vec4 aPosition;\n" \
+        "in vec2 aTexCoord;\n" \
         "uniform mat4 uMVPMatrix;\n" \
         
+        "out vec2 out_texCoord;\n" \
+
         "void main(void) \n" \
         "{\n" \
+        "   out_texCoord = aTexCoord;\n" \
         "	gl_Position = uMVPMatrix * aPosition;\n" \
         "}\n"; 
 
@@ -601,9 +656,25 @@ Model::initOcclusionShaderProgram(void)
     const char* fragmentShaderSourceCode = 
         "#version 460 core\n" \
 
+        "in vec2 out_texCoord;\n" \
+
+        // dissolve related 
+        "uniform float uDissolveAmount;\n" \
+        "uniform sampler2D uDissolveTexture;\n" \
+        "uniform int uIsDissolveEnabled;\n" \
+
         "out vec4 FragColor;\n" \
         "void main(void)\n" \
         "{\n" \
+        /* ----- dissolve ----- */ 
+        "	if(uIsDissolveEnabled == 1)\n" \
+        "	{\n" \
+        "		float dissolve = texture(uDissolveTexture, out_texCoord).r;\n" \
+        "		float isVisible = dissolve - uDissolveAmount;\n" \
+        "		if(isVisible < 0.0f)\n" \
+        "			discard;\n" \
+        "	}\n" \
+
         "	FragColor = vec4(0.0);\n" \
         "}\n"; 
 
@@ -640,6 +711,7 @@ Model::initOcclusionShaderProgram(void)
 
     glAttachShader(occlusionProgram, vertexShaderObject); 
     glBindAttribLocation(occlusionProgram, AMC_ATTRIBUTE_POSITION, "aPosition");
+    glBindAttribLocation(occlusionProgram, AMC_ATTRIBUTE_TEXCOORD, "aTexCoord");
     glAttachShader(occlusionProgram, fragmentShaderObject); 
 
     glLinkProgram(occlusionProgram); 

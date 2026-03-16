@@ -56,6 +56,9 @@ class Model
 		GLuint fogStartUniform = 0; 
 		GLuint fogEndUniform = 0; 
 		GLuint fogColorUniform = 0; 
+		GLuint enableDissolveUniform = 0; 
+		GLuint dissolveAmountUniform = 0; 
+		GLuint dissolveTextureUniform = 0; 
 
 		GLuint occlusionProgram = 0; 
 		GLuint mvpMatrixUniform_occlusion = 0; 
@@ -70,8 +73,8 @@ class Model
 		void processNode(aiNode* node, const aiScene* scene, vmath::mat4 parentTransform); 
 		Mesh processMesh(aiMesh* mesh, const aiScene* scene); 
 		void setupMesh(Mesh& mesh); 
-		void render(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, bool bFog=false, float fogStart=0.0, float fogEnd=0.0, vmath::vec3 fogColor=vec3(0.0), vmath::vec3 viewPosition=vec3(0.0)); 
-		void renderOcclusion(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix); 
+		void render(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, bool bFog=false, float fogStart=0.0, float fogEnd=0.0, vmath::vec3 fogColor=vec3(0.0), vmath::vec3 viewPosition=vec3(0.0), bool bDissolve=false,  GLuint _dissolveTexture=0, float _dissolveAmount=0.2); 
+		void renderOcclusion(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, bool bDissolve=false,  GLuint _dissolveTexture=0, float _dissolveAmount=0.0); 
 		// int initOpenGLState(void); 
 		int initModelsShaderProgram(void); 
 		int initOcclusionShaderProgram(void); 
