@@ -56,6 +56,9 @@ class IntroScene
         bool bShowCrackTexure = false;
         enum Shot shotNumber = SHOT1; 
 
+        // parameter tweaking 
+        float cameraT = 0.0; 
+
     public: 
         float alphabetSpacing = 3.799; 
         int blurIterations = 2; 
@@ -83,13 +86,12 @@ class IntroScene
         void display(); 
         void update(); 
         void uninitialize(); 
-
-        void eventCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam); 
+        
+        ~IntroScene(); 
 
         bool initHeadingAlphabetsShaderProgram(); 
         bool initBrightColorSeparatorProgram(); 
-        bool initTextureBlendProgram(); 
 
-        ~IntroScene(); 
+        void eventCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam); 
 }; 
 

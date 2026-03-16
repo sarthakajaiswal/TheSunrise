@@ -57,10 +57,10 @@ ALuint audioBuffer, audioSource;
 // ====================== Scene VARIABLES ================== 
 // TestScene testScene; 
 IntroScene introScene; 
-Scene1 scene1; 
-Scene2 scene2; 
-OutroScene outroScene; 
-TestScene testScene; 
+// Scene1 scene1; 
+// Scene2 scene2; 
+// OutroScene outroScene; 
+// TestScene testScene; 
 
 enum Scene CurrentScene = INTRO_SCENE; 
 
@@ -72,6 +72,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     void display(void); 
     void update(void); 
     void uninitialize(void); 
+    void toggleFullscreen(void); 
 
     // variable declarations 
     WNDCLASSEX wndClass; 
@@ -161,6 +162,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     alSourcePlay(audioSource); 
     assert(alGetError() == AL_NO_ERROR); 
 
+    toggleFullscreen(); 
+
     // game loop 
     while(bDone == FALSE) 
     {
@@ -224,21 +227,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             introScene.eventCallback(hwnd, uMsg, wParam, lParam);
             break; 
 
-        case SCENE_1: 
-            scene1.eventCallback(hwnd, uMsg, wParam, lParam);
-            break; 
+        // case SCENE_1: 
+        //     scene1.eventCallback(hwnd, uMsg, wParam, lParam);
+        //     break; 
 
-        case SCENE_2: 
-            scene2.eveneCallback(hwnd, uMsg, wParam, lParam);
-            break;
+        // case SCENE_2: 
+        //     scene2.eveneCallback(hwnd, uMsg, wParam, lParam);
+        //     break;
             
-        case OUTRO_SCENE: 
-            outroScene.eveneCallback(hwnd, uMsg, wParam, lParam);
-            break;
+        // case OUTRO_SCENE: 
+        //     outroScene.eveneCallback(hwnd, uMsg, wParam, lParam);
+        //     break;
 
-        case TEST_SCENE: 
-            testScene.eventCallback(hwnd, uMsg, wParam, lParam); 
-            break; 
+        // case TEST_SCENE: 
+        //     testScene.eventCallback(hwnd, uMsg, wParam, lParam); 
+        //     break; 
             
         default: 
             break; 
@@ -440,21 +443,21 @@ int initialize(void)
             introScene.initialize(); 
             break; 
 
-        case SCENE_1:  
-            scene1.initialize(); 
-            break; 
+        // case SCENE_1:  
+        //     scene1.initialize(); 
+        //     break; 
 
-        case SCENE_2: 
-            scene2.initialize(); 
-            break; 
+        // case SCENE_2: 
+        //     scene2.initialize(); 
+        //     break; 
 
-        case OUTRO_SCENE: 
-            outroScene.initialize(); 
-            break; 
+        // case OUTRO_SCENE: 
+        //     outroScene.initialize(); 
+        //     break; 
 
-        case TEST_SCENE: 
-            testScene.initialize(); 
-            break; 
+        // case TEST_SCENE: 
+        //     testScene.initialize(); 
+        //     break; 
 
         default: 
             break; 
@@ -678,21 +681,21 @@ void display(void)
             introScene.display(); 
             break; 
 
-        case SCENE_1: 
-            scene1.display(); 
-            break; 
+        // case SCENE_1: 
+        //     scene1.display(); 
+        //     break; 
 
-        case SCENE_2: 
-            scene2.display(); 
-            break; 
+        // case SCENE_2: 
+        //     scene2.display(); 
+        //     break; 
 
-        case OUTRO_SCENE: 
-            outroScene.display(); 
-            break; 
+        // case OUTRO_SCENE: 
+        //     outroScene.display(); 
+        //     break; 
         
-        case TEST_SCENE: 
-            testScene.display(); 
-            break; 
+        // case TEST_SCENE: 
+        //     testScene.display(); 
+        //     break; 
 
         default: 
             break; 
@@ -720,21 +723,21 @@ void update(void)
             introScene.update(); 
             break; 
 
-        case SCENE_1:  
-            scene1.update(); 
-            break; 
+        // case SCENE_1:  
+        //     scene1.update(); 
+        //     break; 
 
-        case SCENE_2: 
-            scene2.update(); 
-            break; 
+        // case SCENE_2: 
+        //     scene2.update(); 
+        //     break; 
 
-        case OUTRO_SCENE: 
-            outroScene.update(); 
-            break; 
+        // case OUTRO_SCENE: 
+        //     outroScene.update(); 
+        //     break; 
 
-        case TEST_SCENE: 
-            testScene.update(); 
-            break; 
+        // case TEST_SCENE: 
+        //     testScene.update(); 
+        //     break; 
 
         default: 
             break; 

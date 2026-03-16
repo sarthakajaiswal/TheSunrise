@@ -6,8 +6,8 @@ Camera introSceneCamera;
 
 std::vector<vec3> path1ControlPoints = 
 {
-    {-19.19, 1.92, -11.12}, 
-    {-32.29, -4.13, 37.81} 
+    {-19.19, 1.92, -15.12}, 
+    {-32.29, -4.13, 30.81} 
 }; 
 std::vector<float> path1Yaws = {-60.60, -60.80}; 
 std::vector<float> path1Pitches = {8.10, 8.80}; 
@@ -70,23 +70,20 @@ int IntroScene::initialize()
     crackTexture = loadTexture("res\\redCrack.png", FALSE); 
 
     introSceneCamera.automise(path1ControlPoints, path1Yaws, path1Pitches); 
-    // introSceneCamera.setState(vec3(-36.09, 0.27, 21.99), -50.50, 1.0); 
 
     logFile.log("------------------ IntroScene::initialize() completed ----------------\n\n"); 
     return (0); 
 } 
 
-float t = 0.0; 
 void IntroScene::display() 
 {
     mat4 modelMatrix = mat4::identity(); 
-    viewMatrix = introSceneCamera.getViewMatrix(CAMERA_AUTO_MODE, t); 
-    // viewMatrix = introSceneCamera.getViewMatrix(CAMERA_GAME_MODE); 
+    viewMatrix = introSceneCamera.getViewMatrix(CAMERA_AUTO_MODE, cameraT); 
 
     // render scene to fbo 
     fbo_scene.bind(); 
     {
-        glClearColor(0.1, 0.0, 0.0, 1.0); 
+        glClearColor(0.0, 0.0, 0.0, 1.0); 
         glClear(GL_COLOR_BUFFER_BIT); 
 
         headingAlphabetsShaderProgram.use(); 
@@ -238,10 +235,10 @@ void IntroScene::display()
 
 void IntroScene::update() 
 {
-    if(t < 1.0) 
-        t+=0.001f; 
+    if(cameraT < 1.0) 
+        cameraT+=0.001f; 
 
-    if(mainTimer < 16.0) 
+    if(mainTimer < 17.0) 
     {
         // shot1 
         static bool firstTime = true; 
@@ -249,15 +246,21 @@ void IntroScene::update()
         {
             shotNumber = SHOT1; 
     
-            t = 0.0; 
+            cameraT = 0.0; 
             introSceneCamera.automise(path1ControlPoints, path1Yaws, path1Pitches); 
             firstTime = false; 
         } 
 
-        if(mainTimer > 12.0 && textureAlpha > 0.0) 
-            textureAlpha -= 0.01f; 
+        if(mainTimer > 12.0 && blurIterations < 15) 
+        {
+            blurIterations = 15; 
+            blendStrength = 5.0; 
+        } 
+
+        if(mainTimer > 13.5 && textureAlpha > 0.0) 
+            textureAlpha -= 0.014f; 
     } 
-    if(mainTimer > 16.0 && mainTimer < 30.0) 
+    else if(mainTimer < 32.0) 
     {
         // shot2 
         static bool firstTime = true; 
@@ -266,22 +269,31 @@ void IntroScene::update()
             shotNumber = SHOT2; 
 
             introSceneCamera.automise(path2ControlPoints, path2Yaws, path2Pitches); 
-            t = 0.0; 
+            cameraT = 0.0; 
             textureAlpha = 1.0f; 
+            blurIterations = 2; 
+            blendStrength = 0.0; 
             
             firstTime = false; 
         } 
 
-        if(mainTimer > 22.0 && textureAlpha > 0.0) 
-            textureAlpha -= 0.01f; 
+        if(mainTimer > 31.0 && textureAlpha > 0.0) 
+            textureAlpha -= 0.0125f; 
 
-        if(mainTimer > 28.0) 
+        if(mainTimer > 28.0 && bShowCrackTexure == false)  
+        {
+            blurIterations = 15; 
+            blendStrength = 6.0;
             bShowCrackTexure = true; 
+        } 
+
+        if(cameraT < 1.0) 
+            cameraT+=0.0004; // increament cameraT a bit faster that shot1 | adjustment 
     } 
-    // else 
-    // {
-    //     CurrentScene = SCENE_1; 
-    // } 
+    else 
+    {
+        CurrentScene = SCENE_1; 
+    } 
 } 
 
 void IntroScene::uninitialize() 
