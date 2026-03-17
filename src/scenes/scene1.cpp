@@ -50,6 +50,9 @@ static bool bHorrorLikeMusicStarted = false; // after enabling this godrays turn
 static float godraysRedComponent = 0.0; 
 static bool bAutoCameraStart = false; 
 
+static GLuint tex_dissolve; // TODO: texture should be loaded on server side 
+static float dissolveValue = 0.0;
+
 Scene1::Scene1() 
 {
     // code  
@@ -65,9 +68,7 @@ float gateTextureExposureValue = 0.2f;
 static bool bShowQuoteTexture = true; 
 static bool bShowGateTexture = true; 
 static float quoteTextureAlpha = 0.0f; 
-
-GLuint tex_dissolve; 
-float dissolveValue; 
+ 
 int Scene1::initialize() 
 {	
     // code 
@@ -288,6 +289,14 @@ void Scene1::display()
                 exposure_godrays, decay_godrays, density_godrays, weight_godrays, strength_godrays, numSamples_godrays, vmath::vec3(490.6f, 455.627f, 2000.0f)
             ); 
 
+    // if(bShowFadeOutQuad == true) 
+    // {
+    //     glEnable(GL_BLEND); 
+    //     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+    //     fsTexturer.render(0, fadeOutAlpha); 
+    //     glDisable(GL_BLEND); 
+    // } 
+
     // glViewport(1200, 600, 400, 250);    
     // fsTexturer.render(sceneFBO.getTextureID()); 
 } 
@@ -365,7 +374,7 @@ void Scene1::update()
                 cameraT = 1.0;  
         } 
     } 
-    else if(mainTimer > 55.0) 
+    else if(mainTimer > 55.0 && mainTimer <= 69.0) 
     {
         static bool isFirstTime = true; 
         
@@ -383,6 +392,25 @@ void Scene1::update()
             cameraT += cameraSpeed; 
             if(cameraT > 1.0f) 
                 cameraT = 1.0;  
+        } 
+    } 
+    else if(mainTimer > 72.0) 
+    {
+        static bool isFirstTime = true; 
+        if(isFirstTime) 
+        {
+            dissolveValue = 0.1f; 
+            isFirstTime = false; 
+        }   
+
+        if(mainTimer > 74.0) 
+        {
+            dissolveValue += 0.01f; 
+        } 
+
+        if(dissolveValue >= 1.2) 
+        {
+            CurrentScene = SCENE_2; 
         } 
     } 
 } 

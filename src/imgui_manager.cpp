@@ -185,7 +185,7 @@ void scene1Controls(void)
     ImGui::Spacing(); 
     ImGui::SliderFloat("alpha", &alpha, 0.0f, 1.0f);
     ImGui::Spacing(); 
-    ImGui::SliderFloat("dissolve value", &dissolveValue, 0.0f, 1.0f);
+    // ImGui::SliderFloat("dissolve value", &dissolveValue, 0.0f, 1.0f);
     ImGui::SliderFloat("gateTextureExposure:", &gateTextureExposureValue, 0.0, 5.0); 
 } 
 
