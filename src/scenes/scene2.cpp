@@ -11,6 +11,9 @@ float tx, ty, tz;
 float sx=1.0, sy=1.0, sz=1.0; 
 float rx, ry, rz; 
 
+static bool bShowFade = true; 
+static float fadeAlpha = 1.0f; 
+
 int Scene2::initialize() 
 {	
     // code 
@@ -21,6 +24,7 @@ int Scene2::initialize()
     terrain.initialize("res/terr.png", 2.0f, 75.0f, textureImages, textureHeightRanges, textureScale);
 
     water.initialize(16.0); 
+    fsTexturer.initialize(); 
 
     scene2Camera.setState(vec3(452.49, 161.54, 593.75), 773.50, -3.90); 
 
@@ -84,12 +88,38 @@ void Scene2::display()
         water.render(modelMatrix, viewMatrix, projectionMatrix, scene2Camera.getPosition(), vec3(1000.0), 4.0); 
     } 
     modelMatrix = matrixStack.popMatrix(); 
+
+    // rendering black quad for fade effect 
+    if(bShowFade) 
+    {
+        glEnable(GL_BLEND); 
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+        fsTexturer.render(0, fadeAlpha); 
+        glDisable(GL_BLEND); 
+    } 
 } 
 
 void Scene2::update() 
 {
     // code 
     water.update(); 
+
+    if(bShowFade == true) 
+    {
+        fadeAlpha -= 0.0006f; 
+        if(fadeAlpha < 0.0f) 
+            bShowFade = false; 
+    } 
+
+    if(mainTimer > 130.0) 
+    {
+        bShowFade = true; 
+        if(fadeAlpha < 1.0) 
+            fadeAlpha += 0.01f; 
+        else 
+            CurrentScene = OUTRO_SCENE; 
+    } 
+
 } 
 
 Scene2::~Scene2() 

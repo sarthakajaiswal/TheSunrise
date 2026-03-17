@@ -387,6 +387,9 @@ void Scene1::update()
             isFirstTime = false; 
         }    
 
+        if(strength_godrays < 2.0) 
+            strength_godrays += 0.002f; 
+
         if(cameraT < 1.0) 
         {
             cameraT += cameraSpeed; 

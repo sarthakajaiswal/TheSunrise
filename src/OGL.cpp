@@ -16,7 +16,7 @@
 const int WIN_WIDTH = 800; 
 const int WIN_HEIGHT = 600;
 
-// ====================== GLOBAL VARIABLES ================== 
+// ====================== WINDOWING GLOBAL VARIABLES ================== 
 // window dimentions 
 int winWidth, winHeight; 
 
@@ -26,6 +26,8 @@ HWND ghwnd = NULL;
 DWORD dwStyle; 
 WINDOWPLACEMENT wpPrev; 
 UINT uMsg; 
+
+BOOL bDone = FALSE;
 
 // variables related with file io 
 char gszLogFileName[] = "Log.txt"; 
@@ -58,8 +60,8 @@ ALuint audioBuffer, audioSource;
 // TestScene testScene; 
 IntroScene introScene; 
 Scene1 scene1; 
-// Scene2 scene2; 
-// OutroScene outroScene; 
+Scene2 scene2; 
+OutroScene outroScene; 
 // TestScene testScene; 
 
 enum Scene CurrentScene = INTRO_SCENE; 
@@ -79,8 +81,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
     HWND hwnd; 
     MSG msg; 
     TCHAR szAppName[] = TEXT("RTR6"); 
-    TCHAR szWindowTitle[] = TEXT("Template"); 
-    BOOL bDone = FALSE; 
+    TCHAR szWindowTitle[] = TEXT("Template");  
 
     // create a log file 
     logFile.log("***********************************************************\n" \
@@ -231,13 +232,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             scene1.eventCallback(hwnd, uMsg, wParam, lParam);
             break; 
 
-        // case SCENE_2: 
-        //     scene2.eveneCallback(hwnd, uMsg, wParam, lParam);
-        //     break;
+        case SCENE_2: 
+            scene2.eveneCallback(hwnd, uMsg, wParam, lParam);
+            break;
             
-        // case OUTRO_SCENE: 
-        //     outroScene.eveneCallback(hwnd, uMsg, wParam, lParam);
-        //     break;
+        case OUTRO_SCENE: 
+            outroScene.eveneCallback(hwnd, uMsg, wParam, lParam);
+            break;
 
         // case TEST_SCENE: 
         //     testScene.eventCallback(hwnd, uMsg, wParam, lParam); 
@@ -438,6 +439,8 @@ int initialize(void)
 
     introScene.initialize(); 
     scene1.initialize(); 
+    scene2.initialize(); 
+    outroScene.initialize(); 
 
     // scene initialization 
     switch(CurrentScene) 
@@ -688,13 +691,13 @@ void display(void)
             scene1.display(); 
             break; 
 
-        // case SCENE_2: 
-        //     scene2.display(); 
-        //     break; 
+        case SCENE_2: 
+            scene2.display(); 
+            break; 
 
-        // case OUTRO_SCENE: 
-        //     outroScene.display(); 
-        //     break; 
+        case OUTRO_SCENE: 
+            outroScene.display(); 
+            break; 
         
         // case TEST_SCENE: 
         //     testScene.display(); 
@@ -730,13 +733,13 @@ void update(void)
             scene1.update(); 
             break; 
 
-        // case SCENE_2: 
-        //     scene2.update(); 
-        //     break; 
+        case SCENE_2: 
+            scene2.update(); 
+            break; 
 
-        // case OUTRO_SCENE: 
-        //     outroScene.update(); 
-        //     break; 
+        case OUTRO_SCENE: 
+            outroScene.update(); 
+            break; 
 
         // case TEST_SCENE: 
         //     testScene.update(); 

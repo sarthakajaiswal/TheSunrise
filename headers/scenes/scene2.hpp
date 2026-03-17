@@ -12,6 +12,7 @@ class Scene2
 {
     private:
         Terrain terrain; 
+        FullScreenTexturer fsTexturer; 
         const float terrainScale = 50.0f; 
         const float textureScale = 8.0; 
         const float heightScale = 12.0f; 

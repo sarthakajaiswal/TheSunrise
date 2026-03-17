@@ -1,5 +1,10 @@
 #include "../../headers/scenes/outroScene.hpp" 
 
+extern BOOL bDone; 
+
+static bool bShowPoster = false; 
+static float posterAlpha = 1.0f; 
+
 OutroScene::OutroScene() 
 {
     // code 
@@ -14,7 +19,7 @@ int OutroScene::initialize()
 
     slidesSequence.initialize(
         {"res/textures/outro/presentedBy.png", "res/textures/outro/forYogeshwarSir.png", "res/textures/outro/onOccasionOf.png", "res/textures/outro/thankYou.png"}, 
-        0.5, 8.0); 
+        0.9, 3.0); 
 
     texture_theSystemCallsPoster = loadTexture("res/textures/outro/theSystemCallsPoster.png"); 
 
@@ -26,16 +31,24 @@ void OutroScene::display()
 {
     static int slideRenderingCompleted = 0; 
 
-    if(slideRenderingCompleted == 0) 
+    if(slideRenderingCompleted == 0 && bShowPoster == false) 
         slideRenderingCompleted = slidesSequence.render(); 
 
-    // if(mainTimer > 120.0) 
-        // fsTexturer.render(texture_theSystemCallsPoster); 
+    if(bShowPoster == true) 
+        fsTexturer.render(texture_theSystemCallsPoster, posterAlpha); 
 } 
 
 void OutroScene::update() 
 {
     slidesSequence.update(); 
+
+    if(mainTimer > 165.0) 
+        bShowPoster = true; 
+    if(mainTimer > 168) 
+        posterAlpha -= 0.01f; 
+
+    if(mainTimer > 180.0) 
+        bDone = TRUE; 
 } 
 
 void OutroScene::uninitialize() 
