@@ -4,8 +4,34 @@
 // float sx=1.0, sy=1.0, sz=1.0; 
 // float rx, ry, rz; 
 
-float alpha=0.2; 
+static std::vector<vec3> path1ControlPoints = 
+{ 
+    {509.17, 92.07, 1111.14}, 
+    {511.10, 90.38, 1151.05}, 
+    {512.95, 89.08, 1184.97}, 
+    {515.68, 87.96, 1230.88}, 
+    {518.92, 88.74, 1294.79}, 
+    {521.82, 90.75, 1358.69} 
+}; 
+static std::vector<float> path1Yaws = {91.20, 86.90, 86.60, 87.10, 87.40, 86.70 }; 
+static std::vector<float> path1Pitches = { -3.70, -2.30, -1.40, 0.70, 1.80, 3.00 }; 
 
+static std::vector<vec3> path2ControlPoints = 
+{
+    {521.82, 90.75, 1358.69}, 
+    {515.82, 65.75, 1133.69}, 
+    {510.13, 39.15, 908.28}, 
+    {510.57, 28.12, 839.89}, 
+    {509.16, 44.40, 748.99}, 
+    {509.91, 50.93, 656.87} 
+}; 
+static std::vector<float> path2Yaws = {86.70, 87.70, 88.70, 88.30, 87.80, 84.10}; 
+static std::vector<float> path2Pitches = { 3.00, 7.40, 12.40, 13.50, 11.60, 18.80 }; 
+
+static float cameraSpeed = 0.0f; 
+static float cameraT = 0.0f; 
+
+float alpha=0.2; 
 // initial 
 float flareModelTx0 = 530.90f, flareModelTy0 = -121.92f, flareModelTz0 = 1709.79f; 
 float flareModelSx0 = 3.64f, flareModelSy0 = 4.31f, flareModelSz0 = 5.36f;
@@ -15,17 +41,18 @@ float flareModelSx1 = 30.74f, flareModelSy1 = 22.43f, flareModelSz1 = 15.0f;
 // current (initially set to initial values) 
 float flareModelTx=flareModelTx0, flareModelTy=flareModelTy0, flareModelTz=flareModelTz0; 
 float flareModelSx=flareModelSx0, flareModelSy=flareModelSy0, flareModelSz=flareModelSz0; 
-bool bAnimateFlareModel = true; 
 
 Camera scene1Camera; 
 float modelX = 534.06, modelY = 46.0, modelZ = 501.85; 
 float modelSx = 1.0, modelSy = 1.0, modelSz = 1.0; 
 
+static bool bHorrorLikeMusicStarted = false; // after enabling this godrays turns red and mindflare model starts to become bigger 
+static float godraysRedComponent = 0.0; 
+static bool bAutoCameraStart = false; 
+
 Scene1::Scene1() 
 {
     // code  
-    exposureValue = 0.2f; 
-
     exposure_godrays = 0.179f; 
     decay_godrays = 0.92f; 
     density_godrays = 1.00f; 
@@ -33,6 +60,11 @@ Scene1::Scene1()
     strength_godrays = 0.935f; 
     numSamples_godrays = 60; 
 } 
+
+float gateTextureExposureValue = 0.2f; 
+static bool bShowQuoteTexture = true; 
+static bool bShowGateTexture = true; 
+static float quoteTextureAlpha = 0.0f; 
 
 GLuint tex_dissolve; 
 float dissolveValue; 
@@ -45,6 +77,7 @@ int Scene1::initialize()
     // assert(exposureProgram.initialize() == 0); 
     assert(fsTexturer.initialize() == 0); 
     assert(textureBlender.initialize() == 0); 
+    assert(exposureProgram.initialize() == 0); 
     assert(initBWShader() == 0); 
 
     std::vector<std::string> textureImages = {"res/terrain1.png", "res/terrain3.png", "res/terrain2.png", "res/terrain4.png"}; 
@@ -73,21 +106,21 @@ int Scene1::initialize()
 
     assert(moonSphere.initialize() == 0);
 
-    // -------- FBO and textures --------- 
-    // assert(floatingPointFBO.createFloatingPointFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
+    // -------- FBO and textures ---------  
+    assert(floatingPointFBO.createFloatingPointFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
     assert(sceneFBO.createNormalFBO(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)) == true);  
 
     gateTexture = loadTexture("res\\gate.png"); 
     if(gateTexture == 0) 
         throw texture_loading_failure("Scene1::initialize() > gate texture loading failed\n");
-
     tex_dissolve = loadTexture("res/dissolveTex.png"); 
+    if(gateTexture == 0) 
+        throw texture_loading_failure("Scene1::initialize() > dissolve texture loading failed\n");
+    quoteTexture = loadTexture("res\\phrase1.png"); 
+    if(quoteTexture == 0) 
+        throw texture_loading_failure("Scene1::initialize() > phrase1 texture loading failed\n");
 
-    // quoteTexture = loadTexture("res\\phrase1.png"); 
-    // if(quoteTexture == 0) 
-    //     throw texture_loading_failure("Scene1::initialize() > phrase1 texture loading failed\n");
-
-    scene1Camera.setState(vec3(534.06, 46.83, 501.85), 88.60, 1.20); 
+    scene1Camera.setState(vec3(521.82, 90.75, 1358.69), 90.60, 2.50); 
 
     // tx = scene1Camera.getPosition()[0]; 
     // ty = scene1Camera.getPosition()[1]; 
@@ -107,21 +140,37 @@ void Scene1::display()
     resize(winWidth, winHeight); 
 
     mat4 modelMatrix = mat4::identity(); 
-    viewMatrix = scene1Camera.getViewMatrix(CAMERA_GAME_MODE); 
-    // viewMatrix = mat4::identity(); 
+    if(bAutoCameraStart == true) 
+        viewMatrix = scene1Camera.getViewMatrix(CAMERA_AUTO_MODE, cameraT); 
+    // if(mainTimer > 55.0)
+    //     viewMatrix = scene1Camera.getViewMatrix(CAMERA_GAME_MODE); 
+    
 
-    // floatingPointFBO.bind(); 
-    // fsTexturer.render(gateTexture); 
-    // floatingPointFBO.unbind(); 
+    floatingPointFBO.bind(); 
+    fsTexturer.render(gateTexture, 0.2); 
+    floatingPointFBO.unbind(); 
 
-    // exposureProgram.render(floatingPointFBO.getTextureID(), exposureValue); 
+    if(bShowQuoteTexture==true && bShowGateTexture==true) 
+    {
+        exposureProgram.render(floatingPointFBO.getTextureID(), gateTextureExposureValue); 
+        glEnable(GL_BLEND); 
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+        fsTexturer.render(quoteTexture, quoteTextureAlpha);
+        glDisable(GL_BLEND);  
+        return; // do not render other things
+    }  
+    else if(bShowGateTexture == true) 
+    {
+        exposureProgram.render(floatingPointFBO.getTextureID(), gateTextureExposureValue); 
+        return; 
+    } 
 
     sceneFBO.bind(); 
     {
         // terrain 
         matrixStack.pushMatrix(modelMatrix); 
         {
-            terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition(), true, true, vec3(50.0), vec3(1.0, 0.0, 0.0), 150.0, 450.0, vec3(0.0, 0.0, 0.0)); 
+            terrain.render(mat4::identity(), viewMatrix, projectionMatrix, scene1Camera.getPosition(), true, true, vec3(50.0), vec3(1.0*godraysRedComponent, 0.0, 0.0), 150.0, 250.0, vec3(0.0, 0.0, 0.0)); 
         } 
         modelMatrix = matrixStack.popMatrix(); 
 
@@ -131,7 +180,7 @@ void Scene1::display()
             modelMatrix = mat4::identity(); 
             modelMatrix *= vmath::translate(660.032f, 27.08f, 948.01f); 
             modelMatrix *= vmath::scale(0.189f, 0.199f, 0.224f);
-            treeModel.render(modelMatrix, viewMatrix, projectionMatrix, true, 150.0, 450.0, vec3(0.0, 0.0, 0.0), scene1Camera.getPosition()); 
+            treeModel.render(modelMatrix, viewMatrix, projectionMatrix, true, 150.0, 250.0, vec3(0.0, 0.0, 0.0), scene1Camera.getPosition()); 
         } 
         modelMatrix = matrixStack.popMatrix(); 
 
@@ -152,16 +201,19 @@ void Scene1::display()
         modelMatrix = matrixStack.popMatrix(); 
 
         // mind flayer 
-        matrixStack.pushMatrix(modelMatrix); 
+        if(bHorrorLikeMusicStarted == true) 
         {
-            modelMatrix = mat4::identity(); 
-            modelMatrix *= vmath::translate(flareModelTx, flareModelTy, flareModelTz); 
-            modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
-            modelMatrix *= vmath::scale(flareModelSx, flareModelSy, flareModelSz); 
+            matrixStack.pushMatrix(modelMatrix); 
+            {
+                modelMatrix = mat4::identity(); 
+                modelMatrix *= vmath::translate(flareModelTx, flareModelTy, flareModelTz); 
+                modelMatrix *= vmath::rotate(180.0f, 0.0f, 1.0f, 0.0f);
+                modelMatrix *= vmath::scale(flareModelSx, flareModelSy, flareModelSz); 
 
-            mindFlare.render(modelMatrix, viewMatrix, projectionMatrix, true, 150.0, 600.0, vec3(0.0, 0.0, 0.0), scene1Camera.getPosition(), true, tex_dissolve, dissolveValue); 
+                mindFlare.render(modelMatrix, viewMatrix, projectionMatrix, true, 150.0, 400.0, vec3(0.0, 0.0, 0.0), scene1Camera.getPosition(), true, tex_dissolve, dissolveValue); 
+            } 
+            modelMatrix = matrixStack.popMatrix(); 
         } 
-        modelMatrix = matrixStack.popMatrix(); 
 
         // cubemap  
         matrixStack.pushMatrix(modelMatrix); 
@@ -181,7 +233,7 @@ void Scene1::display()
     /*********** GODRAYS ************/ 
     godrays.occlusionFBO.bind(); 
     { 
-        glClearColor(0.1, 0.0, 0.0, 1.0); 
+        glClearColor(godraysRedComponent, 0.0, 0.0, 1.0); 
         glClear(GL_COLOR_BUFFER_BIT); 
 
         // terrain 
@@ -244,7 +296,7 @@ void Scene1::update()
 {
     // code 
     // model scale and translate alpha
-    static float modelAnimateSpeedInverse = 100.0f; 
+    static float modelAnimateSpeedInverse = 300.0f; 
     float modelTxD=(flareModelTx1-flareModelTx0)/modelAnimateSpeedInverse;
     float modelTyD=(flareModelTy1-flareModelTy0)/modelAnimateSpeedInverse;
     float modelTzD=(flareModelTz1-flareModelTz0)/modelAnimateSpeedInverse; 
@@ -252,14 +304,86 @@ void Scene1::update()
     float modelSyD=(flareModelSy1-flareModelSy0)/modelAnimateSpeedInverse; 
     float modelSzD=(flareModelSz1-flareModelSz0)/modelAnimateSpeedInverse; 
 
-    if(bAnimateFlareModel == true && flareModelSy <= flareModelSy1) 
+    if(bHorrorLikeMusicStarted == true) 
     {
-        flareModelTx += modelTxD; 
-        flareModelTy += modelTyD; 
-        flareModelTz += modelTzD; 
-        flareModelSx += modelSxD; 
-        flareModelSy += modelSyD; 
-        flareModelSz += modelSzD; 
+        if(flareModelSy <= flareModelSy1) 
+        {
+            flareModelTx += modelTxD; 
+            flareModelTy += modelTyD; 
+            flareModelTz += modelTzD; 
+            flareModelSx += modelSxD; 
+            flareModelSy += modelSyD; 
+            flareModelSz += modelSzD; 
+        } 
+
+        if(godraysRedComponent < 0.05) 
+            godraysRedComponent += 0.0002; 
+    } 
+
+    // quote texture 
+    if(bShowQuoteTexture == true && quoteTextureAlpha < 1.0) 
+        quoteTextureAlpha += 0.004; 
+    if(mainTimer > 40.0) 
+    {
+        quoteTextureAlpha -= 0.01; 
+        if(quoteTextureAlpha < 0.0f) 
+            bShowQuoteTexture = false; 
+    } 
+    if(mainTimer > 42.0 && bShowQuoteTexture == true) 
+        bShowQuoteTexture = false; 
+
+    // gate texture 
+    static float angle=0.0f;  
+    if(mainTimer < 43.0f) 
+    {
+        gateTextureExposureValue = 2.5*(1.0+sin(radians(angle))); 
+        angle += 0.4f; 
+    } 
+    if(mainTimer > 43.0 && gateTextureExposureValue > 0.0) 
+    {
+        gateTextureExposureValue = 2.5*(1.0+sin(radians(angle))); 
+        angle += 0.4f; 
+    } 
+    
+    if(mainTimer > 45.0 && mainTimer <= 55.0f) 
+    {
+        static bool isFirstTime = true; 
+        
+        if(isFirstTime) 
+        {
+            bShowGateTexture = false; 
+            bAutoCameraStart = true; 
+            cameraSpeed = 0.002f; 
+            scene1Camera.automise(path1ControlPoints, path1Yaws, path1Pitches); 
+            isFirstTime = false; 
+        } 
+
+        if(cameraT < 1.0) 
+        {
+            cameraT += cameraSpeed; 
+            if(cameraT > 1.0f) 
+                cameraT = 1.0;  
+        } 
+    } 
+    else if(mainTimer > 55.0) 
+    {
+        static bool isFirstTime = true; 
+        
+        if(isFirstTime) 
+        {
+            bHorrorLikeMusicStarted = true;  
+            cameraT = 0.0; 
+            cameraSpeed = 0.002f; 
+            scene1Camera.automise(path2ControlPoints, path2Yaws, path2Pitches); 
+            isFirstTime = false; 
+        }    
+
+        if(cameraT < 1.0) 
+        {
+            cameraT += cameraSpeed; 
+            if(cameraT > 1.0f) 
+                cameraT = 1.0;  
+        } 
     } 
 } 
 

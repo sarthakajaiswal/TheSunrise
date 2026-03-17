@@ -41,8 +41,6 @@ class Scene1
         int initBWShader(); 
 
     public: 
-        float exposureValue; 
-
         float exposure_godrays; 
         float decay_godrays; 
         float density_godrays; 

@@ -4,21 +4,21 @@ extern mat4 projectionMatrix;
 
 Camera introSceneCamera; 
 
-std::vector<vec3> path1ControlPoints = 
+static std::vector<vec3> path1ControlPoints = 
 {
     {-19.19, 1.92, -15.12}, 
     {-32.29, -4.13, 30.81} 
 }; 
-std::vector<float> path1Yaws = {-60.60, -60.80}; 
-std::vector<float> path1Pitches = {8.10, 8.80}; 
+static std::vector<float> path1Yaws = {-60.60, -60.80}; 
+static std::vector<float> path1Pitches = {8.10, 8.80}; 
 
-std::vector<vec3> path2ControlPoints = 
+static std::vector<vec3> path2ControlPoints = 
 {
     {3.45, 0.41, -3.37}, 
     {-2.51, -0.84, 14.58} 
 }; 
-std::vector<float> path2Yaws = {-86.30, -68.60}; 
-std::vector<float> path2Pitches = {-0.00, 5.40}; 
+static std::vector<float> path2Yaws = {-86.30, -68.60}; 
+static std::vector<float> path2Pitches = {-0.00, 5.40}; 
 
 IntroScene::IntroScene() 
 {
@@ -253,14 +253,14 @@ void IntroScene::update()
 
         if(mainTimer > 12.0 && blurIterations < 15) 
         {
-            blurIterations = 15; 
-            blendStrength = 5.0; 
+            blurIterations = 12; 
+            blendStrength = 4.0; 
         } 
 
         if(mainTimer > 13.5 && textureAlpha > 0.0) 
             textureAlpha -= 0.014f; 
     } 
-    else if(mainTimer < 32.0) 
+    else if(mainTimer < 34.0) 
     {
         // shot2 
         static bool firstTime = true; 

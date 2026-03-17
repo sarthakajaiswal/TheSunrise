@@ -235,19 +235,19 @@ Spline3D::initOpenGLState()
     free(fragmentShaderSourceCode); fragmentShaderSourceCode = NULL; 
 
     // --------- FILL BUFFERS -------- 
-    getPositionsOnSpline(positionsOnSpline, controlPoints.size()*25);  // fill array with nr of positions based on number of control points 
-    glGenVertexArrays(1, &vao); 
-    glBindVertexArray(vao);     
+    // getPositionsOnSpline(positionsOnSpline, controlPoints.size()*25);  // fill array with nr of positions based on number of control points 
+    // glGenVertexArrays(1, &vao); 
+    // glBindVertexArray(vao);     
     
-    glGenBuffers(1, &vbo); 
-    glBindBuffer(GL_ARRAY_BUFFER, vbo); 
-        glBufferData(GL_ARRAY_BUFFER, positionsOnSpline.size()*sizeof(vmath::vec3), positionsOnSpline.data(), GL_DYNAMIC_DRAW); 
-        glVertexAttribPointer(AMC_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 0, NULL); 
-        glEnableVertexAttribArray(AMC_ATTRIBUTE_POSITION); 
-    glBindBuffer(GL_ARRAY_BUFFER, 0); 
+    // glGenBuffers(1, &vbo); 
+    // glBindBuffer(GL_ARRAY_BUFFER, vbo); 
+    //     glBufferData(GL_ARRAY_BUFFER, positionsOnSpline.size()*sizeof(vmath::vec3), positionsOnSpline.data(), GL_DYNAMIC_DRAW); 
+    //     glVertexAttribPointer(AMC_ATTRIBUTE_POSITION, 3, GL_FLOAT, GL_FALSE, 0, NULL); 
+    //     glEnableVertexAttribArray(AMC_ATTRIBUTE_POSITION); 
+    // glBindBuffer(GL_ARRAY_BUFFER, 0); 
 
-    glVertexAttrib3fv(AMC_ATTRIBUTE_COLOR, vec3(1.0, 1.0, 1.0)); 
-    glBindVertexArray(0); 
+    // glVertexAttrib3fv(AMC_ATTRIBUTE_COLOR, vec3(1.0, 1.0, 1.0)); 
+    // glBindVertexArray(0); 
 
     isOpenGLStateInitialized = true; 
 } 

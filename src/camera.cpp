@@ -66,14 +66,20 @@ vmath::mat4 Camera::getViewMatrix(enum CameraMode mode, float t)
     else 
     {
         vmath::vec3 eye = positionSpline.evaluatePositionAtT(t); 
+        this->position = eye; 
         
         float yawAtT = yawSpline.evaluateValueAtT(t); 
         float pitchAtT = pitchSpline.evaluateValueAtT(t); 
+        this->updateVectorsAfterChangesInAngle(); 
+
         vmath::vec3 direction; 
         direction[0] = cos(vmath::radians(yawAtT)) * cos(vmath::radians(pitchAtT)); 
         direction[1] = sin(vmath::radians(pitchAtT)); 
         direction[2] = sin(vmath::radians(yawAtT)) * cos(vmath::radians(pitchAtT)); 
+        this->direction = direction; 
+        
         vmath::vec3 center = eye + direction; 
+        this->target = center; 
 
         vmath::vec3 up = vmath::vec3(0.0, 1.0, 0.0); 
 

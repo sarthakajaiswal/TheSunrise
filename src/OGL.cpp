@@ -57,7 +57,7 @@ ALuint audioBuffer, audioSource;
 // ====================== Scene VARIABLES ================== 
 // TestScene testScene; 
 IntroScene introScene; 
-// Scene1 scene1; 
+Scene1 scene1; 
 // Scene2 scene2; 
 // OutroScene outroScene; 
 // TestScene testScene; 
@@ -227,9 +227,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             introScene.eventCallback(hwnd, uMsg, wParam, lParam);
             break; 
 
-        // case SCENE_1: 
-        //     scene1.eventCallback(hwnd, uMsg, wParam, lParam);
-        //     break; 
+        case SCENE_1: 
+            scene1.eventCallback(hwnd, uMsg, wParam, lParam);
+            break; 
 
         // case SCENE_2: 
         //     scene2.eveneCallback(hwnd, uMsg, wParam, lParam);
@@ -436,12 +436,15 @@ int initialize(void)
     // print gl info 
     // printGLInfo();  
 
+    introScene.initialize(); 
+    scene1.initialize(); 
+
     // scene initialization 
     switch(CurrentScene) 
     {
-        case INTRO_SCENE: 
-            introScene.initialize(); 
-            break; 
+        // case INTRO_SCENE: 
+        //     introScene.initialize(); 
+        //     break; 
 
         // case SCENE_1:  
         //     scene1.initialize(); 
@@ -681,9 +684,9 @@ void display(void)
             introScene.display(); 
             break; 
 
-        // case SCENE_1: 
-        //     scene1.display(); 
-        //     break; 
+        case SCENE_1: 
+            scene1.display(); 
+            break; 
 
         // case SCENE_2: 
         //     scene2.display(); 
@@ -723,9 +726,9 @@ void update(void)
             introScene.update(); 
             break; 
 
-        // case SCENE_1:  
-        //     scene1.update(); 
-        //     break; 
+        case SCENE_1:  
+            scene1.update(); 
+            break; 
 
         // case SCENE_2: 
         //     scene2.update(); 
@@ -764,7 +767,7 @@ void uninitialize(void)
     } 
 
     // uninitialize scenes 
-    introScene.uninitialize(); 
+    // introScene.uninitialize(); 
 
     // make HDC as current rendering context 
     if(wglGetCurrentContext() == ghrc) 

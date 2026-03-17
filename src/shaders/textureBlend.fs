@@ -4,7 +4,6 @@ in vec2 out_texCoord;
 
 uniform sampler2D uTexture1;
 uniform sampler2D uTexture2;
-uniform float uExposure;
 uniform float uTex1Factor; 
 uniform float uTex2Factor; 
 
