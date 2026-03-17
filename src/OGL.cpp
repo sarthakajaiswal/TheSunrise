@@ -58,13 +58,13 @@ ALuint audioBuffer, audioSource;
 
 // ====================== Scene VARIABLES ================== 
 // TestScene testScene; 
-IntroScene introScene; 
-Scene1 scene1; 
+// IntroScene introScene; 
+// Scene1 scene1; 
 Scene2 scene2; 
-OutroScene outroScene; 
+// OutroScene outroScene; 
 // TestScene testScene; 
 
-enum Scene CurrentScene = INTRO_SCENE; 
+enum Scene CurrentScene = SCENE_2; 
 
 // ==================== ENTRY-POINT FUNCTION ================ 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) 
@@ -160,8 +160,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 
     QueryPerformanceCounter(&startTime); 
 
-    alSourcePlay(audioSource); 
-    assert(alGetError() == AL_NO_ERROR); 
+    // alSourcePlay(audioSource); 
+    // assert(alGetError() == AL_NO_ERROR); 
 
     toggleFullscreen(); 
 
@@ -224,21 +224,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     
     switch(CurrentScene) 
     {
-        case INTRO_SCENE: 
-            introScene.eventCallback(hwnd, uMsg, wParam, lParam);
-            break; 
+        // case INTRO_SCENE: 
+        //     introScene.eventCallback(hwnd, uMsg, wParam, lParam);
+        //     break; 
 
-        case SCENE_1: 
-            scene1.eventCallback(hwnd, uMsg, wParam, lParam);
-            break; 
+        // case SCENE_1: 
+        //     scene1.eventCallback(hwnd, uMsg, wParam, lParam);
+        //     break; 
 
         case SCENE_2: 
             scene2.eveneCallback(hwnd, uMsg, wParam, lParam);
             break;
             
-        case OUTRO_SCENE: 
-            outroScene.eveneCallback(hwnd, uMsg, wParam, lParam);
-            break;
+        // case OUTRO_SCENE: 
+        //     outroScene.eveneCallback(hwnd, uMsg, wParam, lParam);
+        //     break;
 
         // case TEST_SCENE: 
         //     testScene.eventCallback(hwnd, uMsg, wParam, lParam); 
@@ -437,10 +437,10 @@ int initialize(void)
     // print gl info 
     // printGLInfo();  
 
-    introScene.initialize(); 
-    scene1.initialize(); 
+    // introScene.initialize(); 
+    // scene1.initialize(); 
     scene2.initialize(); 
-    outroScene.initialize(); 
+    // outroScene.initialize(); 
 
     // scene initialization 
     switch(CurrentScene) 
@@ -683,21 +683,21 @@ void display(void)
 
     switch(CurrentScene) 
     {
-        case INTRO_SCENE: 
-            introScene.display(); 
-            break; 
+        // case INTRO_SCENE: 
+        //     introScene.display(); 
+        //     break; 
 
-        case SCENE_1: 
-            scene1.display(); 
-            break; 
+        // case SCENE_1: 
+        //     scene1.display(); 
+        //     break; 
 
         case SCENE_2: 
             scene2.display(); 
             break; 
 
-        case OUTRO_SCENE: 
-            outroScene.display(); 
-            break; 
+        // case OUTRO_SCENE: 
+        //     outroScene.display(); 
+        //     break; 
         
         // case TEST_SCENE: 
         //     testScene.display(); 
@@ -725,21 +725,21 @@ void update(void)
 
     switch(CurrentScene) 
     {
-        case INTRO_SCENE: 
-            introScene.update(); 
-            break; 
+        // case INTRO_SCENE: 
+        //     introScene.update(); 
+        //     break; 
 
-        case SCENE_1:  
-            scene1.update(); 
-            break; 
+        // case SCENE_1:  
+        //     scene1.update(); 
+        //     break; 
 
         case SCENE_2: 
             scene2.update(); 
             break; 
 
-        case OUTRO_SCENE: 
-            outroScene.update(); 
-            break; 
+        // case OUTRO_SCENE: 
+        //     outroScene.update(); 
+        //     break; 
 
         // case TEST_SCENE: 
         //     testScene.update(); 

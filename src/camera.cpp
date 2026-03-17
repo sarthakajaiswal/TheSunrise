@@ -53,7 +53,7 @@ vmath::vec3 Camera::getPosition()
 
 vmath::vec3 Camera::getCenter() const 
 {
-    return (position+direction); 
+    return (position+front); 
 } 
 
 vmath::mat4 Camera::getViewMatrix(enum CameraMode mode, float t) 
@@ -77,6 +77,7 @@ vmath::mat4 Camera::getViewMatrix(enum CameraMode mode, float t)
         direction[1] = sin(vmath::radians(pitchAtT)); 
         direction[2] = sin(vmath::radians(yawAtT)) * cos(vmath::radians(pitchAtT)); 
         this->direction = direction; 
+        this->front = normalize(this->direction); 
         
         vmath::vec3 center = eye + direction; 
         this->target = center; 

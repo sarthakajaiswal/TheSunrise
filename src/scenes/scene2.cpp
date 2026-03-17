@@ -12,7 +12,9 @@ float sx=1.0, sy=1.0, sz=1.0;
 float rx, ry, rz; 
 
 static bool bShowFade = true; 
-static float fadeAlpha = 1.0f; 
+static float fadeAlpha = 1.0f;
+static bool bShowQuoteTexture = false; 
+static float quoteTextureAlpha = 0.0f; 
 
 int Scene2::initialize() 
 {	
@@ -26,8 +28,14 @@ int Scene2::initialize()
     water.initialize(16.0); 
     fsTexturer.initialize(); 
 
-    scene2Camera.setState(vec3(452.49, 161.54, 593.75), 773.50, -3.90); 
+    phraseTexture = loadTexture("res/phrase2.png"); 
+    if(phraseTexture == 0) 
+        throw texture_loading_failure("failed to load phrase2 texture"); 
 
+    flowerModel.initialize("res/models/flower_shrub/scene.gltf"); 
+    butterfly.initialize("res/butterflyWing.png"); 
+
+    scene2Camera.setState(vec3(1059.29, 85.05, 1481.44), 1040.70, -9.80); 
 
     logFile.log("------------------ Scene2::initialize() completed ----------------\n\n"); 
     return (0); 
@@ -39,11 +47,11 @@ void Scene2::display()
     viewMatrix = mat4::identity(); 
     viewMatrix = scene2Camera.getViewMatrix(CAMERA_GAME_MODE); 
 
-    // In reflection and refraction all objects except water itself is rendered 
-	glEnable(GL_CLIP_DISTANCE0); 
+    // // In reflection and refraction all objects except water itself is rendered 
+	// glEnable(GL_CLIP_DISTANCE0); 
 
     GLfloat waterPosX = 963.26f; 
-    GLfloat waterPosY = 28.75f; 
+    GLfloat waterPosY = 28.75f+ty; 
     GLfloat waterPosZ = 1045.70f; 
 
 	// ************************** REFLECTION ************************** 
@@ -89,20 +97,58 @@ void Scene2::display()
     } 
     modelMatrix = matrixStack.popMatrix(); 
 
-    // rendering black quad for fade effect 
-    if(bShowFade) 
+    // flower tree 
+    matrixStack.pushMatrix(modelMatrix); 
     {
-        glEnable(GL_BLEND); 
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-        fsTexturer.render(0, fadeAlpha); 
-        glDisable(GL_BLEND); 
+        modelMatrix = mat4::identity(); 
+        modelMatrix *= vmath::translate(1100.50f, 52.0f, 1377.0f); 
+        modelMatrix *= vmath::scale(0.184f, 0.187f, 0.219f);
+        flowerModel.render(modelMatrix, viewMatrix, projectionMatrix); 
     } 
+    modelMatrix = matrixStack.popMatrix(); 
+
+    // butterfly 
+    matrixStack.pushMatrix(modelMatrix); 
+    {
+        modelMatrix = mat4::identity(); 
+        modelMatrix *= vmath::translate(1090.214f, 76.452f, 1410.285f); 
+        modelMatrix *= vmath::rotate(324.0f, 0.0f, 0.0f);
+        modelMatrix *= vmath::scale(1.903f, 1.75f, 1.089f);
+        butterfly.render(modelMatrix, viewMatrix, projectionMatrix); 
+        
+        // modelMatrix *= vmath::translate(-3.059f, 3.211f, -5.60f); 
+        // modelMatrix *= vmath::rotate(0.0f, 0.0f, 316.69f);
+        // modelMatrix *= vmath::scale(1.968f, 1.0f, 1.0f);
+        // butterfly.render(modelMatrix, viewMatrix, projectionMatrix); 
+    } 
+    modelMatrix = matrixStack.popMatrix(); 
+
+    // if(bShowQuoteTexture == true) 
+    // {
+    //     glEnable(GL_BLEND); 
+    //     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+    //     fsTexturer.render(phraseTexture, quoteTextureAlpha); 
+    //     glDisable(GL_BLEND);         
+    // } 
+
+    // // rendering black quad for fade effect 
+    // if(bShowFade) 
+    // {
+    //     glEnable(GL_BLEND); 
+    //     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+    //     fsTexturer.render(0, fadeAlpha); 
+    //     glDisable(GL_BLEND); 
+    // } 
+
+    // glViewport(1200, 600, 300, 180);    
+    // fsTexturer.render(water.reflectionFBO.getTextureID()); 
 } 
 
 void Scene2::update() 
 {
     // code 
     water.update(); 
+    butterfly.update(4.0); 
 
     if(bShowFade == true) 
     {
@@ -111,14 +157,34 @@ void Scene2::update()
             bShowFade = false; 
     } 
 
-    if(mainTimer > 130.0) 
+    if(mainTimer > 5.0) 
     {
-        bShowFade = true; 
-        if(fadeAlpha < 1.0) 
-            fadeAlpha += 0.01f; 
-        else 
-            CurrentScene = OUTRO_SCENE; 
+        bShowQuoteTexture = true; 
+
+        const float MAX_ALPHA = 2.0; // increase this to make phrase texture last longer 
+        static bool pingpong = true; 
+        if(quoteTextureAlpha < MAX_ALPHA && pingpong == true) 
+        {
+            quoteTextureAlpha += 0.01f; 
+            if(quoteTextureAlpha >= MAX_ALPHA) 
+                pingpong = false; 
+        } 
+        else if(quoteTextureAlpha > 0.0)  
+        {
+            quoteTextureAlpha -= 0.01f; 
+            if(quoteTextureAlpha <= 0.0) 
+                bShowQuoteTexture = false; 
+        } 
     } 
+
+    // if(mainTimer > 130.0) 
+    // {
+    //     bShowFade = true; 
+    //     if(fadeAlpha < 1.0) 
+    //         fadeAlpha += 0.01f; 
+    //     else 
+    //         CurrentScene = OUTRO_SCENE; 
+    // } 
 
 } 
 

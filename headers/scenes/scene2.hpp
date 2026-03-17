@@ -4,6 +4,8 @@
 #include "../shaderProgram.hpp" 
 #include "../objects.hpp"
 #include "../camera.hpp"
+#include "../butterfly.hpp" 
+#include "../assimpModelLoader.hpp" 
 #include "../imgui_manager.hpp" 
 #include "../effects/terrain.hpp"
 #include "../effects/water.hpp"
@@ -12,12 +14,16 @@ class Scene2
 {
     private:
         Terrain terrain; 
-        FullScreenTexturer fsTexturer; 
         const float terrainScale = 50.0f; 
         const float textureScale = 8.0; 
         const float heightScale = 12.0f; 
-
+        FullScreenTexturer fsTexturer; 
         Water water; 
+
+        Model flowerModel; 
+        Butterfly butterfly;
+
+        GLuint phraseTexture; 
 
     public: 
         Scene2(); 
