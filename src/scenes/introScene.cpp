@@ -236,7 +236,7 @@ void IntroScene::display()
 void IntroScene::update() 
 {
     if(cameraT < 1.0) 
-        cameraT+=0.001f; 
+        cameraT+=0.0012f; 
 
     if(mainTimer < 17.0) 
     {
@@ -288,7 +288,7 @@ void IntroScene::update()
         } 
 
         if(cameraT < 1.0) 
-            cameraT+=0.0004; // increament cameraT a bit faster that shot1 | adjustment 
+            cameraT+=0.0002; // increament cameraT a bit faster that shot1 | adjustment 
     } 
     else 
     {

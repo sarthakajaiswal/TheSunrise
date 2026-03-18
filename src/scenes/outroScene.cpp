@@ -18,8 +18,8 @@ int OutroScene::initialize()
     fsTexturer.initialize(); 
 
     slidesSequence.initialize(
-        {"res/textures/outro/presentedBy.png", "res/textures/outro/forYogeshwarSir.png", "res/textures/outro/onOccasionOf.png", "res/textures/outro/thankYou.png"}, 
-        0.9, 3.0); 
+        {"res/textures/outro/forYogeshwarSir.png", "res/textures/outro/onOccasionOf.png", "res/textures/outro/thankYou.png"}, 
+        0.9, 4.0); 
 
     texture_theSystemCallsPoster = loadTexture("res/textures/outro/theSystemCallsPoster.png"); 
 
@@ -47,7 +47,7 @@ void OutroScene::update()
     if(mainTimer > 168) 
         posterAlpha -= 0.01f; 
 
-    if(mainTimer > 186.0) 
+    if(mainTimer > 182.0) 
         bDone = TRUE; 
 } 
 

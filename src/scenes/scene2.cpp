@@ -130,6 +130,13 @@ void Scene2::display()
     } 
     modelMatrix = matrixStack.popMatrix(); 
 
+    matrixStack.pushMatrix(modelMatrix); 
+    {
+        modelMatrix *= vmath::rotate(100.0f, 0.0f, 1.0f, 0.0f); 
+        cubemap.render(modelMatrix, viewMatrix, projectionMatrix); 
+    } 
+    modelMatrix = matrixStack.popMatrix(); 
+
     if(bShowQuoteTexture == true) 
     {
         glEnable(GL_BLEND); 
@@ -146,14 +153,6 @@ void Scene2::display()
         fsTexturer.render(0, fadeAlpha); 
         glDisable(GL_BLEND); 
     } 
-
-    matrixStack.pushMatrix(modelMatrix); 
-    {
-        modelMatrix *= vmath::rotate(100.0f, 0.0f, 1.0f, 0.0f); 
-        modelMatrix *= vmath::rotate(rz, 0.0f, 0.0f, 1.0f); 
-        cubemap.render(modelMatrix, viewMatrix, projectionMatrix); 
-    } 
-    modelMatrix = matrixStack.popMatrix(); 
 } 
 
 void Scene2::update() 

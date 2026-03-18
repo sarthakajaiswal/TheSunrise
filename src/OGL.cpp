@@ -348,7 +348,7 @@ void toggleFullscreen(void)
             } 
         } 
      
-        // ShowCursor(FALSE); 
+        ShowCursor(FALSE); 
     } 
     else 
     {
