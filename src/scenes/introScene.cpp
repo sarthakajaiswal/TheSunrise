@@ -7,7 +7,7 @@ Camera introSceneCamera;
 static std::vector<vec3> path1ControlPoints = 
 {
     {-19.19, 1.92, -15.12}, 
-    {-32.29, -4.13, 30.81} 
+    {-34.29, -4.13, 35.81} 
 }; 
 static std::vector<float> path1Yaws = {-60.60, -60.80}; 
 static std::vector<float> path1Pitches = {8.10, 8.80}; 
