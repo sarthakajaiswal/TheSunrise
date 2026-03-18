@@ -55,5 +55,6 @@ void main(void)
     vec3 specularHighlights = uLightColor * specular * reflectivity;
 
     FragColor = mix(reflectColor, refractColor, refractiveIndex) + vec4(specularHighlights, 0.0);
+    FragColor += vec4(0.0, 0.0, 0.1, 0.0); // demo specific adjustment
 }
 

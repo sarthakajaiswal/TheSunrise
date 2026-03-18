@@ -33,6 +33,7 @@ class Cubemap
         Cubemap(); 
         int initialize(const char* cubemapImages[6]); 
         void render(vmath::mat4 _rotationMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix); 
+        void uninitialize(); 
 }; 
 
 #endif // _CUBEMAP_HPP 

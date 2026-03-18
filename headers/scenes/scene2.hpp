@@ -9,6 +9,7 @@
 #include "../imgui_manager.hpp" 
 #include "../effects/terrain.hpp"
 #include "../effects/water.hpp"
+#include "../effects/cubemap.hpp"
 
 class Scene2 
 {
@@ -19,6 +20,7 @@ class Scene2
         const float heightScale = 12.0f; 
         FullScreenTexturer fsTexturer; 
         Water water; 
+        Cubemap cubemap; 
 
         Model flowerModel; 
         Butterfly butterfly;
@@ -31,6 +33,7 @@ class Scene2
         int initialize(); 
         void display(); 
         void update(); 
+        void uninitialize(); 
         
         ~Scene2(); 
 

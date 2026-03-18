@@ -100,7 +100,7 @@ void Water::render(mat4 modelMatrix, mat4 viewMatrix, mat4 projectionMatrix, vec
 	glUniform2fv(screenSizeUniform, 1, vec2(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN))); 
 	glUniform3fv(cameraPositionUniform, 1, cameraPosition); 
 	glUniform3fv(lightPositionUniform, 1, lightPosition); 
-	glUniform3fv(lightColorUniform, 1, vec3(1.0, 1.0, 1.0)); 
+	glUniform3fv(lightColorUniform, 1, vec3(1.0, 0.50, 0.25)); 
 
 	moveFactor += waveSpeed * deltaTime; 
 	moveFactor = fmod(moveFactor, 1.0); 

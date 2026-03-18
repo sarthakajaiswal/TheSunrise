@@ -327,7 +327,8 @@ void Terrain::render(
     vec3 viewPosition, 
     bool bLight, bool bFog, 
     vec3 lightPosition, vec3 lightColor, 
-    float fogStart, float fogEnd, vec3 fogColor
+    float fogStart, float fogEnd, vec3 fogColor, 
+    vec4 clipPlane 
 ) 
 {
     terrainShaderProgram.use(); 
@@ -412,6 +413,12 @@ void Terrain::uninitialize()
     // code 
     logFile.log("Terrain::uninitialize() >  uninitializing terrain...\n"); 
     
+    for(int i = 0; i < textures.size(); ++i) 
+    {
+        glDeleteTextures(1, &textures[i]); 
+        textures[i] = 0; 
+    } 
+
     if(ebo) 
     {
         glDeleteBuffers(1, &ebo); 
@@ -427,6 +434,8 @@ void Terrain::uninitialize()
         glDeleteVertexArrays(1, &vao); 
         vao = 0; 
     } 
+
+    logFile.log("Terrain::uninitialize() >  uninitialized...\n"); 
 } 
 
 Terrain::~Terrain() 

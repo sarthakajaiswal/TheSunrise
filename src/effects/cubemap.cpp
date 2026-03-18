@@ -66,6 +66,19 @@ int Cubemap::initOpenGLState()
     return (0); 
 } 
 
+void Cubemap::uninitialize() 
+{
+    logFile.log("---- Cubemap::uninitialize() started ----\n");
+
+    if(cubemapTexture != 0) 
+    {
+        glDeleteTextures(1, &cubemapTexture); 
+        cubemapTexture = 0; 
+    } 
+
+    logFile.log("---- Cubemap::uninitialize() completed ----\n");
+} 
+
 void Cubemap::loadCubeMapTexture(const char* images[])
 {
     glGenTextures(1, &cubemapTexture);

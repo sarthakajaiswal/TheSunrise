@@ -47,7 +47,7 @@ void OutroScene::update()
     if(mainTimer > 168) 
         posterAlpha -= 0.01f; 
 
-    if(mainTimer > 180.0) 
+    if(mainTimer > 186.0) 
         bDone = TRUE; 
 } 
 

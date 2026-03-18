@@ -57,14 +57,14 @@ float mainTimer = 0.0f;
 ALuint audioBuffer, audioSource; 
 
 // ====================== Scene VARIABLES ================== 
-// TestScene testScene; 
-// IntroScene introScene; 
-// Scene1 scene1; 
+TestScene testScene; 
+IntroScene introScene; 
+Scene1 scene1; 
 Scene2 scene2; 
-// OutroScene outroScene; 
+OutroScene outroScene; 
 // TestScene testScene; 
 
-enum Scene CurrentScene = SCENE_2; 
+enum Scene CurrentScene = INTRO_SCENE; 
 
 // ==================== ENTRY-POINT FUNCTION ================ 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLine, int iCmdShow) 
@@ -160,8 +160,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdLi
 
     QueryPerformanceCounter(&startTime); 
 
-    // alSourcePlay(audioSource); 
-    // assert(alGetError() == AL_NO_ERROR); 
+    alSourcePlay(audioSource); 
+    assert(alGetError() == AL_NO_ERROR); 
 
     toggleFullscreen(); 
 
@@ -219,34 +219,34 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     extern bool doImGuiCapturedEvent; 
 
     // code
-	if (ImGuiManager::IsEnabled() && ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
-		return DefWindowProc(hwnd, uMsg, wParam, lParam);
+	// if (ImGuiManager::IsEnabled() && ImGui_ImplWin32_WndProcHandler(hwnd, uMsg, wParam, lParam))
+	// 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
     
-    switch(CurrentScene) 
-    {
-        // case INTRO_SCENE: 
-        //     introScene.eventCallback(hwnd, uMsg, wParam, lParam);
-        //     break; 
+    // switch(CurrentScene) 
+    // {
+    //     case INTRO_SCENE: 
+    //         introScene.eventCallback(hwnd, uMsg, wParam, lParam);
+    //         break; 
 
-        // case SCENE_1: 
-        //     scene1.eventCallback(hwnd, uMsg, wParam, lParam);
-        //     break; 
+    //     case SCENE_1: 
+    //         scene1.eventCallback(hwnd, uMsg, wParam, lParam);
+    //         break; 
 
-        case SCENE_2: 
-            scene2.eveneCallback(hwnd, uMsg, wParam, lParam);
-            break;
+    //     case SCENE_2: 
+    //         scene2.eveneCallback(hwnd, uMsg, wParam, lParam);
+    //         break;
             
-        // case OUTRO_SCENE: 
-        //     outroScene.eveneCallback(hwnd, uMsg, wParam, lParam);
-        //     break;
+    //     case OUTRO_SCENE: 
+    //         outroScene.eveneCallback(hwnd, uMsg, wParam, lParam);
+    //         break;
 
-        // case TEST_SCENE: 
-        //     testScene.eventCallback(hwnd, uMsg, wParam, lParam); 
-        //     break; 
+    //     case TEST_SCENE: 
+    //         testScene.eventCallback(hwnd, uMsg, wParam, lParam); 
+    //         break; 
             
-        default: 
-            break; 
-    } 
+    //     default: 
+    //         break; 
+    // } 
 
     switch(uMsg) 
     {
@@ -437,14 +437,14 @@ int initialize(void)
     // print gl info 
     // printGLInfo();  
 
-    // introScene.initialize(); 
-    // scene1.initialize(); 
+    introScene.initialize(); 
+    scene1.initialize(); 
     scene2.initialize(); 
-    // outroScene.initialize(); 
+    outroScene.initialize(); 
 
-    // scene initialization 
-    switch(CurrentScene) 
-    {
+    // // scene initialization 
+    // switch(CurrentScene) 
+    // {
         // case INTRO_SCENE: 
         //     introScene.initialize(); 
         //     break; 
@@ -465,9 +465,9 @@ int initialize(void)
         //     testScene.initialize(); 
         //     break; 
 
-        default: 
-            break; 
-    } 
+    //     default: 
+    //         break; 
+    // } 
 
     if(initializeAudio() == FALSE)
     {
@@ -487,12 +487,12 @@ int initialize(void)
     // tell opengl to clear the screen 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); 
 
-	// initialize ImGUI 
-	if (ImGuiManager::IsEnabled() && !ImGuiManager::Initialize(ghwnd))
-	{
-		logFile.log("ImGui initialization failed\n");
-		return (-1);
-	}
+	// // initialize ImGUI 
+	// if (ImGuiManager::IsEnabled() && !ImGuiManager::Initialize(ghwnd))
+	// {
+	// 	logFile.log("ImGui initialization failed\n");
+	// 	return (-1);
+	// }
 
     projectionMatrix = mat4::identity();
 
@@ -675,44 +675,44 @@ void display(void)
     // code 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
 
-    if (ImGuiManager::IsEnabled())
-	{
-		// Start new ImGui frame
-		ImGuiManager::NewFrame();
-	}
+    // if (ImGuiManager::IsEnabled())
+	// {
+	// 	// Start new ImGui frame
+	// 	ImGuiManager::NewFrame();
+	// }
 
     switch(CurrentScene) 
     {
-        // case INTRO_SCENE: 
-        //     introScene.display(); 
-        //     break; 
+        case INTRO_SCENE: 
+            introScene.display(); 
+            break; 
 
-        // case SCENE_1: 
-        //     scene1.display(); 
-        //     break; 
+        case SCENE_1: 
+            scene1.display(); 
+            break; 
 
         case SCENE_2: 
             scene2.display(); 
             break; 
 
-        // case OUTRO_SCENE: 
-        //     outroScene.display(); 
-        //     break; 
+        case OUTRO_SCENE: 
+            outroScene.display(); 
+            break; 
         
-        // case TEST_SCENE: 
-        //     testScene.display(); 
-        //     break; 
+        case TEST_SCENE: 
+            testScene.display(); 
+            break; 
 
         default: 
             break; 
     } 
 
 	// Render ImGui debug window and other UI elements
-	if (ImGuiManager::IsEnabled())
-	{
-		ImGuiManager::RenderDebugWindow();
-		ImGuiManager::Render();
-	}
+	// if (ImGuiManager::IsEnabled())
+	// {
+	// 	ImGuiManager::RenderDebugWindow();
+	// 	ImGuiManager::Render();
+	// }
 
     // Swap buffers 
     SwapBuffers(ghdc); 
@@ -725,25 +725,25 @@ void update(void)
 
     switch(CurrentScene) 
     {
-        // case INTRO_SCENE: 
-        //     introScene.update(); 
-        //     break; 
+        case INTRO_SCENE: 
+            introScene.update(); 
+            break; 
 
-        // case SCENE_1:  
-        //     scene1.update(); 
-        //     break; 
+        case SCENE_1:  
+            scene1.update(); 
+            break; 
 
         case SCENE_2: 
             scene2.update(); 
             break; 
 
-        // case OUTRO_SCENE: 
-        //     outroScene.update(); 
-        //     break; 
+        case OUTRO_SCENE: 
+            outroScene.update(); 
+            break; 
 
-        // case TEST_SCENE: 
-        //     testScene.update(); 
-        //     break; 
+        case TEST_SCENE: 
+            testScene.update(); 
+            break; 
 
         default: 
             break; 
@@ -757,10 +757,10 @@ void uninitialize(void)
 
     // code 
 	// Cleanup ImGui
-	if (ImGuiManager::IsEnabled())
-	{
-		ImGuiManager::Cleanup();
-	}
+	// if (ImGuiManager::IsEnabled())
+	// {
+	// 	ImGuiManager::Cleanup();
+	// }
 
     // if user is exitting in full screen then restore fullscreen back to normal 
     if(gbFullscreen == TRUE) 
@@ -770,7 +770,10 @@ void uninitialize(void)
     } 
 
     // uninitialize scenes 
-    // introScene.uninitialize(); 
+    outroScene.uninitialize(); 
+    scene2.uninitialize(); 
+    scene1.uninitialize(); 
+    introScene.uninitialize(); 
 
     // make HDC as current rendering context 
     if(wglGetCurrentContext() == ghrc) 

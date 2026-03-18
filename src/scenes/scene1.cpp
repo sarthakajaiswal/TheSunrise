@@ -433,7 +433,14 @@ void Scene1::uninitialize()
         glDeleteTextures(1, &quoteTexture); 
         quoteTexture = 0; 
     } 
-    
+         
+    sceneFBO.destroyFBO(); 
+    floatingPointFBO.destroyFBO(); 
+    textureBlender.uninitialize();      
+    cubemap.uninitialize(); 
+    godrays.uninitialize(); 
+    terrain.uninitialize(); 
+
     logFile.log("Scene1::uninitialize() > Uninitialized\n"); 
 } 
 
