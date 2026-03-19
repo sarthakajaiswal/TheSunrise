@@ -86,6 +86,7 @@ class FullScreenTexturer
     public: 
         int initialize();
         void render(GLuint texture, float alpha=1.0); 
+        void uninitialize(); 
 }; 
 // ========= FS TEXTURE PROGRAM ======== 
 

@@ -5,7 +5,8 @@ Water::Water()
     deltaTime = 0.0f; 
 } 
 
-int Water::initialize(float _textureScale) 
+int 
+Water::initialize(float _textureScale) 
 {
     logFile.log("---- Water::initialize() started --\n"); 
 
@@ -37,7 +38,8 @@ int Water::initialize(float _textureScale)
     return 0; 
 } 
 
-int Water::initOpenGLState()
+int 
+Water::initOpenGLState()
 {
     // variable declarations 
     char* vertexShaderSourceCode = NULL; 
@@ -81,7 +83,8 @@ int Water::initOpenGLState()
     return (0); 
 } 
 
-void Water::render(mat4 modelMatrix, mat4 viewMatrix, mat4 projectionMatrix, vec3 cameraPosition, vec3 lightPosition, float waveSpeed) 
+void 
+Water::render(mat4 modelMatrix, mat4 viewMatrix, mat4 projectionMatrix, vec3 cameraPosition, vec3 lightPosition, float waveSpeed) 
 {
 	// variable declarations 
 	static float moveFactor = 0.0f; 
@@ -107,11 +110,11 @@ void Water::render(mat4 modelMatrix, mat4 viewMatrix, mat4 projectionMatrix, vec
 	glUniform1f(moveFactorUniform, moveFactor);  
 	
 	glActiveTexture(GL_TEXTURE0); 
-	glBindTexture(GL_TEXTURE_2D, reflectionFBO.getTextureID()); 
+	glBindTexture(GL_TEXTURE_2D, reflectionFBO.getColorTextureID()); 
 	glUniform1i(reflectionTextureUniform, 0); 
 
 	glActiveTexture(GL_TEXTURE1); 
-	glBindTexture(GL_TEXTURE_2D, refractionFBO.getTextureID()); 
+	glBindTexture(GL_TEXTURE_2D, refractionFBO.getColorTextureID()); 
 	glUniform1i(refractionTextureUniform, 1); 
 
 	glActiveTexture(GL_TEXTURE2); 
@@ -141,7 +144,8 @@ void Water::update()
     // this->startTime = this->currentTime; 
 } 
 
-void Water::uninitialize() 
+void 
+Water::uninitialize() 
 {
     // code 
     logFile.log("Water::uninitialize() uninitializing Water...\n"); 
@@ -172,7 +176,8 @@ Water::WaterRect::WaterRect() : vao(0), vbo(0)
 {
 } 
 
-int Water::WaterRect::initialize(float textureScale) 
+int 
+Water::WaterRect::initialize(float textureScale) 
 {
     const GLfloat quad_PCNT[] =
 	{						 
@@ -209,14 +214,16 @@ int Water::WaterRect::initialize(float textureScale)
     return 0; 
 } 
 
-void Water::WaterRect::render() 
+void 
+Water::WaterRect::render() 
 {
     glBindVertexArray(vao); 
 	glDrawArrays(GL_TRIANGLE_FAN, 0, 6); 
 	glBindVertexArray(0); 
 } 
 
-void Water::WaterRect::uninitialize() 
+void 
+Water::WaterRect::uninitialize() 
 {
     if(vbo) 
     {

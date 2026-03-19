@@ -4,7 +4,8 @@ Cubemap::Cubemap()
 {
 } 
 
-int Cubemap::initialize(const char* cubemapImages[6]) 
+int 
+Cubemap::initialize(const char* cubemapImages[6]) 
 {
     logFile.log("---- Cubemap::initialize() started ----\n");
 
@@ -19,7 +20,8 @@ int Cubemap::initialize(const char* cubemapImages[6])
     return (0); 
 } 
 
-void Cubemap::render(vmath::mat4 _rotationMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix) 
+void 
+Cubemap::render(vmath::mat4 _rotationMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix) 
 {
     shaderProgramObject.use(); 
 
@@ -38,7 +40,8 @@ void Cubemap::render(vmath::mat4 _rotationMatrix, vmath::mat4 _viewMatrix, vmath
     shaderProgramObject.unuse(); 
 } 
 
-int Cubemap::initOpenGLState() 
+int 
+Cubemap::initOpenGLState() 
 {
     char* vertexShaderSourceCode = NULL; 
     char* fragmentShaderSourceCode = NULL; 
@@ -66,7 +69,8 @@ int Cubemap::initOpenGLState()
     return (0); 
 } 
 
-void Cubemap::uninitialize() 
+void 
+Cubemap::uninitialize() 
 {
     logFile.log("---- Cubemap::uninitialize() started ----\n");
 
@@ -79,7 +83,8 @@ void Cubemap::uninitialize()
     logFile.log("---- Cubemap::uninitialize() completed ----\n");
 } 
 
-void Cubemap::loadCubeMapTexture(const char* images[])
+void 
+Cubemap::loadCubeMapTexture(const char* images[])
 {
     glGenTextures(1, &cubemapTexture);
     glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);

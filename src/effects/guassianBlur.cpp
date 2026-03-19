@@ -5,7 +5,8 @@ GuassianBlur::GuassianBlur()
 	isInitialized = false; 
 } 
 
-int GuassianBlur::initialize() 
+int 
+GuassianBlur::initialize() 
 {
     logFile.log("------ GuassianBlur::initialize() started ----\n"); 
 
@@ -27,7 +28,8 @@ int GuassianBlur::initialize()
     return 0; 
 } 
 
-int GuassianBlur::initOpenGLState() 
+int 
+GuassianBlur::initOpenGLState() 
 {
     char* vertexShaderSourceCode = NULL; 
     char* fragmentShaderSourceCode = NULL; 
@@ -56,7 +58,8 @@ int GuassianBlur::initOpenGLState()
     return (true); 
 } 
 
-GLuint GuassianBlur::render(GLuint brightColorTexture, int blurIterations) 
+GLuint 
+GuassianBlur::render(GLuint brightColorTexture, int blurIterations) 
 {
 	// TODO: 
 	// if(isInitialized == false) 
@@ -72,13 +75,13 @@ GLuint GuassianBlur::render(GLuint brightColorTexture, int blurIterations)
 		if(fboPingPong == false) 
 		{
 			fboToBeBound = fbos[0]; 
-			inputTexture = fbos[1].getTextureID(); 
+			inputTexture = fbos[1].getColorTextureID(); 
 			horizontalOrVertical = 0; 
 		} 
 		else 
 		{
 			fboToBeBound = fbos[1]; 
-			inputTexture = fbos[0].getTextureID(); 
+			inputTexture = fbos[0].getColorTextureID(); 
 			horizontalOrVertical = 1; 
 		} 
 
@@ -100,15 +103,16 @@ GLuint GuassianBlur::render(GLuint brightColorTexture, int blurIterations)
 		fboPingPong = !fboPingPong; 
 	} 
 
-    return fbos[0].getTextureID(); 
+    return fbos[0].getColorTextureID(); 
 } 
 
-void GuassianBlur::uninitialize() 
+void 
+GuassianBlur::uninitialize() 
 {
 	logFile.log("------ GuassianBlur::uninitialize() started ----\n"); 
-	if(fbos[0].getTextureID() != 0) 
+	if(fbos[0].getColorTextureID() != 0) 
 		fbos[0].destroyFBO(); 
-	if(fbos[1].getTextureID() != 0) 
+	if(fbos[1].getColorTextureID() != 0) 
 		fbos[1].destroyFBO(); 
 	logFile.log("GuassianBlur::uninitialize() > fbos uninitialized\n"); 
 

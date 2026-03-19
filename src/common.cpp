@@ -240,3 +240,9 @@ void FullScreenTexturer::render(GLuint texture, float alpha)
     shaderProgram.unuse(); 
     // glDepthMask(GL_TRUE); 
 } 
+
+void FullScreenTexturer::uninitialize() 
+{
+    logFile.log("--- FullScreenTexturer()::uninitialize() started ---\n"); 
+    logFile.log("--- FullScreenTexturer()::uninitialize() completed successfully ---\n"); 
+} 

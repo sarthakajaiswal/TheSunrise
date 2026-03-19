@@ -11,8 +11,8 @@ class FBO
         GLuint textures[maxColorBuffers]; 
 
     public: 
-        GLuint getTextureID() const; 
-        GLuint getDepthID() const; 
+        GLuint getColorTextureID() const; 
+        GLuint getDepthTextureID() const; 
 
         bool createNormalFBO(GLuint textureWidth, GLuint textureHeight); 
         bool createFloatingPointFBO(GLuint textureWidth, GLuint textureHeight); 

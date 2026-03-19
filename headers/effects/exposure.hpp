@@ -31,6 +31,7 @@ class Exposure
         Exposure(); 
         int initialize(); 
         void render(GLuint sceneHDRTexture, float exposure);  
+        void uninitialize(); 
 }; 
 
 #endif // _HDR_HPP  

@@ -4,14 +4,18 @@ Exposure::Exposure()
 {
 } 
 
-int Exposure::initialize() 
+int 
+Exposure::initialize() 
 {
+    logFile.log("---- Exposure::initialize() started ----\n");
     assert(initOpenGLState() == 0); 
     assert(quad.initialize() == 0); 
+    logFile.log("---- Exposure::initialize() completed successfully ----\n");
     return (0); 
 } 
 
-void Exposure::render(GLuint hdrSceneTexture, float exposure) 
+void 
+Exposure::render(GLuint hdrSceneTexture, float exposure) 
 {
     shaderProgramObject.use(); 
 
@@ -25,7 +29,8 @@ void Exposure::render(GLuint hdrSceneTexture, float exposure)
     shaderProgramObject.unuse(); 
 } 
 
-int Exposure::initOpenGLState() 
+int 
+Exposure::initOpenGLState() 
 {
     char* vertexShaderSourceCode = NULL; 
     char* fragmentShaderSourceCode = NULL; 
@@ -53,3 +58,9 @@ int Exposure::initOpenGLState()
     return (0); 
 } 
 
+void 
+Exposure::uninitialize() 
+{
+    logFile.log("---- Exposure::uninitialize() started ----\n");
+    logFile.log("---- Exposure::uninitialize() completed successfully ----\n");
+} 

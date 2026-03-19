@@ -746,14 +746,6 @@ Model::initOcclusionShaderProgram(void)
     return (0); 
 } 
 
-// int 
-// Model::initOpenGLState(void) 
-// {
-//     assert(initModelsShaderProgram() == 0); 
-//     assert(initOcclusionShaderProgram() == 0); 
-//     return (0); 
-// } 
-
 Model::~Model() 
 {
     for(size_t i = 0; i < meshes.size(); ++i) 

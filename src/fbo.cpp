@@ -1,11 +1,11 @@
 #include "..\headers\fbo.hpp" 
 
-GLuint FBO::getTextureID() const 
+GLuint FBO::getColorTextureID() const 
 {
 	return textures[0]; 
 } 
 
-GLuint FBO::getDepthID() const 
+GLuint FBO::getDepthTextureID() const 
 {
 	return rbo; 
 } 

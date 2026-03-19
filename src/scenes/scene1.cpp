@@ -153,7 +153,7 @@ void Scene1::display()
 
     if(bShowQuoteTexture==true && bShowGateTexture==true) 
     {
-        exposureProgram.render(floatingPointFBO.getTextureID(), gateTextureExposureValue); 
+        exposureProgram.render(floatingPointFBO.getColorTextureID(), gateTextureExposureValue); 
         glEnable(GL_BLEND); 
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
         fsTexturer.render(quoteTexture, quoteTextureAlpha);
@@ -162,7 +162,7 @@ void Scene1::display()
     }  
     else if(bShowGateTexture == true) 
     {
-        exposureProgram.render(floatingPointFBO.getTextureID(), gateTextureExposureValue); 
+        exposureProgram.render(floatingPointFBO.getColorTextureID(), gateTextureExposureValue); 
         return; 
     } 
 
@@ -284,7 +284,7 @@ void Scene1::display()
     godrays.occlusionFBO.unbind(); 
 
     godrays.renderWithScene(
-                sceneFBO.getTextureID(), 
+                sceneFBO.getColorTextureID(), 
                 viewMatrix, projectionMatrix, 
                 exposure_godrays, decay_godrays, density_godrays, weight_godrays, strength_godrays, numSamples_godrays, vmath::vec3(490.6f, 455.627f, 2000.0f)
             ); 
@@ -427,7 +427,11 @@ void Scene1::uninitialize()
         glDeleteTextures(1, &gateTexture); 
         gateTexture = 0; 
     } 
-
+    if(tex_dissolve != 0) 
+    {
+        glDeleteTextures(1, &tex_dissolve); 
+        tex_dissolve = 0; 
+    } 
     if(quoteTexture != 0) 
     {
         glDeleteTextures(1, &quoteTexture); 
@@ -441,7 +445,11 @@ void Scene1::uninitialize()
     godrays.uninitialize(); 
     terrain.uninitialize(); 
 
-    logFile.log("Scene1::uninitialize() > Uninitialized\n"); 
+    exposureProgram.uninitialize(); 
+    textureBlender.uninitialize(); 
+    fsTexturer.uninitialize(); 
+
+    logFile.log("Scene1::uninitialize() > Uninitialized\n\n"); 
 } 
 
 Scene1::~Scene1() 

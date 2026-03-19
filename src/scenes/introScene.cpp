@@ -25,7 +25,8 @@ IntroScene::IntroScene()
     // code 
 } 
 
-int IntroScene::initialize() 
+int 
+IntroScene::initialize() 
 {
     // code 
     logFile.log("------------------ IntroScene::initialize() started ----------------\n"); 
@@ -66,8 +67,16 @@ int IntroScene::initialize()
     logFile.log("IntroScene::initialize > Alphabets initialized\n"); 
 
     texture_marbleColor = loadTexture("res\\BlackMarble.png", FALSE); 
+    if(texture_marbleColor == 0) 
+        throw texture_loading_failure("failed to load marble color texture"); 
+
     texture_marbleNormalMap = loadTexture("res\\BlackMarbleNormalMap.png", FALSE); 
+    if(texture_marbleNormalMap == 0) 
+        throw texture_loading_failure("failed to load marble normalmap texture"); 
+
     crackTexture = loadTexture("res\\redCrack.png", FALSE); 
+    if(crackTexture == 0) 
+        throw texture_loading_failure("failed to load marble crack texture"); 
 
     introSceneCamera.automise(path1ControlPoints, path1Yaws, path1Pitches); 
 
@@ -75,7 +84,8 @@ int IntroScene::initialize()
     return (0); 
 } 
 
-void IntroScene::display() 
+void 
+IntroScene::display() 
 {
     mat4 modelMatrix = mat4::identity(); 
     viewMatrix = introSceneCamera.getViewMatrix(CAMERA_AUTO_MODE, cameraT); 
@@ -195,17 +205,17 @@ void IntroScene::display()
     {
         brightColorSeparatorProgram.use();  
         glActiveTexture(GL_TEXTURE0); 
-        glBindTexture(GL_TEXTURE_2D, fbo_scene.getTextureID()); 
+        glBindTexture(GL_TEXTURE_2D, fbo_scene.getColorTextureID()); 
         glUniform1i(textureUniform_brightColors, 0); 
         quad.render(); 
     } 
 	fbo_brightColors.unbind(); 
 
 	// applying blueEffect on bright colors 
-    blurTexture = blurEffect.render(fbo_brightColors.getTextureID(), blurIterations); 
+    blurTexture = blurEffect.render(fbo_brightColors.getColorTextureID(), blurIterations); 
 
     // combining blur and scene texture
-    blendedTexture = blendTextureEffect.render(fbo_scene.getTextureID(), 1.0, blurTexture, 1.0); 
+    blendedTexture = blendTextureEffect.render(fbo_scene.getColorTextureID(), 1.0, blurTexture, 1.0); 
 
     // Finally, render blended texture on screen  
     glEnable(GL_BLEND); 
@@ -233,7 +243,8 @@ void IntroScene::display()
 	// glUseProgram(0);
 } 
 
-void IntroScene::update() 
+void 
+IntroScene::update() 
 {
     if(cameraT < 1.0) 
         cameraT+=0.0012f; 
@@ -296,11 +307,50 @@ void IntroScene::update()
     } 
 } 
 
-void IntroScene::uninitialize() 
+void 
+IntroScene::uninitialize() 
 {
+    logFile.log("------------------ IntroScene::uninitialize() started ----------------\n"); 
+    if(crackTexture != 0) 
+    {
+        glDeleteTextures(1, &crackTexture); 
+        crackTexture = 0; 
+    } 
+    if(texture_marbleNormalMap != 0) 
+    {
+        glDeleteTextures(1, &texture_marbleNormalMap); 
+        texture_marbleNormalMap = 0; 
+    } 
+    if(texture_marbleColor != 0) 
+    {
+        glDeleteTextures(1, &texture_marbleColor); 
+        texture_marbleColor = 0; 
+    } 
+    
+    uninitializeAlphabet_P(); 
+    uninitializeAlphabet_C(); 
+    uninitializeAlphabet_I(); 
+    uninitializeAlphabet_D(); 
+    uninitializeAlphabet_E(); 
+    uninitializeAlphabet_M(); 
+    uninitializeAlphabet_O(); 
+    uninitializeAlphabet_R(); 
+    uninitializeAlphabet_T(); 
+    uninitializeAlphabet_S(); 
+    uninitializeAlphabet_A(); 
+
+    fsTexture.uninitialize(); 
+    blendTextureEffect.uninitialize(); 
+    blurEffect.uninitialize(); 
+
+    fbo_brightColors.destroyFBO(); 
+    fbo_scene.destroyFBO(); 
+    
+    logFile.log("------------------ IntroScene::uninitialize() completed ----------------\n\n"); 
 } 
 
-void IntroScene::eventCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
+void 
+IntroScene::eventCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 {
     bool doImGuiCapturedEvent = false; 
     if(ImGuiManager::initialized == true)
@@ -332,7 +382,8 @@ IntroScene::~IntroScene()
     // code 
 } 
 
-bool IntroScene::initHeadingAlphabetsShaderProgram() 
+bool 
+IntroScene::initHeadingAlphabetsShaderProgram() 
 {
     // function declarations 
     void uninitialize(void); 
@@ -383,7 +434,8 @@ bool IntroScene::initHeadingAlphabetsShaderProgram()
     return (true); 
 } 
 
-bool IntroScene::initBrightColorSeparatorProgram()
+bool 
+IntroScene::initBrightColorSeparatorProgram()
 {
     char* vertexShaderSourceCode = NULL; 
     char* fragmentShaderSourceCode = NULL; 

@@ -4,7 +4,8 @@ Godrays::Godrays()
 {
 } 
 
-int Godrays::initialize() 
+int 
+Godrays::initialize() 
 {
     logFile.log("---- Godrays::initialize() ----\n"); 
     
@@ -22,10 +23,11 @@ int Godrays::initialize()
     return (0); 
 } 
 
-void Godrays::renderWithScene(GLuint sceneTexture, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, float exposure, float decay, float density, float weight, float strength, int numSamples, vmath::vec3 lightPosition) 
+void 
+Godrays::renderWithScene(GLuint sceneTexture, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, float exposure, float decay, float density, float weight, float strength, int numSamples, vmath::vec3 lightPosition) 
 {
     vec2 lightPositionOnScreen = convertToScreenSpace(lightPosition, _viewMatrix, _projectionMatrix); 
-    GLuint godraysTexture = createRadialBlurTexture(occlusionFBO.getTextureID(), exposure, decay, density, weight, numSamples, vec2(lightPositionOnScreen[0], 1.0-lightPositionOnScreen[1])); 
+    GLuint godraysTexture = createRadialBlurTexture(occlusionFBO.getColorTextureID(), exposure, decay, density, weight, numSamples, vec2(lightPositionOnScreen[0], 1.0-lightPositionOnScreen[1])); 
 
     finalCompositeProgram.use(); 
     glActiveTexture(GL_TEXTURE0); 
@@ -43,14 +45,16 @@ void Godrays::renderWithScene(GLuint sceneTexture, vmath::mat4 _viewMatrix, vmat
     finalCompositeProgram.unuse();
 } 
 
-void Godrays::uninitialize() 
+void 
+Godrays::uninitialize() 
 {
     logFile.log("Godrays::uninitialize() Uninitializing...\n"); 
     occlusionFBO.destroyFBO(); 
     logFile.log("Godrays::uninitialize() Uninitialization completed\n"); 
 } 
 
-int Godrays::initRadialBlurProgram() 
+int 
+Godrays::initRadialBlurProgram() 
 {
     char* vertexShaderSourceCode = NULL; 
     char* fragmentShaderSourceCode = NULL; 
@@ -84,7 +88,8 @@ int Godrays::initRadialBlurProgram()
     return (0); 
 } 
 
-int Godrays::initFinalCompositeProgram() 
+int 
+Godrays::initFinalCompositeProgram() 
 {
     char* vertexShaderSourceCode = NULL; 
     char* fragmentShaderSourceCode = NULL; 
@@ -114,7 +119,8 @@ int Godrays::initFinalCompositeProgram()
     return (0); 
 } 
 
-GLuint Godrays::createRadialBlurTexture(GLuint occlusionTexture, float exposure, float decay, float density, float weight, int numSamples, vmath::vec2 lightPositionOnScreen) 
+GLuint 
+Godrays::createRadialBlurTexture(GLuint occlusionTexture, float exposure, float decay, float density, float weight, int numSamples, vmath::vec2 lightPositionOnScreen) 
 {
     godraysFBO.bind(); 
     {
@@ -140,41 +146,12 @@ GLuint Godrays::createRadialBlurTexture(GLuint occlusionTexture, float exposure,
     } 
     godraysFBO.unbind(); 
 
-    return (godraysFBO.getTextureID()); 
+    return (godraysFBO.getColorTextureID()); 
 } 
 
-// // combines scene texture and occlusion/silhoutte texture 
-// GLuint Godrays::getFinalCompositeTexture() 
-// {
-//     finalCompositeFBO.bind(); 
-//     {
-//         glClearColor(0.0, 0.0, 0.0, 1.0); 
-//         glClear(GL_COLOR_BUFFER_BIT); 
-
-//         finalCompositeProgram.use(); 
-
-//         glActiveTexture(GL_TEXTURE0); 
-//         glBindTexture(GL_TEXTURE_2D, sceneFBO.getTextureID()); 
-//         glUniform1i(sceneTextureUniform_finalComposite, 0); 
-
-//         glActiveTexture(GL_TEXTURE1); 
-//         glBindTexture(GL_TEXTURE_2D, radialBlurFBO.getTextureID()); 
-//         glUniform1i(godRaysTextureUniform_finalComposite, 1);
-
-//         glUniform1f(godRaysStrengthUniform_finalComposite, 1.0f); 
-        
-//         quad.render(); 
-        
-//         glBindTexture(GL_TEXTURE_2D, 0); 
-//         finalCompositeProgram.unuse(); 
-//     } 
-//     finalCompositeFBO.unbind(); 
-
-//     return (finalCompositeFBO.getTextureID()); 
-// } 
-
 /* Helper routines */ 
-vmath::mat4 transpose(const vmath::mat4 &m) 
+vmath::mat4 
+transpose(const vmath::mat4 &m) 
 { 
 	vmath::mat4 t; 
 	
@@ -188,7 +165,8 @@ vmath::mat4 transpose(const vmath::mat4 &m)
 	return t; 
 }
 
-vec2 convertToScreenSpace(vec3 worldPos, mat4 viewMatrix, mat4 projectionMatrix) 
+vec2 
+convertToScreenSpace(vec3 worldPos, mat4 viewMatrix, mat4 projectionMatrix) 
 {
 	// variable declarations 
 	vec2 screenPos; 

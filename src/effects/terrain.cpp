@@ -16,7 +16,8 @@ no_texture_images_provided::no_texture_images_provided(const char* msg) : std::r
 {
 } 
 
-void Terrain::showHeightMapData() 
+void 
+Terrain::showHeightMapData() 
 {
     for(unsigned int i = 0; i < depth; ++i) 
     {
@@ -28,7 +29,8 @@ void Terrain::showHeightMapData()
     } 
 } 
 
-void Terrain::showVertices() 
+void 
+Terrain::showVertices() 
 {
     for(unsigned int i = 0; i < depth; ++i) 
     {
@@ -44,7 +46,8 @@ void Terrain::showVertices()
     } 
 } 
 
-void Terrain::InitVertices(int width, int depth, float* heightData, std::vector<Vertex>& vertices) 
+void 
+Terrain::InitVertices(int width, int depth, float* heightData, std::vector<Vertex>& vertices) 
 {
     logFile.log("textureScale = %.2f\n", textureScale); 
     for(int z = 0; z < depth; ++z) 
@@ -85,7 +88,8 @@ void Terrain::InitVertices(int width, int depth, float* heightData, std::vector<
     } 
 } 
 
-void Terrain::InitIndices(int width, int depth, std::vector<unsigned int>& indices) 
+void 
+Terrain::InitIndices(int width, int depth, std::vector<unsigned int>& indices) 
 {
     for(int z = 0; z < depth-1; ++z) 
     {
@@ -107,7 +111,8 @@ void Terrain::InitIndices(int width, int depth, std::vector<unsigned int>& indic
     } 
 } 
 
-float* Terrain::LoadHeightMap(const char* filePath, int* pWidth, int* pDepth) 
+float* 
+Terrain::LoadHeightMap(const char* filePath, int* pWidth, int* pDepth) 
 {
     // variable declarations 
     unsigned char* pRawData; 
@@ -143,7 +148,8 @@ float* Terrain::LoadHeightMap(const char* filePath, int* pWidth, int* pDepth)
     return (pHeightData); 
 }  
 
-int Terrain::InitOpenGLState() 
+int 
+Terrain::InitOpenGLState() 
 {
     // function declarations 
     void uninitialize(void); 
@@ -177,7 +183,8 @@ int Terrain::InitOpenGLState()
     return (0); 
 } 
 
-void Terrain::createTerrainProgram() 
+void 
+Terrain::createTerrainProgram() 
 {
     /*************** terrain program ****************/
     char* vertexShaderSourceCode = FileHandler::fileToString("src/shaders/terrain.vs"); 
@@ -235,7 +242,8 @@ void Terrain::createTerrainProgram()
     fogColorUniform             = terrainShaderProgram.getUniformLocation("uFogColor"); 
 } 
 
-void Terrain::createOcclusionProgram() 
+void 
+Terrain::createOcclusionProgram() 
 {
     /*************** occlusion program ****************/ 
     char* vertexShaderSourceCode = FileHandler::fileToString("src/shaders/occlusion.vs"); 
@@ -272,7 +280,8 @@ Terrain::Terrain()
     isInitialized = false; 
 }  
 
-int Terrain::initialize(const char* heightmapImagePath, float _worldScale, float _heightScale, 
+int 
+Terrain::initialize(const char* heightmapImagePath, float _worldScale, float _heightScale, 
                 std::vector<std::string> textureImages, std::vector<float> _textureHeightRanges, float _textureScale) 
 {
     // code 
@@ -322,7 +331,8 @@ int Terrain::initialize(const char* heightmapImagePath, float _worldScale, float
     return (0); 
 } 
 
-void Terrain::render(
+void 
+Terrain::render(
     vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix, 
     vec3 viewPosition, 
     bool bLight, bool bFog, 
@@ -396,7 +406,8 @@ void Terrain::render(
     terrainShaderProgram.unuse(); 
 } 
 
-void Terrain::renderOcclusion(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix) 
+void 
+Terrain::renderOcclusion(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix) 
 {
     occlusionProgram.use(); 
     glUniformMatrix4fv(mvpMatrixUniform_occlusion, 1, GL_FALSE, _projectionMatrix * _viewMatrix * _modelMatrix); 
@@ -408,7 +419,8 @@ void Terrain::renderOcclusion(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix,
     occlusionProgram.unuse(); 
 } 
 
-void Terrain::uninitialize() 
+void 
+Terrain::uninitialize() 
 {
     // code 
     logFile.log("Terrain::uninitialize() >  uninitializing terrain...\n"); 

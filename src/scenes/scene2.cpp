@@ -16,7 +16,8 @@ static float fadeAlpha = 1.0f;
 static bool bShowQuoteTexture = false; 
 static float quoteTextureAlpha = 0.0f; 
 
-int Scene2::initialize() 
+int 
+Scene2::initialize() 
 {	
     // code 
     logFile.log("------------------ Scene2::initialize() started ----------------\n"); 
@@ -155,7 +156,8 @@ void Scene2::display()
     } 
 } 
 
-void Scene2::update() 
+void 
+Scene2::update() 
 {
     // code 
     water.update(); 
@@ -198,23 +200,20 @@ void Scene2::update()
     } 
 } 
 
-void Scene2::uninitialize() 
+void 
+Scene2::uninitialize() 
 {	
     // code 
     logFile.log("------------------ Scene2::uninitialize() started ----------------\n"); 
-
-    terrain.uninitialize(); 
-    water.uninitialize(); 
-    cubemap.uninitialize(); 
 
     phraseTexture = loadTexture("res/phrase2.png"); 
     if(phraseTexture == 0) 
         throw texture_loading_failure("failed to load phrase2 texture"); 
 
-    flowerModel.initialize("res/models/flower_shrub/scene.gltf"); 
-    butterfly.initialize("res/butterflyWing.png"); 
-
-    scene2Camera.setState(vec3(1059.29, 85.05, 1481.44), 1040.70, -9.80); 
+    cubemap.uninitialize(); 
+    fsTexturer.uninitialize(); 
+    water.uninitialize(); 
+    terrain.uninitialize(); 
 
     logFile.log("------------------ Scene2::uninitialize() completed ----------------\n\n"); 
 } 
@@ -223,7 +222,8 @@ Scene2::~Scene2()
 {
 } 
 
-void Scene2::eveneCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
+void 
+Scene2::eveneCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 {
     // variable declarations 
     float cameraStep = 0.5f; 

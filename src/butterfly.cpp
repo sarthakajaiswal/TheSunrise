@@ -6,17 +6,21 @@ Butterfly::Butterfly()
 	texture = 0; 
 } 
 
-int Butterfly::initialize(const char* wingTextureImagePath) 
+int 
+Butterfly::initialize(const char* wingTextureImagePath) 
 {
+    logFile.log("Butterfly::initialize() > initialize started\n"); 
 	quad.initialize(); 
 	texture = loadTexture(wingTextureImagePath, TRUE); 
 
     initShaderProgram(); 
 
+    logFile.log("Butterfly::initialize() > initialize completed successfully\n"); 
 	return (0); 
 } 
 
-void Butterfly::initShaderProgram(void) 
+void 
+Butterfly::initShaderProgram(void) 
 {
     // function declarations 
     void uninitialize(void); 
@@ -146,8 +150,8 @@ void Butterfly::initShaderProgram(void)
     mvpMatrixUniform = glGetUniformLocation(shaderProgram, "uMVPMatrix");
 } 
 
-
-void Butterfly::render(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix) 
+void 
+Butterfly::render(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath::mat4 _projectionMatrix) 
 {
 	glEnable(GL_BLEND); 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
@@ -176,7 +180,8 @@ void Butterfly::render(vmath::mat4 _modelMatrix, vmath::mat4 _viewMatrix, vmath:
 	glDisable(GL_BLEND); 
 } 
 
-void Butterfly::update(float wingSpeed) 
+void 
+Butterfly::update(float wingSpeed) 
 {
 	static float theta = 0.0f; 
 	wingAngle = -10.0 * (sin(theta)+1.0f); 

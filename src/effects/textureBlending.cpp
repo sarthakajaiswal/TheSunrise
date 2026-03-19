@@ -4,7 +4,8 @@ TextureBlending::TextureBlending()
 {
 } 
 
-int TextureBlending::initialize() 
+int 
+TextureBlending::initialize() 
 {
     logFile.log("---- TextureBlending::initialize() started --\n"); 
 
@@ -25,7 +26,8 @@ int TextureBlending::initialize()
     return 0; 
 } 
 
-int TextureBlending::initOpenGLState()
+int 
+TextureBlending::initOpenGLState()
 {
     // variable declarations 
     char* vertexShaderSourceCode = NULL; 
@@ -58,7 +60,8 @@ int TextureBlending::initOpenGLState()
     return (0); 
 } 
 
-GLuint TextureBlending::render(GLuint texture1, float tex1Factor, GLuint texture2, float tex2Factor) 
+GLuint 
+TextureBlending::render(GLuint texture1, float tex1Factor, GLuint texture2, float tex2Factor) 
 {
     // function declarations 
     void resize(int width, int height); 
@@ -89,16 +92,19 @@ GLuint TextureBlending::render(GLuint texture1, float tex1Factor, GLuint texture
 
     fbo.unbind(); 
     
-    return (fbo.getTextureID()); 
+    return (fbo.getColorTextureID()); 
 } 
 
-void TextureBlending::uninitialize() 
+void 
+TextureBlending::uninitialize() 
 {
     // code 
-    logFile.log("TextureBlending::uninitialize() uninitializing textureBlending...\n"); 
+    logFile.log("TextureBlending::uninitialize() started...\n"); 
 
-    if(fbo.getTextureID() != 0) 
+    if(fbo.getColorTextureID() != 0) 
         fbo.destroyFBO(); 
+
+    logFile.log("TextureBlending::uninitialize() completed succesfully...\n"); 
 } 
 
 TextureBlending::~TextureBlending() 

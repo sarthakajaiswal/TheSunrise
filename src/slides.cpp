@@ -6,8 +6,10 @@ Slides::Slides()
 {
 } 
 
-int Slides::initialize(std::vector<const char*> _textureImages, float _fadeSpeed, float _slideDisplayTime) 
+int 
+Slides::initialize(std::vector<const char*> _textureImages, float _fadeSpeed, float _slideDisplayTime) 
 {
+    logFile.log("---- Slides::initialize() started ----\n");
     assert(_textureImages.size() != 0); 
 
     fsTexturer.initialize(); 
@@ -17,10 +19,12 @@ int Slides::initialize(std::vector<const char*> _textureImages, float _fadeSpeed
     for(int i = 0; i < _textureImages.size(); ++i) 
         textures.push_back(loadTexture(_textureImages[i]));
 
+    logFile.log("---- Slides::initialize() completed ----\n"); 
     return (0); 
 } 
 
-int Slides::render() 
+int 
+Slides::render() 
 {
     if(currentSlideNumber >= textures.size()) 
         return 1; 
@@ -33,7 +37,8 @@ int Slides::render()
     return 0; 
 } 
 
-void Slides::update() 
+void 
+Slides::update() 
 {
     static bool pingpong = true; 
     static float slideDisplayTimer = textureDisplayTime; 
@@ -73,6 +78,13 @@ void Slides::update()
     } 
 } 
 
-void Slides::uninitialize() 
+void 
+Slides::uninitialize() 
 {
+    logFile.log("---- Slides::uninitialize() started ----\n");
+
+    glDeleteTextures(textures.size(), textures.data());  
+    textures.clear(); 
+
+    logFile.log("---- Slides::uninitialize() completed ----\n"); 
 }  

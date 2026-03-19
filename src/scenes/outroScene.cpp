@@ -10,24 +10,29 @@ OutroScene::OutroScene()
     // code 
 } 
 
-int OutroScene::initialize() 
+int 
+OutroScene::initialize() 
 {
     // code 
     logFile.log("------------------ OutroScene::initialize() started ----------------\n"); 
 
     fsTexturer.initialize(); 
 
-    slidesSequence.initialize(
-        {"res/textures/outro/forYogeshwarSir.png", "res/textures/outro/onOccasionOf.png", "res/textures/outro/thankYou.png"}, 
-        0.9, 4.0); 
+    assert(slidesSequence.initialize(
+                {"res/textures/outro/forYogeshwarSir.png", "res/textures/outro/onOccasionOf.png", "res/textures/outro/thankYou.png"}, 
+                0.9, 
+                4.0) == 0); 
 
     texture_theSystemCallsPoster = loadTexture("res/textures/outro/theSystemCallsPoster.png"); 
+    if(texture_theSystemCallsPoster == 0) 
+        throw texture_loading_failure("Failed to load TheSystemCalls poster texture"); 
 
     logFile.log("------------------ OutroScene::initialize() completed ----------------\n\n"); 
     return (0); 
 } 
 
-void OutroScene::display() 
+void 
+OutroScene::display() 
 {
     static int slideRenderingCompleted = 0; 
 
@@ -38,7 +43,8 @@ void OutroScene::display()
         fsTexturer.render(texture_theSystemCallsPoster, posterAlpha); 
 } 
 
-void OutroScene::update() 
+void 
+OutroScene::update() 
 {
     slidesSequence.update(); 
 
@@ -51,11 +57,24 @@ void OutroScene::update()
         bDone = TRUE; 
 } 
 
-void OutroScene::uninitialize() 
+void 
+OutroScene::uninitialize() 
 {
+    logFile.log("------------------ OutroScene::uninitialize() started ----------------\n"); 
+    if(texture_theSystemCallsPoster != 0) 
+    {
+        glDeleteTextures(1, &texture_theSystemCallsPoster); 
+        texture_theSystemCallsPoster = 0; 
+    } 
+    
+    slidesSequence.uninitialize(); 
+    fsTexturer.uninitialize(); 
+
+    logFile.log("------------------ OutroScene::uninitialize() completed ----------------\n\n"); 
 } 
 
-void OutroScene::eveneCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
+void 
+OutroScene::eveneCallback(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 {
 } 
 

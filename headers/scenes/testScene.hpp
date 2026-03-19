@@ -24,6 +24,7 @@ class TestScene
         int initialize(); 
         void display(); 
         void update(); 
+        void uninitialize(); 
         
         ~TestScene(); 
 

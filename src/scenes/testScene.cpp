@@ -9,19 +9,20 @@ TestScene::TestScene()
     // code  
 } 
 
-int TestScene::initialize() 
+int 
+TestScene::initialize() 
 {	
+    logFile.log("------------------ TestScene::initialize() started ----------------\n");
+
     assert(initShaderProgram() == true); 
     cube.initialize(); 
 
-    for(int i = 0; i <= 10; ++i) 
-        logFile.log("%.2f ", spline2.evaluateValueAtT(i/10.0)); 
-    logFile.log("\n"); 
-
+    logFile.log("------------------ TestScene::initialize() completed ----------------\n\n"); 
     return (0); 
 } 
 
-void TestScene::display() 
+void 
+TestScene::display() 
 {
     mat4 modelMatrix = mat4::identity(); 
     mat4 viewMatrix = mat4::identity(); 
@@ -35,9 +36,17 @@ void TestScene::display()
     shaderProgramObject.unuse(); 
 } 
 
-void TestScene::update() 
+void 
+TestScene::update() 
 {
     // code 
+} 
+
+void 
+TestScene::uninitialize() 
+{
+    logFile.log("------------------ TestScene::uninitialize() started ----------------\n");
+    logFile.log("------------------ TestScene::uninitialize() completed ----------------\n\n"); 
 } 
 
 TestScene::~TestScene() 
