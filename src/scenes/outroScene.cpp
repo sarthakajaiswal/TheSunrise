@@ -19,9 +19,9 @@ OutroScene::initialize()
     fsTexturer.initialize(); 
 
     assert(slidesSequence.initialize(
-                {"res/textures/outro/forYogeshwarSir.png", "res/textures/outro/onOccasionOf.png", "res/textures/outro/thankYou.png"}, 
+                {"res/textures/outro/presentedBy.png", "res/textures/outro/forYogeshwarSir.png", "res/textures/outro/onOccasionOf.png", "res/textures/outro/thankYou.png"}, 
                 0.9, 
-                4.0) == 0); 
+                3.0) == 0); 
 
     texture_theSystemCallsPoster = loadTexture("res/textures/outro/theSystemCallsPoster.png"); 
     if(texture_theSystemCallsPoster == 0) 
